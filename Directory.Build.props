@@ -1,0 +1,17 @@
+<Project>
+
+  <!-- Shared by every project: who made the software, shown in each exe's Properties > Details. -->
+  <PropertyGroup>
+    <Company>Homayk Studio</Company>
+    <Authors>Homayk Studio</Authors>
+    <Product>Market POS</Product>
+    <Copyright>© 2026 Homayk Studio</Copyright>
+  </PropertyGroup>
+
+  <!-- The activation secret. Kept in license.secret beside this file, which is never committed:
+       anyone holding it could make activation keys. See src/Services/License.cs. -->
+  <PropertyGroup Condition="Exists('$(MSBuildThisFileDirectory)license.secret')">
+    <LicenseSecret>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)license.secret').Trim())</LicenseSecret>
+  </PropertyGroup>
+
+</Project>

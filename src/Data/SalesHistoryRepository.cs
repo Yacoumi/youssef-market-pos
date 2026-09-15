@@ -371,8 +371,14 @@ public static class SalesHistoryRepository
         command.CommandText = """
             SELECT l.product_id, l.name, COALESCE(c.name, ''),
                    COALESCE(SUM(CAST(l.quantity AS REAL) - CAST(l.returned_qty AS REAL)), 0),
+                   -- What was actually charged for the line: its shelf price less its share of
+                   -- the sale's remise. The remise comes out of the profit; the purchase cost
+                   -- below is never touched by it.
                    COALESCE(SUM((CAST(l.quantity AS REAL) - CAST(l.returned_qty AS REAL))
-                                * CAST(l.unit_price AS REAL)), 0),
+                                * CAST(l.unit_price AS REAL)
+                                * CASE WHEN CAST(s.gross_before_discount AS REAL) > 0
+                                       THEN CAST(s.total AS REAL) / CAST(s.gross_before_discount AS REAL)
+                                       ELSE 1 END), 0),
                    COALESCE(SUM((CAST(l.quantity AS REAL) - CAST(l.returned_qty AS REAL))
                                 * CAST(l.unit_cost AS REAL)), 0)
             FROM sale_lines l

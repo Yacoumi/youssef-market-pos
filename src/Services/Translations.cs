@@ -3085,6 +3085,33 @@ public static class Translations
             ["profit report"] =
                 ("rapport de bénéfices",
                  "تقرير الأرباح"),
+            ["{0} is new — it is kept in this supplier's records only, not in Inventory."] =
+                ("{0} est nouveau — il reste dans les fiches de ce fournisseur, pas dans l'inventaire.",
+                 "{0} جديد — يُحفظ في سجلات هذا المورد فقط، وليس في المخزون."),
+            ["Print the ticket?"] =
+                ("Imprimer le ticket ?",
+                 "هل تريد طباعة التذكرة؟"),
+            ["Activate this computer"] =
+                ("Activer cet ordinateur",
+                 "تفعيل هذا الجهاز"),
+            ["This copy is registered to one shop. Send the machine code to Homayk Studio to receive the activation key for this computer."] =
+                ("Cette copie est enregistrée pour un seul magasin. Envoyez le code machine à Homayk Studio pour recevoir la clé d'activation de cet ordinateur.",
+                 "هذه النسخة مسجلة لمتجر واحد. أرسل رمز الجهاز إلى Homayk Studio للحصول على مفتاح التفعيل لهذا الجهاز."),
+            ["MACHINE CODE"] =
+                ("CODE MACHINE",
+                 "رمز الجهاز"),
+            ["ACTIVATION KEY"] =
+                ("CLÉ D'ACTIVATION",
+                 "مفتاح التفعيل"),
+            ["Activate"] =
+                ("Activer",
+                 "تفعيل"),
+            ["Copy"] =
+                ("Copier",
+                 "نسخ"),
+            ["That key is not for this computer. Check it and try again."] =
+                ("Cette clé n'est pas pour cet ordinateur. Vérifiez-la et réessayez.",
+                 "هذا المفتاح ليس لهذا الجهاز. تحقق منه وحاول مرة أخرى."),
             ["Quantity: {0}"] =
                 ("Quantité : {0}",
                  "الكمية: {0}"),

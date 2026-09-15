@@ -53,6 +53,15 @@ AppDomain.CurrentDomain.UnhandledException += (_, fatal) =>
     }
 };
 
+// Activation before anything else. A copy on a computer without its key asks for the key and,
+// without one, does not start serving.
+Loc.Load();
+if (!ServerActivation.EnsureActivated())
+{
+    Note("not activated: this computer has no activation key, so the server did not start");
+    return 1;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Listens on the shop's network, not just on this machine. Kestrel's default is localhost,

@@ -119,8 +119,10 @@
                              everywhere else in the app rather than the stock success badge. -->
                         <Border Width="70" Height="70" CornerRadius="22" Background="{StaticResource Brush.Accent}"
                                 HorizontalAlignment="Center" TextElement.Foreground="White">
+                            <!-- Left to right always: in Arabic the whole window is mirrored,
+                                 and a mirrored tick reads as a broken "V". -->
                             <Path Style="{StaticResource Icon}" Data="{StaticResource Icon.Check}"
-                                  Width="34" Height="34" StrokeThickness="2.4"/>
+                                  Width="34" Height="34" StrokeThickness="2.4" FlowDirection="LeftToRight"/>
                         </Border>
                         <TextBlock Text="Payment confirmed" Style="{StaticResource Text.Title}" FontSize="19"
                                    HorizontalAlignment="Center" Margin="0,16,0,0"/>
@@ -207,6 +209,13 @@
                             <TextBlock x:Name="LinkStatus" Margin="8,0,8,0" VerticalAlignment="Center"
                                        FontFamily="Segoe UI, Tahoma"/>
                         </StackPanel>
+                    </Button>
+
+                    <!-- Refresh: reads the products again from the shop, so something just
+                         added or changed in the back office is on the till without restarting. -->
+                    <Button x:Name="RefreshButton" Style="{StaticResource Button.RowAction}"
+                            ToolTip="Reload" Click="Refresh_Click" Margin="0,0,10,0">
+                        <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Refresh}"/>
                     </Button>
 
                     <!-- Price check. Green while it is on, because the one thing that must
@@ -849,7 +858,7 @@
                         <StackPanel VerticalAlignment="Center" MinWidth="150">
                             <StackPanel Orientation="Horizontal">
                                 <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Check}"
-                                      Width="12" Height="12" StrokeThickness="2.4"
+                                      Width="12" Height="12" StrokeThickness="2.4" FlowDirection="LeftToRight"
                                       TextElement.Foreground="{StaticResource Brush.Accent}"/>
                                 <TextBlock x:Name="AddedToastTitle" Margin="7,0,0,0" VerticalAlignment="Center"
                                            FontSize="14" FontWeight="SemiBold"

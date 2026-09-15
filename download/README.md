@@ -1,20 +1,31 @@
 ## Downloads
 - **POS-Server.exe**: for the back-office PC. It holds the database.
 - **POS-Till.exe**: for each cashier PC.
-- **marketpos.db**: the clean shipping database. All tables are present and every table is empty.
+- **marketpos.db**: the clean shipping database. Every table is empty.
 
-## Fixes in 2.5
-1. **Back-office sidebar opens its pages again.** The date buttons (Today, Yesterday…) work again too.
-2. **Replacing `marketpos.db` now really gives a fresh shop.**
-   - POS-Server no longer keeps the database file open between requests, so Windows allows it to be deleted or replaced while the server runs.
-   - Leftover `-wal`/`-shm` files are checked and deleted on every open.
-   - On first start the app only adds its list of default expense category names for the expense dropdown. It adds no products, sales, users or any other records.
-3. **The on-screen keyboard button appears again** on PCs where Windows doesn't report a touchscreen. To hide it on a PC, set `"OnScreenKeyboard": false` in `settings.json`.
+Publisher: **Homayk Studio**
 
-## New client setup
-1. **Server PC:** copy `marketpos.db` to `%AppData%\MarketPos\`. Then run **POS-Server.exe**.
-2. **Server address:** run `ipconfig` on the server PC and note the IPv4 address, e.g. `192.168.1.20`.
-3. **Each cashier PC:** run **POS-Till.exe**. In **Settings → Shop server**, enter `192.168.1.20:5000`.
+## What's new in 2.7
+- **Activation.** Each computer needs its own activation key.
+  - On first start, POS-Server and POS-Till show this computer's **machine code**.
+  - Homayk Studio sends back the key for that code.
+  - A copy moved to another computer shows a different code and does not open without a new key.
+- **Pay** first asks **هل تريد طباعة التذكرة؟** (نعم / لا). The payment is saved either way; the ticket is printed only on نعم.
+- **Refresh button** on the cashier page reloads the products.
+- **Payment confirmed icon** fixed; it was drawn mirrored.
+- **Supplier purchases stay in the Supplier section.**
+  - They no longer create products, add stock, or change a product's cost or price.
+  - Purchases recorded before this update are kept.
+- **Supplier section:** no visible scrollbars. The mouse wheel, touchpad and touch dragging still scroll.
+- **Discount (remise)** comes out of the profit in every report. The purchase cost never changes.
+  - Example: bought for 20, sells for 30, discount 5 → sold for 25, profit 5, cost still 20.
 
-- **Updating an existing install:** end **POS-Server** and **POS-Till** in Task Manager, then replace both exes.
-- **Back-office password:** starts as **123456**.
+## Setup
+1. **Server PC:**
+   1. Copy `marketpos.db` to `%AppData%\MarketPos\`.
+   2. Run **POS-Server.exe**.
+   3. Enter the activation key when asked.
+2. **Each cashier PC:**
+   1. Run **POS-Till.exe**.
+   2. Enter the activation key for that PC.
+   3. In **Settings → Shop server**, enter the server's address, e.g. `192.168.1.20:5000`.

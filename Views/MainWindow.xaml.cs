@@ -801,6 +801,10 @@ public partial class MainWindow : Window
     /// </summary>
     private void Vm_PaymentRequested(object? sender, decimal amountDue)
     {
+        // Asked before anything happens: print the ticket or not. The answer only decides the
+        // printing; the sale is made either way, and the confirmation follows the answer.
+        var printTicket = ConfirmWindow.Ask(this, "Print the ticket?");
+
         var total = Vm.Total;
         Vm.CompleteSale(Vm.PaymentMethod, total);
 
@@ -808,10 +812,7 @@ public partial class MainWindow : Window
 
         ConfirmDetail.Text = $"{Loc.T("Ticket #{0}", Vm.LastInvoiceNumber)}  ·  {Loc.Ltr($"{total:N2} DH")}";
 
-        var paper = Receipts.Find(Vm.LastInvoiceNumber);
-
-        // Print directly to the configured printer without asking.
-        if (paper is not null)
+        if (printTicket && Receipts.Find(Vm.LastInvoiceNumber) is { } paper)
         {
             var problem = ReceiptPrinter.PrintSilent(paper, isDuplicate: false);
             if (problem is not null) ConfirmDetail.Text = problem;
@@ -819,6 +820,37 @@ public partial class MainWindow : Window
 
         ((Storyboard)FindResource("PaymentConfirmed")).Begin(this);
         FocusBarcode();
+    }
+
+    /// <summary>
+    /// Reads the shop's products again. On a till the server is asked for the whole catalogue,
+    /// not only what changed since the last look.
+    /// </summary>
+    private async void Refresh_Click(object sender, RoutedEventArgs e)
+    {
+        RefreshButton.IsEnabled = false;
+
+        try
+        {
+            if (Catalog.BelongsToAServer)
+            {
+                CatalogSync.Stamp = string.Empty;
+                await ShopLink.Sync();
+            }
+
+            Vm.ReloadCatalogue();
+            Vm.ReloadProducts();
+            if (Vm.IsTicketsPage) Vm.LoadTickets();
+        }
+        catch (Exception error)
+        {
+            Vm.AnnounceProblem(error.Message);
+        }
+        finally
+        {
+            RefreshButton.IsEnabled = true;
+            FocusBarcode();
+        }
     }
 
     // Custom window controls (top-right) — the window has no native title bar.

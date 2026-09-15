@@ -122,7 +122,7 @@ internal static class Schema
             CREATE TABLE IF NOT EXISTS purchase_lines (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 purchase_id INTEGER NOT NULL REFERENCES purchases(id) ON DELETE CASCADE,
-                product_id  INTEGER NOT NULL REFERENCES products(id),
+                product_id  INTEGER REFERENCES products(id),   -- optional: supplier goods need not be stock
                 name        TEXT    NOT NULL,   -- snapshot, same reason as sale_lines
                 quantity    TEXT    NOT NULL,
                 unit_cost   TEXT    NOT NULL,
@@ -314,6 +314,7 @@ internal static class Schema
     private static void Extend(SqliteConnection connection)
     {
         BarcodeBecomesOptional(connection);
+        PurchaseLinesStandAlone(connection);
 
         AddColumns(connection, "products", new[]
         {
@@ -537,6 +538,82 @@ internal static class Schema
         // and is the file itself sound? A rebuild is the one operation in this schema that can
         // quietly orphan a decade of history, so it is the one that says so out loud.
         Complain(connection, "PRAGMA foreign_key_check;", "left rows pointing at products that are gone");
+        Complain(connection, "PRAGMA integrity_check;", "left the database itself damaged");
+    }
+
+    /// <summary>
+    /// Lets a supplier's goods be recorded without being an Inventory product.
+    ///
+    /// What is bought from a supplier stays in the supplier's records: it is not created as a
+    /// product, not added to stock and does not change a product's cost or price. A purchase
+    /// line therefore no longer has to point at a product. SQLite cannot drop a NOT NULL, so the
+    /// table is rebuilt once, row for row, and checked before the old one is dropped.
+    /// </summary>
+    private static void PurchaseLinesStandAlone(SqliteConnection connection)
+    {
+        bool mustRebuild;
+        using (var info = connection.CreateCommand())
+        {
+            info.CommandText = "SELECT \"notnull\" FROM pragma_table_info('purchase_lines') WHERE name = 'product_id';";
+            mustRebuild = info.ExecuteScalar() is long notNull && notNull != 0;
+        }
+        if (!mustRebuild) return;
+
+        using (var off = connection.CreateCommand())
+        {
+            off.CommandText = "PRAGMA foreign_keys = OFF;";
+            off.ExecuteNonQuery();
+        }
+
+        using (var work = connection.BeginTransaction())
+        {
+            void Run(string sql)
+            {
+                using var command = connection.CreateCommand();
+                command.Transaction = work;
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+            }
+
+            Run("""
+                CREATE TABLE purchase_lines_rebuilt (
+                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    purchase_id INTEGER NOT NULL REFERENCES purchases(id) ON DELETE CASCADE,
+                    product_id  INTEGER REFERENCES products(id),
+                    name        TEXT    NOT NULL,
+                    quantity    TEXT    NOT NULL,
+                    unit_cost   TEXT    NOT NULL,
+                    line_total  TEXT    NOT NULL
+                );
+                """);
+            Run("""
+                INSERT INTO purchase_lines_rebuilt (id, purchase_id, product_id, name, quantity, unit_cost, line_total)
+                SELECT id, purchase_id, product_id, name, quantity, unit_cost, line_total FROM purchase_lines;
+                """);
+
+            using (var count = connection.CreateCommand())
+            {
+                count.Transaction = work;
+                count.CommandText = "SELECT (SELECT COUNT(*) FROM purchase_lines), (SELECT COUNT(*) FROM purchase_lines_rebuilt);";
+                using var reader = count.ExecuteReader();
+                reader.Read();
+                if (reader.GetInt64(0) != reader.GetInt64(1))
+                    throw new InvalidOperationException(
+                        "The purchase lines could not be rebuilt safely. Nothing has been changed.");
+            }
+
+            Run("DROP TABLE purchase_lines;");
+            Run("ALTER TABLE purchase_lines_rebuilt RENAME TO purchase_lines;");
+            Run("CREATE INDEX IF NOT EXISTS ix_purchase_lines ON purchase_lines(purchase_id);");
+            work.Commit();
+        }
+
+        using (var on = connection.CreateCommand())
+        {
+            on.CommandText = "PRAGMA foreign_keys = ON;";
+            on.ExecuteNonQuery();
+        }
+
         Complain(connection, "PRAGMA integrity_check;", "left the database itself damaged");
     }
 

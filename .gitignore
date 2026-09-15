@@ -30,3 +30,10 @@ untranslated.txt
 *.db-wal
 settings.json
 crash.log
+
+# The activation secret. Anyone holding it could make activation keys, so it never leaves this computer.
+license.secret
+# The key generator has the secret compiled into it.
+tools/LicenseKeyGen/bin/
+tools/LicenseKeyGen/obj/
+KeyGen/

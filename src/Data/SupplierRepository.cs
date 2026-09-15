@@ -197,22 +197,20 @@ public static class SupplierRepository
     // ------------------------------ Purchases ------------------------------
 
     /// <summary>
-    /// Records a delivery: the invoice, its lines, the stock they add, and any money handed
-    /// over at the door. All of it in one transaction, so a half-entered delivery cannot
-    /// leave stock up and the invoice missing.
+    /// Records a supplier purchase: the invoice, its lines and any money handed over at the
+    /// door, in one transaction. It is kept in the supplier's records only and never touches
+    /// Inventory.
     /// </summary>
-    public static int RecordPurchase(Purchase purchase, decimal amountPaidNow, bool addToStock = true)
+    public static int RecordPurchase(Purchase purchase, decimal amountPaidNow)
     {
         Session.Require(Permission.ManagePurchases);
         if (purchase.Lines.Count == 0)
             throw new ArgumentException(Loc.T("A purchase needs at least one product line."));
 
-        // Repricing the shelf is a different power from recording what arrived, so it is
-        // asked for separately — and only when a line actually carries a new price.
-        if (purchase.Lines.Any(l => l.SellPrice is > 0m))
-            Session.Require(Permission.ManageProducts);
-
-        var lines = CreateAnyNewProducts(purchase.Lines);
+        // What is bought from a supplier stays in the supplier's records. It is not created as
+        // a product, not added to stock, and it does not change any product's cost or price:
+        // Inventory is only ever changed from Inventory and Add product.
+        var lines = purchase.Lines;
 
         var total = lines.Sum(l => l.LineTotal);
 
@@ -237,7 +235,7 @@ public static class SupplierRepository
                   .WithMoney("$total", total)
                   .With("$method", purchase.Method)
                   .With("$note", purchase.Note)
-                  .With("$received", addToStock ? 1 : 0)
+                  .With("$received", 0)
                   .With("$by", Session.CurrentId)
                   .WithDate("$now", DateTime.Now);
             purchaseId = Convert.ToInt32(insert.ExecuteScalar());
@@ -245,61 +243,18 @@ public static class SupplierRepository
 
         foreach (var line in lines)
         {
-            using (var insert = connection.CreateCommand())
-            {
-                insert.CommandText = """
-                    INSERT INTO purchase_lines (purchase_id, product_id, name, quantity, unit_cost, line_total)
-                    VALUES ($purchaseId, $productId, $name, $qty, $cost, $total);
-                    """;
-                insert.With("$purchaseId", purchaseId)
-                      .With("$productId", line.ProductId)
-                      .With("$name", line.Name)
-                      .WithMoney("$qty", line.Quantity)
-                      .WithMoney("$cost", line.UnitCost)
-                      .WithMoney("$total", line.LineTotal);
-                insert.ExecuteNonQuery();
-            }
-
-            if (!addToStock) continue;
-
-            InventoryRepository.Move(line.ProductId, line.Quantity, StockReason.SupplierPurchase,
-                reference: Loc.T("Purchase #{0}", purchaseId), unitCost: line.UnitCost, connection: connection);
-
-            // The delivered cost becomes the product's cost, so COGS on the next sale uses
-            // what this shop actually paid rather than a figure typed in months ago.
-            using (var cost = connection.CreateCommand())
-            {
-                cost.CommandText = "UPDATE products SET cost = $cost WHERE id = $id;";
-                cost.WithMoney("$cost", line.UnitCost).With("$id", line.ProductId);
-                cost.ExecuteNonQuery();
-            }
-
-            // A new shelf price, when the owner set one on the line. In the same transaction
-            // as the stock and the cost: a delivery that repriced half its products and then
-            // failed would leave the shop selling at prices nobody chose.
-            if (line.SellPrice is not { } sellPrice || sellPrice <= 0m) continue;
-
-            decimal wasPrice;
-            using (var read = connection.CreateCommand())
-            {
-                read.CommandText = "SELECT price FROM products WHERE id = $id;";
-                read.With("$id", line.ProductId);
-                wasPrice = Db.ParseMoney(read.ExecuteScalar() as string);
-            }
-
-            if (wasPrice == sellPrice) continue;
-
-            using (var price = connection.CreateCommand())
-            {
-                price.CommandText = "UPDATE products SET price = $price WHERE id = $id;";
-                price.WithMoney("$price", sellPrice).With("$id", line.ProductId);
-                price.ExecuteNonQuery();
-            }
-
-            ActivityRepository.Record("changed a price", "Product", line.ProductId,
-                oldValue: $"{wasPrice:0.00}", newValue: $"{sellPrice:0.00}",
-                detail: ActivityRepository.Say("repriced {0} on a delivery", line.Name),
-                connection: connection);
+            using var insert = connection.CreateCommand();
+            insert.CommandText = """
+                INSERT INTO purchase_lines (purchase_id, product_id, name, quantity, unit_cost, line_total)
+                VALUES ($purchaseId, $productId, $name, $qty, $cost, $total);
+                """;
+            insert.With("$purchaseId", purchaseId)
+                  .With("$productId", line.ProductId > 0 ? line.ProductId : null)
+                  .With("$name", line.Name)
+                  .WithMoney("$qty", line.Quantity)
+                  .WithMoney("$cost", line.UnitCost)
+                  .WithMoney("$total", line.LineTotal);
+            insert.ExecuteNonQuery();
         }
 
         if (amountPaidNow > 0m)
@@ -314,63 +269,6 @@ public static class SupplierRepository
 
         transaction.Commit();
         return purchaseId;
-    }
-
-    /// <summary>
-    /// Turns lines typed as plain names into real products, and returns the lines pointing at
-    /// them.
-    ///
-    /// A delivery is where a shop meets a product for the first time — the van brings
-    /// something new and it has to go somewhere. Made before the transaction opens rather
-    /// than inside it: a product created and then rolled back would be a product the shop
-    /// typed in and lost, whereas one left behind by a failed delivery is simply a product
-    /// with no stock, which is what a shop has before its first delivery anyway.
-    /// </summary>
-    private static List<PurchaseLine> CreateAnyNewProducts(List<PurchaseLine> lines)
-    {
-        if (!lines.Any(l => l.IsNew)) return lines;
-
-        Session.Require(Permission.ManageProducts);
-
-        var made = new List<PurchaseLine>(lines.Count);
-        foreach (var line in lines)
-        {
-            if (!line.IsNew)
-            {
-                made.Add(line);
-                continue;
-            }
-
-            var id = StockRepository.Create(new StockItem
-            {
-                // The code on the box when one was scanned, so the till finds it by scan from
-                // the first sale. Goods with nothing printed on them arrive with no barcode and
-                // keep none: they are found on the till by their picture.
-                Barcode = (line.Barcode ?? string.Empty).Trim(),
-                Name = line.Name,
-                Cost = line.UnitCost,
-                // No selling price given means the shop has not decided yet. Cost is the
-                // honest placeholder: it makes nothing, rather than pretending to.
-                Price = line.SellPrice ?? line.UnitCost,
-
-                // Bought, not yet for sale. What arrives from a supplier goes into stock and
-                // stays off the cashier's screen; it reaches the till only when somebody puts
-                // it there through Add product, with a name and a price chosen for selling.
-                ShowInPos = false,
-            });
-
-            made.Add(new PurchaseLine
-            {
-                ProductId = id,
-                Barcode = line.Barcode,
-                Name = line.Name,
-                Quantity = line.Quantity,
-                UnitCost = line.UnitCost,
-                SellPrice = line.SellPrice,
-            });
-        }
-
-        return made;
     }
 
     public static List<Purchase> ListPurchases(DateRange? range = null, int? supplierId = null,
@@ -510,10 +408,10 @@ public static class SupplierRepository
             latest.CommandText = """
                 SELECT l.unit_cost FROM purchase_lines l
                 JOIN purchases p ON p.id = l.purchase_id
-                WHERE p.supplier_id = $id AND l.product_id = $product AND p.status <> 'Cancelled'
+                WHERE p.supplier_id = $id AND l.name = $name AND p.status <> 'Cancelled'
                 ORDER BY p.purchased_on DESC, l.id DESC LIMIT 1;
                 """;
-            latest.With("$id", supplierId).With("$product", item.ProductId);
+            latest.With("$id", supplierId).With("$name", item.Name);
             item.LastUnitCost = Db.ParseMoney(latest.ExecuteScalar() as string);
         }
 
@@ -545,7 +443,9 @@ public static class SupplierRepository
 
         if (received)
         {
-            foreach (var line in ListPurchaseLines(purchaseId))
+            // Only purchases recorded before supplier goods were kept apart moved stock, and only
+            // their lines that pointed at a product.
+            foreach (var line in ListPurchaseLines(purchaseId).Where(l => l.ProductId > 0))
                 InventoryRepository.Move(line.ProductId, -line.Quantity, StockReason.SupplierReturn,
                     reference: Loc.T("Purchase #{0} cancelled", purchaseId), note: reason,
                     unitCost: line.UnitCost, connection: connection);

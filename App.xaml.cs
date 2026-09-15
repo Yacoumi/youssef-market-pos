@@ -126,6 +126,22 @@ public partial class App : Application
             return;
         }
 
+        // Activation, before anything of the shop opens. A copy on a computer without its key
+        // stops here. Kept alive through the prompt: it is the only window so far, and closing
+        // the last window would otherwise end the app before the till could open.
+        if (!e.Args.Contains("--selftest"))
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            var activated = Views.ActivationWindow.EnsureActivated();
+            ShutdownMode = ShutdownMode.OnLastWindowClose;
+
+            if (!activated)
+            {
+                Shutdown();
+                return;
+            }
+        }
+
         try
         {
             // A till loads nothing from here: there is no database on this machine to load it

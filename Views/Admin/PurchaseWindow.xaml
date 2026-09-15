@@ -27,7 +27,7 @@
                 </Button>
             </Grid>
 
-            <ScrollViewer MaxHeight="460" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer MaxHeight="460" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>

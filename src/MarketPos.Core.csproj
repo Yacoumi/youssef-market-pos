@@ -28,4 +28,15 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
   </ItemGroup>
 
+  <!-- The activation secret, compiled in from license.secret (see Directory.Build.props). -->
+  <ItemGroup Condition="'$(LicenseSecret)' != ''">
+    <AssemblyMetadata Include="MarketPos.Activation" Value="$(LicenseSecret)" />
+  </ItemGroup>
+
+  <!-- A release built without the secret would run on any computer, so it is refused. -->
+  <Target Name="RequireActivationSecret" BeforeTargets="CoreCompile"
+          Condition="'$(Configuration)' == 'Release' And '$(LicenseSecret)' == ''">
+    <Error Text="license.secret is missing next to Directory.Build.props. A release build needs it so copies only run on activated computers." />
+  </Target>
+
 </Project>

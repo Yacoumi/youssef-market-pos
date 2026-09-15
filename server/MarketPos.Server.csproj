@@ -8,7 +8,9 @@
        one place stock is decremented. -->
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- Windows: the server asks for its activation key in a small window before it starts. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>MarketPos.Server</RootNamespace>
     <AssemblyName>POS-Server</AssemblyName>
 

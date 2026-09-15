@@ -38,7 +38,9 @@
                         <TextBox x:Name="CostBox" Style="{StaticResource TextBox.Field}"
                                  local:Numeric.Only="True" TextChanged="Prices_Changed"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="6">
+                    <!-- A supplier purchase does not set a shelf price: supplier goods stay in the
+                         supplier's records and never change Inventory. -->
+                    <StackPanel Grid.Column="6" Visibility="Collapsed">
                         <TextBlock Text="SELL FOR" Style="{StaticResource Text.FieldLabel}"/>
                         <TextBox x:Name="SellBox" Style="{StaticResource TextBox.Field}"
                                  local:Numeric.Only="True" TextChanged="Prices_Changed"
@@ -63,8 +65,8 @@
                 <ColumnDefinition Width="2.6*"/>
                 <ColumnDefinition Width="0.7*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="0"/>
+                <ColumnDefinition Width="0"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -78,7 +80,7 @@
         </Grid>
         <Border Style="{StaticResource Rule}" Margin="0,0,0,4"/>
 
-        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
                 <ItemsControl x:Name="LineList">
                     <ItemsControl.ItemTemplate>
@@ -88,8 +90,8 @@
                                     <ColumnDefinition Width="2.6*"/>
                                     <ColumnDefinition Width="0.7*"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="1.2*"/>
+                                    <ColumnDefinition Width="0"/>
+                                    <ColumnDefinition Width="0"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>

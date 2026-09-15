@@ -148,17 +148,9 @@ public partial class DeliveryEditor : UserControl
             return Loc.T("Enter what each one cost.");
         }
 
-        // A sell price is only carried when one was actually typed. Left blank, the shelf
-        // price stays where it is rather than being reset to zero by an empty box.
-        decimal? sellPrice = TryMoney(SellBox.Text, out var sell) && sell > 0m ? sell : null;
-
-        // A product that has never been priced is the exception: there is no old price to
-        // leave alone, so one has to be given or the till would sell it at cost.
-        if (product is null && sellPrice is null)
-        {
-            SellBox.Focus();
-            return Loc.T("Enter what {0} sells for - it is new to the shop.", typed);
-        }
+        // No shelf price: what is bought from a supplier stays in the supplier's records and
+        // never changes Inventory, so there is no selling price to set here.
+        decimal? sellPrice = null;
 
         var name = product?.Name ?? typed;
 
@@ -279,9 +271,12 @@ public partial class DeliveryEditor : UserControl
                     !Known.Any(p => string.Equals(p.Name, typed, StringComparison.CurrentCultureIgnoreCase));
 
         var newNote = _scannedCode is not null && typed.Length == 0
-            ? Loc.T("Scanned {0} — not in the shop yet. Give it a name.", _scannedCode) + "  ·  "
-            : isNew ? Loc.T("{0} is new — it goes into stock, not onto the till. Put it on sale from Add product.", typed) + "  ·  "
+            ? Loc.T("Scanned {0} — not in the shop yet. Give it a name.", _scannedCode)
+            : isNew ? Loc.T("{0} is new — it is kept in this supplier's records only, not in Inventory.", typed)
             : string.Empty;
+
+        // Supplier goods carry no selling price, so there is no margin to show.
+        hasSell = false;
 
         if (!hasCost || !hasSell)
         {

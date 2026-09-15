@@ -39,11 +39,11 @@
     <!-- The other projects live under this one on disk, and the SDK compiles everything
          beneath a project folder by default - which pulled Core's sources into the app a
          second time and produced duplicate-attribute errors nobody would guess the cause of. -->
-    <Compile Remove="src\**;server\**;launcher\**" />
-    <None Remove="src\**;server\**;launcher\**" />
-    <Page Remove="src\**;server\**;launcher\**" />
-    <EmbeddedResource Remove="src\**;server\**;launcher\**" />
-    <Resource Remove="src\**;server\**;launcher\**" />
+    <Compile Remove="src\**;server\**;launcher\**;tools\**" />
+    <None Remove="src\**;server\**;launcher\**;tools\**" />
+    <Page Remove="src\**;server\**;launcher\**;tools\**" />
+    <EmbeddedResource Remove="src\**;server\**;launcher\**;tools\**" />
+    <Resource Remove="src\**;server\**;launcher\**;tools\**" />
   </ItemGroup>
 
   <ItemGroup>

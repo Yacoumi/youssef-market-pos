@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Makes activation keys. For Homayk Studio only: built with license.secret, which is never
+       committed, so the exe it produces must never be given to a client or uploaded. -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>MarketPos-KeyGen</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MarketPos.Core.csproj" />
+  </ItemGroup>
+
+</Project>
