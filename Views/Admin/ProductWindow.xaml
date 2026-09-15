@@ -4,7 +4,8 @@
      is, what the shop paid, what it sells for, and how many there are. Everything else a
      product carries (VAT bracket, minimum stock, shelf, supplier) keeps its value on an edit
      and takes the shop's default on a new one. -->
-<Window x:Class="MarketPos.Views.Admin.ProductWindow"
+<views:DialogWindow x:Class="MarketPos.Views.Admin.ProductWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:MarketPos.Views.Admin"
@@ -196,4 +197,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

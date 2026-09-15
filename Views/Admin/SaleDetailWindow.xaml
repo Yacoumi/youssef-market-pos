@@ -1,4 +1,5 @@
-<Window x:Class="MarketPos.Views.Admin.SaleDetailWindow"
+<views:DialogWindow x:Class="MarketPos.Views.Admin.SaleDetailWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Sale" Width="560" SizeToContent="Height" MaxHeight="640"
@@ -133,4 +134,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

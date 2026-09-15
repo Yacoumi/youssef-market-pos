@@ -15,7 +15,7 @@ namespace MarketPos.Views.Admin;
 /// a shop's costs do not fit a fixed menu, and being forced into "Other" makes the Money
 /// Spent breakdown useless within a month.
 /// </summary>
-public partial class ExpenseWindow : Window
+public partial class ExpenseWindow : MarketPos.Views.DialogWindow
 {
     private readonly Expense? _existing;
     private string? _receiptPath;
@@ -137,7 +137,7 @@ public partial class ExpenseWindow : Window
             Filter = "Images and PDF|*.jpg;*.jpeg;*.png;*.pdf|All files|*.*",
         };
 
-        if (dialog.ShowDialog(this) == true)
+        if (dialog.ShowDialog(DialogOwner) == true)
         {
             _receiptPath = dialog.FileName;
             ShowReceipt();

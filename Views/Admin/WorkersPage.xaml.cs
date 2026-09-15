@@ -202,16 +202,16 @@ public partial class WorkersPage : AdminPageBase
         if (!Session.Can(Permission.PaySalaries))
         {
             ConfirmWindow.Ask(Shell, "Not allowed",
-                $"{Session.CurrentName} may not record salary payments.");
+                Loc.T("{0} may not record salary payments.", Session.CurrentName));
             return;
         }
 
         var result = AmountWindow.Ask(Shell, new AmountRequest
         {
-            Heading = $"Pay {row.Name}",
+            Heading = Loc.T("Pay {0}", row.Name),
             Blurb = row.Owed > 0m
-                ? $"{Money(row.Owed)} owed for {Dates.RangeLabel.ToLowerInvariant()}."
-                : $"Nothing outstanding for {Dates.RangeLabel.ToLowerInvariant()}.",
+                ? Loc.T("{0} owed for {1}.", Money(row.Owed), Loc.T(Dates.RangeLabel))
+                : Loc.T("Nothing outstanding for {0}.", Loc.T(Dates.RangeLabel)),
             AmountLabel = "AMOUNT PAID",
             ConfirmText = "Record payment",
             Suggested = row.Owed > 0m ? row.Owed : null,

@@ -328,8 +328,8 @@ public partial class AdminWindow : Window
         if (!Session.IsOwnerUnlocked)
         {
             ConfirmWindow.Ask(this, "Not your password to set",
-                $"{Session.CurrentName} signed in as staff. Only the owner can change the "
-                + "owner's password.");
+                Loc.T("{0} signed in as staff. Only the owner can change the owner's password.",
+                      Session.CurrentName));
             return;
         }
 
@@ -342,9 +342,9 @@ public partial class AdminWindow : Window
     /// </summary>
     private void ShowPasswordState()
     {
-        PasswordButton.ToolTip = AdminAccount.IsConfigured
+        PasswordButton.ToolTip = Loc.T(AdminAccount.IsConfigured
             ? "Change your password"
-            : "No password set — anyone can open the back office";
+            : "No password set — anyone can open the back office");
 
         PasswordButton.Foreground = (System.Windows.Media.Brush)FindResource(
             AdminAccount.IsConfigured ? "Brush.Muted" : "Brush.Accent");
@@ -358,7 +358,7 @@ public partial class AdminWindow : Window
     /// </summary>
     private void SignOut_Click(object sender, RoutedEventArgs e)
     {
-        if (!ConfirmWindow.Ask(this, $"Sign {Session.CurrentName} out?",
+        if (!ConfirmWindow.Ask(this, Loc.T("Sign {0} out?", Session.CurrentName),
                 "The back office will ask for a name and password again.")) return;
 
         Session.SignOut();
@@ -367,6 +367,10 @@ public partial class AdminWindow : Window
 
     private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {
+        // With a form open over the page, Escape belongs to the form — not to closing the
+        // whole back office behind it.
+        if (InPage.IsOpen(this)) return;
+
         if (e.Key == Key.Escape)
         {
             // An open dropdown takes Escape for itself: it closes the list, nothing more.

@@ -14,7 +14,7 @@ namespace MarketPos.Views.Admin;
 /// The role box spells out what it grants, because "Manager" is not self-explanatory and
 /// getting it wrong is how a cashier ends up able to see the shop's profit.
 /// </summary>
-public partial class WorkerWindow : Window
+public partial class WorkerWindow : MarketPos.Views.DialogWindow
 {
     private readonly Worker? _existing;
 
@@ -164,7 +164,7 @@ public partial class WorkerWindow : Window
         if (_existing is null) return;
         var activate = !_existing.IsActive;
 
-        if (!activate && !ConfirmWindow.Ask(this, $"Deactivate {_existing.Name}?",
+        if (!activate && !ConfirmWindow.Ask(this, Loc.T("Deactivate {0}?", _existing.Name),
                 "They can no longer sign in at the till. Their past sales, shifts and salary "
                 + "payments all stay on record."))
             return;

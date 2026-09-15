@@ -15,7 +15,7 @@ namespace MarketPos.Views.Admin;
 /// and whatever was paid at the door. The unpaid remainder becomes supplier debt rather than
 /// an expense, because the money has not left yet.
 /// </summary>
-public partial class PurchaseWindow : Window
+public partial class PurchaseWindow : MarketPos.Views.DialogWindow
 {
     /// <summary>How a delivery was paid, as stored; shown in the shop's language.</summary>
     private static readonly string[] PayMethods =
@@ -144,8 +144,8 @@ public partial class PurchaseWindow : Window
         if (atALoss.Count > 0 &&
             !ConfirmWindow.Ask(this,
                 atALoss.Count == 1
-                    ? $"Sell {atALoss[0].Name} below what it cost?"
-                    : $"Sell {atALoss.Count} of these below what they cost?",
+                    ? Loc.T("Sell {0} below what it cost?", atALoss[0].Name)
+                    : Loc.T("Sell {0} of these below what they cost?", atALoss.Count),
                 "Every one sold will lose money. Sometimes that is deliberate \u2014 confirm if it is."))
             return;
 
@@ -167,7 +167,7 @@ public partial class PurchaseWindow : Window
         var count = Editor.Lines.Count;
         if (count > 0 &&
             !ConfirmWindow.Ask(this, "Discard this delivery?",
-                $"{count} line{(count == 1 ? string.Empty : "s")} will be lost."))
+                Loc.T(count == 1 ? "{0} line will be lost." : "{0} lines will be lost.", count)))
             return;
 
         DialogResult = false;

@@ -2215,6 +2215,180 @@ public static class Translations
             ["{0} signed out"] =
                 ("{0} s'est déconnecté",
                  "سجّل {0} الخروج"),
+            ["Add a supplier first"] =
+                ("Ajoutez d'abord un fournisseur",
+                 "أضف مورداً أولاً"),
+            ["A delivery has to belong to someone. Add the supplier, then record what they brought."] =
+                ("Une livraison appartient à quelqu'un. Ajoutez le fournisseur, puis enregistrez ce qu'il a apporté.",
+                 "يجب أن يكون للتوريد مورد. أضف المورد، ثم سجّل ما أحضره."),
+            ["Add some products first"] =
+                ("Ajoutez d'abord des produits",
+                 "أضف بعض المنتجات أولاً"),
+            ["A delivery is a list of things the shop sells. Put them in under Add product, then come back and record what arrived."] =
+                ("Une livraison est une liste d'articles vendus par le magasin. Ajoutez-les dans Ajouter un produit, puis revenez enregistrer ce qui est arrivé.",
+                 "التوريد قائمة بما يبيعه المتجر. أضفها من صفحة إضافة منتج، ثم عد وسجّل ما وصل."),
+            ["Every one sold will lose money. Sometimes that is deliberate — confirm if it is."] =
+                ("Chaque vente fera perdre de l'argent. C'est parfois voulu — confirmez si c'est le cas.",
+                 "كل قطعة تُباع ستخسر مالاً. أحياناً يكون ذلك مقصوداً — أكّد إن كان كذلك."),
+            ["Sell {0} below what it cost?"] =
+                ("Vendre {0} en dessous de son coût ?",
+                 "بيع {0} بأقل من تكلفته؟"),
+            ["Sell {0} of these below what they cost?"] =
+                ("Vendre {0} de ces articles en dessous de leur coût ?",
+                 "بيع {0} من هذه بأقل من تكلفتها؟"),
+            ["Discard this delivery?"] =
+                ("Abandonner cette livraison ?",
+                 "تجاهل هذا التوريد؟"),
+            ["{0} line will be lost."] =
+                ("{0} ligne sera perdue.",
+                 "سيُفقد {0} سطر."),
+            ["{0} lines will be lost."] =
+                ("{0} lignes seront perdues.",
+                 "ستُفقد {0} أسطر."),
+            ["That sale could not be opened"] =
+                ("Impossible d'ouvrir cette vente",
+                 "تعذّر فتح هذه العملية"),
+            ["Refund {0}?"] =
+                ("Rembourser {0} ?",
+                 "استرداد {0}؟"),
+            ["{0} line(s) go back into stock. The sale stays on record, marked as refunded."] =
+                ("{0} ligne(s) retournent en stock. La vente reste enregistrée, marquée remboursée.",
+                 "يعود {0} سطر إلى المخزون. تبقى العملية مسجلة وموسومة كمستردة."),
+            ["{0} line(s) are refunded but NOT put back into stock, so the goods count as a loss."] =
+                ("{0} ligne(s) sont remboursées mais NE retournent PAS en stock ; la marchandise compte comme une perte.",
+                 "يُسترد {0} سطر دون إعادته إلى المخزون، فتُحسب البضاعة خسارة."),
+            ["Cancel receipt #{0}?"] =
+                ("Annuler le reçu n°{0} ?",
+                 "إلغاء الإيصال رقم {0}؟"),
+            ["The whole {0} sale is voided and everything on it goes back into stock. The receipt stays on record, marked as cancelled."] =
+                ("Toute la vente de {0} est annulée et tout retourne en stock. Le reçu reste enregistré, marqué annulé.",
+                 "تُلغى العملية كاملة بقيمة {0} ويعود كل ما فيها إلى المخزون. يبقى الإيصال مسجلاً وموسوماً كملغى."),
+            ["{0} is still owed to them. They stop appearing in lists, but the debt and every invoice stay on record."] =
+                ("{0} leur est encore dû. Ils n'apparaissent plus dans les listes, mais la dette et les factures restent enregistrées.",
+                 "ما زال {0} مستحقاً لهم. لن يظهروا في القوائم، لكن الدين وكل الفواتير تبقى مسجلة."),
+            ["They stop appearing in lists. Nothing is deleted."] =
+                ("Ils n'apparaissent plus dans les listes. Rien n'est supprimé.",
+                 "لن يظهروا في القوائم. لا يُحذف شيء."),
+            ["Deactivate {0}?"] =
+                ("Désactiver {0} ?",
+                 "تعطيل {0}؟"),
+            ["Discard this supplier?"] =
+                ("Abandonner ce fournisseur ?",
+                 "تجاهل هذا المورد؟"),
+            ["The name and {0} delivery line will be lost."] =
+                ("Le nom et {0} ligne de livraison seront perdus.",
+                 "سيُفقد الاسم و{0} سطر توريد."),
+            ["The name and {0} delivery lines will be lost."] =
+                ("Le nom et {0} lignes de livraison seront perdus.",
+                 "سيُفقد الاسم و{0} أسطر توريد."),
+            ["Pay {0}"] =
+                ("Payer {0}",
+                 "دفع لـ {0}"),
+            ["{0} outstanding."] =
+                ("{0} restant dû.",
+                 "المتبقي {0}."),
+            ["AMOUNT PAID"] =
+                ("MONTANT PAYÉ",
+                 "المبلغ المدفوع"),
+            ["Record payment"] =
+                ("Enregistrer le paiement",
+                 "تسجيل الدفع"),
+            ["Not allowed"] =
+                ("Non autorisé",
+                 "غير مسموح"),
+            ["{0} may not record salary payments."] =
+                ("{0} ne peut pas enregistrer de salaires.",
+                 "لا يمكن لـ {0} تسجيل دفع الرواتب."),
+            ["{0} owed for {1}."] =
+                ("{0} dû pour {1}.",
+                 "مستحق {0} عن {1}."),
+            ["Nothing outstanding for {0}."] =
+                ("Rien de dû pour {0}.",
+                 "لا شيء مستحق عن {0}."),
+            ["They can no longer sign in at the till. Their past sales, shifts and salary payments all stay on record."] =
+                ("Il ne peut plus se connecter à la caisse. Ses ventes, services et salaires restent enregistrés.",
+                 "لن يتمكن من تسجيل الدخول في الصندوق. تبقى مبيعاته ونوباته ورواتبه السابقة مسجلة."),
+            ["Turn the admin password off?"] =
+                ("Désactiver le mot de passe administrateur ?",
+                 "إيقاف كلمة مرور المدير؟"),
+            ["Anyone at this machine will be able to open the back office, see profit and salaries, and clear the sales history."] =
+                ("N'importe qui sur cet ordinateur pourra ouvrir la gestion, voir les bénéfices et les salaires, et effacer l'historique des ventes.",
+                 "سيتمكن أي شخص على هذا الجهاز من فتح الإدارة ورؤية الأرباح والرواتب ومسح سجل المبيعات."),
+            ["Not your password to set"] =
+                ("Ce n'est pas votre mot de passe",
+                 "ليست كلمة مرورك لتغييرها"),
+            ["{0} signed in as staff. Only the owner can change the owner's password."] =
+                ("{0} est connecté comme employé. Seul le propriétaire peut changer son mot de passe.",
+                 "سجّل {0} الدخول كموظف. المالك وحده يمكنه تغيير كلمة مروره."),
+            ["Change your password"] =
+                ("Changer votre mot de passe",
+                 "غيّر كلمة المرور"),
+            ["No password set — anyone can open the back office"] =
+                ("Aucun mot de passe — n'importe qui peut ouvrir la gestion",
+                 "لا توجد كلمة مرور — يمكن لأي شخص فتح الإدارة"),
+            ["Sign {0} out?"] =
+                ("Déconnecter {0} ?",
+                 "تسجيل خروج {0}؟"),
+            ["The back office will ask for a name and password again."] =
+                ("La gestion redemandera un nom et un mot de passe.",
+                 "ستطلب الإدارة الاسم وكلمة المرور مرة أخرى."),
+            ["Cancel this sale?"] =
+                ("Annuler cette vente ?",
+                 "إلغاء هذه العملية؟"),
+            ["The cart will be cleared."] =
+                ("Le panier sera vidé.",
+                 "سيتم إفراغ السلة."),
+            ["The till keeps running. The back office will ask for a name and password again."] =
+                ("La caisse continue de fonctionner. La gestion redemandera un nom et un mot de passe.",
+                 "يبقى الصندوق يعمل. ستطلب الإدارة الاسم وكلمة المرور مرة أخرى."),
+            ["Close the app?"] =
+                ("Fermer l'application ?",
+                 "إغلاق التطبيق؟"),
+            ["Close the till?"] =
+                ("Fermer la caisse ?",
+                 "إغلاق الصندوق؟"),
+            ["The current sale will be discarded."] =
+                ("La vente en cours sera abandonnée.",
+                 "سيتم تجاهل العملية الحالية."),
+            ["The shop's server did not take the sale."] =
+                ("Le serveur du magasin n'a pas accepté la vente.",
+                 "لم يقبل خادم المتجر عملية البيع."),
+            ["Cannot change password: {0}"] =
+                ("Impossible de changer le mot de passe : {0}",
+                 "تعذّر تغيير كلمة المرور: {0}"),
+            ["Could not reset password: {0}"] =
+                ("Impossible de réinitialiser le mot de passe : {0}",
+                 "تعذّرت إعادة تعيين كلمة المرور: {0}"),
+            ["Connected to {0} at {1}. Press to send now."] =
+                ("Connecté à {0} à {1}. Appuyez pour envoyer maintenant.",
+                 "متصل بـ {0} على {1}. اضغط للإرسال الآن."),
+            ["Looking for the shop…"] =
+                ("Recherche du magasin…",
+                 "جارٍ البحث عن المتجر…"),
+            ["The shop's server is called {0}. Press Connect, or type its address if it has been given a different name."] =
+                ("Le serveur du magasin s'appelle {0}. Appuyez sur Connecter, ou saisissez son adresse s'il porte un autre nom.",
+                 "اسم خادم المتجر {0}. اضغط اتصال، أو اكتب عنوانه إن كان له اسم آخر."),
+            ["That does not look like an address. Try {0} — or press Find the shop."] =
+                ("Cela ne ressemble pas à une adresse. Essayez {0} — ou appuyez sur Trouver le magasin.",
+                 "هذا لا يبدو عنواناً. جرّب {0} — أو اضغط البحث عن المتجر."),
+            ["This machine is the shop's server. Leave this empty."] =
+                ("Cet ordinateur est le serveur du magasin. Laissez vide.",
+                 "هذا الجهاز هو خادم المتجر. اترك هذا فارغاً."),
+            ["Scanned {0} — not in the shop yet. Give it a name."] =
+                ("{0} scanné — pas encore dans le magasin. Donnez-lui un nom.",
+                 "تم مسح {0} — غير موجود في المتجر بعد. أعطه اسماً."),
+            ["{0} is new — it goes into stock, not onto the till. Put it on sale from Add product."] =
+                ("{0} est nouveau — il va en stock, pas à la caisse. Mettez-le en vente depuis Ajouter un produit.",
+                 "{0} جديد — يدخل المخزون ولا يظهر في الصندوق. اعرضه للبيع من صفحة إضافة منتج."),
+            ["price changes from {0} to {1}"] =
+                ("le prix passe de {0} à {1}",
+                 "يتغير السعر من {0} إلى {1}"),
+            ["Selling at {0} loses {1} on every one."] =
+                ("Vendre à {0} fait perdre {1} sur chaque article.",
+                 "البيع بـ {0} يخسر {1} في كل قطعة."),
+            ["Makes {0} each, {1} of the price."] =
+                ("Rapporte {0} par article, {1} du prix.",
+                 "يربح {0} للقطعة، {1} من السعر."),
             ["Quantity: {0}"] =
                 ("Quantité : {0}",
                  "الكمية: {0}"),

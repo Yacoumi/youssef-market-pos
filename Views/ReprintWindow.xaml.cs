@@ -15,7 +15,7 @@ namespace MarketPos.Views;
 /// a reprint cannot create a sale, charge again, move stock or change revenue. The copy is
 /// stamped DUPLICATA so it cannot be mistaken for a new transaction at cash-up.
 /// </summary>
-public partial class ReprintWindow : Window
+public partial class ReprintWindow : MarketPos.Views.DialogWindow
 {
     private static readonly Regex Digits = new(@"^[0-9]*$", RegexOptions.Compiled);
 

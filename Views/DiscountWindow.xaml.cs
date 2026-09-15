@@ -12,7 +12,7 @@ namespace MarketPos.Views;
 /// Enter a remise as either a percentage or a flat amount. The running calculation is shown
 /// live, because the cashier is usually agreeing the figure with the customer standing there.
 /// </summary>
-public partial class DiscountWindow : Window
+public partial class DiscountWindow : MarketPos.Views.DialogWindow
 {
     private static readonly Regex Numeric = new(@"^[0-9]*[.,]?[0-9]{0,2}$", RegexOptions.Compiled);
 

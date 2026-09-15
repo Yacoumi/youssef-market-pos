@@ -14,7 +14,7 @@ namespace MarketPos.Views;
 /// were set to — see <see cref="AppSettings"/>, which still holds and saves every one — they
 /// are simply not editable from here any more.
 /// </summary>
-public partial class SettingsWindow : Window
+public partial class SettingsWindow : MarketPos.Views.DialogWindow
 {
     /// <summary>
     /// The languages, in the order they are offered. Held as a plain list so the drop-down can

@@ -1,19 +1,21 @@
-## 1. Server PC (back office): **POS-Server.exe** + **marketpos.db**
-1. Put **marketpos.db** in this folder (type it into the Explorer address bar):
-   `%AppData%\MarketPos\`
-   Create the `MarketPos` folder if it isn't there.
-2. Run **POS-Server.exe**. It has no window. It serves port 5000 and stores all the shop's data in that database.
-   Say **Yes** when Windows asks to allow it through the firewall.
-3. Find this PC's address with `ipconfig` (IPv4, e.g. `192.168.1.20`). Give it a fixed address on the router.
-4. To start it automatically, put a shortcut to POS-Server.exe in `shell:startup`.
+## Downloads
+- **POS-Server.exe**: for the back-office PC. It holds the database.
+- **POS-Till.exe**: for each cashier PC.
+- **marketpos.db**: an empty database for the server PC (optional).
 
-*If you skip marketpos.db, POS-Server creates the same empty database on first run.*
+## What's new
+- **Everything opens inside the same page.** Forms like add product, pay, expense, confirm and settings open over the current screen, not as separate windows.
+- **Supplier purchases stay off the till.** Goods from a supplier go into stock only. A product reaches the cashier when you save it through **Add product**.
+- **Arabic everywhere.** Pay, confirm, refund, sign-out, supplier and delivery messages are all translated.
+- **Simple add/edit product form:** barcode, name, category, bought for, selling for, quantity, expiry, profit.
+- **Expenses show up after saving.** The date problem is fixed, and so is the empty "paid by" box.
+- **Date ranges from a till are correct.** "Yesterday" no longer includes today.
 
-## 2. Each cashier PC: **POS-Till.exe**
-Run it. In **Settings → Shop server**, enter the server PC's address, e.g. `192.168.1.20:5000`.
-The till stores nothing important itself. Sales go to the server's database.
+## Setup
+1. **Server PC:** put `marketpos.db` in `%AppData%\MarketPos\`, create the folder if needed. Then run **POS-Server.exe** and allow it through the firewall.
+2. **Server address:** run `ipconfig` on the server PC and note the IPv4 address, e.g. `192.168.1.20`.
+3. **Each cashier PC:** run **POS-Till.exe**. In **Settings → Shop server**, enter `192.168.1.20:5000`.
 
-## Notes
 - **Backups:** copy `%AppData%\MarketPos\marketpos.db` from the server PC.
 - **Updates:** replacing the exes never touches the database.
 - **Unknown publisher warning:** click **More info → Run anyway**.

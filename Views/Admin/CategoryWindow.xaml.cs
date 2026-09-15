@@ -10,7 +10,7 @@ using MarketPos.Services;
 namespace MarketPos.Views.Admin;
 
 /// <summary>Add or rename a category, and pick the icon the till shows on its card.</summary>
-public partial class CategoryWindow : Window
+public partial class CategoryWindow : MarketPos.Views.DialogWindow
 {
     private readonly CategoryRow? _existing;
 
@@ -81,7 +81,7 @@ public partial class CategoryWindow : Window
             CheckFileExists = true,
         };
 
-        if (picker.ShowDialog(this) != true) return;
+        if (picker.ShowDialog(DialogOwner) != true) return;
 
         _pickedFrom = picker.FileName;
         ShowPicture();

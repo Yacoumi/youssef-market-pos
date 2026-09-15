@@ -582,6 +582,10 @@ public partial class AddProductPage : AdminPageBase
                     price: hasPrice && price > 0m ? price : null,
                     expiresOn: AddExpiryBox.SelectedDate);
 
+                // Bought from a supplier and kept off the till until now. Adding it here is
+                // the owner putting it on sale.
+                if (!known.ShowInPos) PutOnTheTill(known, cost, hasPrice ? price : known.Price);
+
                 // A delivery is also the moment somebody finally has the thing in their hand
                 // to photograph it.
                 if (_pickedPicture is not null) ProductImageWriter.Save(known.Barcode, _pickedPicture);
@@ -630,6 +634,31 @@ public partial class AddProductPage : AdminPageBase
         {
             AddError.Text = error.Message;
         }
+    }
+
+    /// <summary>Makes a product that came in from a supplier something the cashier can sell.</summary>
+    private void PutOnTheTill(StockItem known, decimal cost, decimal price)
+    {
+        var fresh = Link.Shop.Stock.Find(known.Id) ?? known;
+
+        Link.Shop.Stock.Update(new StockItem
+        {
+            Id = fresh.Id,
+            Barcode = fresh.Barcode,
+            Name = AddNameBox.Text.Trim().Length > 0 ? AddNameBox.Text.Trim() : fresh.Name,
+            Category = AddCategoryBox.Text.Trim().Length > 0 ? AddCategoryBox.Text.Trim() : fresh.Category,
+            Sku = fresh.Sku,
+            Cost = cost > 0m ? cost : fresh.Cost,
+            Price = price > 0m ? price : fresh.Price,
+            MinStock = fresh.MinStock,
+            Unit = fresh.Unit,
+            TaxRate = fresh.TaxRate,
+            Shelf = fresh.Shelf,
+            SupplierId = fresh.SupplierId,
+            ExpiresOn = AddExpiryBox.SelectedDate ?? fresh.ExpiresOn,
+            ImagePath = fresh.ImagePath,
+            ShowInPos = true,
+        });
     }
 
     /// <summary>Saved. Back to the list, where the row is now at the top.</summary>

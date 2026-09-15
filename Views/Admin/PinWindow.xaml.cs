@@ -13,7 +13,7 @@ namespace MarketPos.Views.Admin;
 /// the till, so sales and drawer differences land against a name. The owner's password, which
 /// protects the money screens, is a different thing entirely.
 /// </summary>
-public partial class PinWindow : Window
+public partial class PinWindow : MarketPos.Views.DialogWindow
 {
     private string? _pin;
 

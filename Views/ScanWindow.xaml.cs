@@ -11,7 +11,7 @@ namespace MarketPos.Views;
 /// sign the till is listening. This window is the sign: it takes the keystrokes, closes itself
 /// the moment a code arrives, and can be typed into when the barcode is scuffed.
 /// </summary>
-public partial class ScanWindow : Window
+public partial class ScanWindow : MarketPos.Views.DialogWindow
 {
     /// <summary>The scanned code. Empty when the cashier said the product has no barcode.</summary>
     public string Code { get; private set; } = string.Empty;

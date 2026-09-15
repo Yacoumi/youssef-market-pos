@@ -25,7 +25,7 @@ namespace MarketPos.Views.Admin;
 /// on a new product.
 /// </para>
 /// </summary>
-public partial class ProductWindow : Window
+public partial class ProductWindow : MarketPos.Views.DialogWindow
 {
     private readonly StockItem? _existing;
 
@@ -282,7 +282,9 @@ public partial class ProductWindow : Window
             MinStock = _existing?.MinStock ?? AppSettings.Current.DefaultLowStock,
             Shelf = _existing?.Shelf ?? string.Empty,
             SupplierId = _existing?.SupplierId,
-            ShowInPos = _existing?.ShowInPos ?? true,
+            // Saving this form is how a product is put on sale — including one that arrived
+            // from a supplier and has been waiting in stock off the till.
+            ShowInPos = true,
 
             // Only a path somebody set deliberately is stored. The catalogue finds the usual
             // file by barcode on its own.
@@ -384,7 +386,7 @@ public partial class ProductWindow : Window
             CheckFileExists = true,
         };
 
-        if (picker.ShowDialog(this) != true) return;
+        if (picker.ShowDialog(DialogOwner) != true) return;
 
         _pickedFrom = picker.FileName;
         ShowPicture();

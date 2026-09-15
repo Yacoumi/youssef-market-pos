@@ -13,7 +13,7 @@ namespace MarketPos.Views;
 /// in Settings turns the gate on; clearing it turns the gate off again. There is no default
 /// password, because a shipped default that nobody changes is the same as no password.
 /// </summary>
-public partial class AdminLoginWindow : Window
+public partial class AdminLoginWindow : MarketPos.Views.DialogWindow
 {
     private readonly bool _isChangingPassword;
     private readonly bool _isOpen;

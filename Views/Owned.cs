@@ -26,6 +26,7 @@ public static class Owned
     /// <summary>Hands the dialog its owner if that owner has been shown, and returns the dialog.</summary>
     public static T By<T>(this T dialog, Window? owner) where T : Window
     {
+        if (dialog is DialogWindow inPage) inPage.RequestedOwner = owner;
         if (CanOwn(owner)) dialog.Owner = owner;
         return dialog;
     }

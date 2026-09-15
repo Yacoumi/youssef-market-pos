@@ -126,8 +126,8 @@ public partial class SupplierForm : UserControl
             if (atALoss.Count > 0 &&
                 !ConfirmWindow.Ask(Host,
                     atALoss.Count == 1
-                        ? $"Sell {atALoss[0].Name} below what it cost?"
-                        : $"Sell {atALoss.Count} of these below what they cost?",
+                        ? Loc.T("Sell {0} below what it cost?", atALoss[0].Name)
+                        : Loc.T("Sell {0} of these below what they cost?", atALoss.Count),
                     "Every one sold will lose money. Sometimes that is deliberate — confirm if it is."))
                 return;
         }
@@ -203,11 +203,11 @@ public partial class SupplierForm : UserControl
         // A supplier with an unpaid balance quietly disappearing from the list is how a debt
         // gets forgotten, so the warning names the figure rather than being generic.
         var body = _existing.Owed > 0m
-            ? $"{_existing.Owed:N2} DH is still owed to them. They stop appearing in lists, "
-              + "but the debt and every invoice stay on record."
+            ? Loc.T("{0} is still owed to them. They stop appearing in lists, but the debt and every invoice stay on record.",
+                    Loc.Ltr($"{_existing.Owed:N2} DH"))
             : "They stop appearing in lists. Nothing is deleted.";
 
-        if (!ConfirmWindow.Ask(Host, $"Deactivate {_existing.Name}?", body)) return;
+        if (!ConfirmWindow.Ask(Host, Loc.T("Deactivate {0}?", _existing.Name), body)) return;
 
         Link.Shop.Suppliers.SetActive(_existing.Id, _existing.Name, active: false);
         Done?.Invoke(this, true);
@@ -221,7 +221,8 @@ public partial class SupplierForm : UserControl
         var count = _existing is null ? Editor.Lines.Count : 0;
         if (count > 0 &&
             !ConfirmWindow.Ask(Host, "Discard this supplier?",
-                $"The name and {count} delivery line{(count == 1 ? string.Empty : "s")} will be lost."))
+                Loc.T(count == 1 ? "The name and {0} delivery line will be lost."
+                                 : "The name and {0} delivery lines will be lost.", count)))
             return;
 
         Done?.Invoke(this, false);

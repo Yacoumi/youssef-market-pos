@@ -1,4 +1,5 @@
-﻿<Window x:Class="MarketPos.Views.StaffSignInWindow"
+﻿<views:DialogWindow x:Class="MarketPos.Views.StaffSignInWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="تسجيل الدخول" Width="400" SizeToContent="Height"
@@ -57,4 +58,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

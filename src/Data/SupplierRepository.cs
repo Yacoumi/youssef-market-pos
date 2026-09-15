@@ -352,6 +352,11 @@ public static class SupplierRepository
                 // No selling price given means the shop has not decided yet. Cost is the
                 // honest placeholder: it makes nothing, rather than pretending to.
                 Price = line.SellPrice ?? line.UnitCost,
+
+                // Bought, not yet for sale. What arrives from a supplier goes into stock and
+                // stays off the cashier's screen; it reaches the till only when somebody puts
+                // it there through Add product, with a name and a price chosen for selling.
+                ShowInPos = false,
             });
 
             made.Add(new PurchaseLine

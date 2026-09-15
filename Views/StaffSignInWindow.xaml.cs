@@ -22,7 +22,7 @@ namespace MarketPos.Views;
 /// name and it is remembered. Without that the shop could lock its own owner out simply by
 /// giving the first cashier a password.
 /// </summary>
-public partial class StaffSignInWindow : Window
+public partial class StaffSignInWindow : MarketPos.Views.DialogWindow
 {
     /// <summary>
     /// One name in the list. <see cref="Worker"/> is null for the owner, who signs in with the

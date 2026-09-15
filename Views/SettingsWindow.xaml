@@ -9,7 +9,8 @@
      Written in English, which is the source text every translation is keyed by — see
      Translations. This window was written in Arabic literals, which is why it stayed Arabic in
      French: there was nothing for the translator to look the words up by. -->
-<Window x:Class="MarketPos.Views.SettingsWindow"
+<views:DialogWindow x:Class="MarketPos.Views.SettingsWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Settings" Width="420" SizeToContent="Height"
@@ -91,4 +92,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

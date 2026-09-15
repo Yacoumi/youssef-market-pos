@@ -445,6 +445,10 @@ public partial class MainWindow : Window
 
     private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
     {
+        // A form open over the till owns the keyboard: Escape closes the form, it does not
+        // cancel the customer's sale behind it.
+        if (InPage.IsOpen(this)) return;
+
         switch (e.Key)
         {
             case Key.F3:
@@ -562,6 +566,7 @@ public partial class MainWindow : Window
     // next scan, and the uncommitted edit) stranded in it. Commit and hand focus back.
     private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
+        if (InPage.IsOpen(this)) return;
         if (Keyboard.FocusedElement is not TextBox box || ReferenceEquals(box, BarcodeBox)) return;
         if (e.OriginalSource is DependencyObject clicked && IsWithin(clicked, box)) return;
 
@@ -598,6 +603,9 @@ public partial class MainWindow : Window
     {
         Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
         {
+            // Never out from under a form that is open over the till.
+            if (InPage.IsOpen(this)) return;
+
             BarcodeBox.Focus();
             Keyboard.Focus(BarcodeBox);
             BarcodeBox.SelectAll();
@@ -807,7 +815,7 @@ public partial class MainWindow : Window
         }
 
         var who = Session.CurrentName;
-        if (!ConfirmWindow.Ask(this, $"Sign {who} out?",
+        if (!ConfirmWindow.Ask(this, Loc.T("Sign {0} out?", who),
                 "The till keeps running. The back office will ask for a name and password again."))
         {
             FocusBarcode();

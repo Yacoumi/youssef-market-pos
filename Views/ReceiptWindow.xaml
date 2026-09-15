@@ -1,4 +1,5 @@
-﻿<Window x:Class="MarketPos.Views.ReceiptWindow"
+﻿<views:DialogWindow x:Class="MarketPos.Views.ReceiptWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Receipt" Width="440" Height="620"
@@ -51,4 +52,4 @@
 
         </Grid>
     </Border>
-</Window>
+</views:DialogWindow>

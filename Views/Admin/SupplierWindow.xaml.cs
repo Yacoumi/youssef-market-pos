@@ -8,7 +8,7 @@ namespace MarketPos.Views.Admin;
 /// <see cref="SupplierForm"/>; adding a supplier shows that same form on the Suppliers page,
 /// in place of the list, rather than in here.
 /// </summary>
-public partial class SupplierWindow : Window
+public partial class SupplierWindow : MarketPos.Views.DialogWindow
 {
     private readonly SupplierForm _form;
 

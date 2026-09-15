@@ -57,7 +57,7 @@ public sealed class RefundLine : ViewModelBase
 /// Refund returns some lines and their money; Cancel voids the whole sale. Neither deletes
 /// anything — the sale keeps its number, its lines and its time, and gains a status.
 /// </summary>
-public partial class SaleDetailWindow : Window
+public partial class SaleDetailWindow : MarketPos.Views.DialogWindow
 {
     private SaleDetail _sale;
     private List<RefundLine> _lines = new();
@@ -229,12 +229,10 @@ public partial class SaleDetailWindow : Window
         var total = chosen.Sum(l => l.ReturnValue);
         var restock = RestockBox.IsChecked == true;
 
-        if (!ConfirmWindow.Ask(this, $"Refund {total:N2} DH?",
+        if (!ConfirmWindow.Ask(this, Loc.T("Refund {0}?", Loc.Ltr($"{total:N2} DH")),
                 restock
-                    ? $"{chosen.Count} line{(chosen.Count == 1 ? string.Empty : "s")} go back into stock. "
-                      + "The sale stays on record, marked as refunded."
-                    : $"{chosen.Count} line{(chosen.Count == 1 ? string.Empty : "s")} are refunded but NOT put "
-                      + "back into stock, so the goods count as a loss."))
+                    ? Loc.T("{0} line(s) go back into stock. The sale stays on record, marked as refunded.", chosen.Count)
+                    : Loc.T("{0} line(s) are refunded but NOT put back into stock, so the goods count as a loss.", chosen.Count)))
             return;
 
         try
@@ -258,9 +256,9 @@ public partial class SaleDetailWindow : Window
 
     private void CancelSale_Click(object sender, RoutedEventArgs e)
     {
-        if (!ConfirmWindow.Ask(this, $"Cancel receipt #{_sale.InvoiceNumber}?",
-                $"The whole {_sale.Total:N2} DH sale is voided and everything on it goes back into stock. "
-                + "The receipt stays on record, marked as cancelled."))
+        if (!ConfirmWindow.Ask(this, Loc.T("Cancel receipt #{0}?", _sale.InvoiceNumber),
+                Loc.T("The whole {0} sale is voided and everything on it goes back into stock. The receipt stays on record, marked as cancelled.",
+                      Loc.Ltr($"{_sale.Total:N2} DH"))))
             return;
 
         try

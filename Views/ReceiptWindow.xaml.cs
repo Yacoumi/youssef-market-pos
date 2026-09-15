@@ -13,7 +13,7 @@ namespace MarketPos.Views;
 /// for a second sale at cash-up. Either way this window only ever reads: it cannot create a
 /// sale, charge again, move stock or change revenue.
 /// </summary>
-public partial class ReceiptWindow : Window
+public partial class ReceiptWindow : MarketPos.Views.DialogWindow
 {
     private readonly Receipt _receipt;
     private readonly bool _asDuplicate;

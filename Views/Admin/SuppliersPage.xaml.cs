@@ -380,8 +380,8 @@ public partial class SuppliersPage : AdminPageBase
 
         var result = AmountWindow.Ask(Shell, new AmountRequest
         {
-            Heading = $"Pay {supplier.Name}",
-            Blurb = $"{Money(supplier.Owed)} outstanding.",
+            Heading = Loc.T("Pay {0}", supplier.Name),
+            Blurb = Loc.T("{0} outstanding.", Money(supplier.Owed)),
             AmountLabel = "AMOUNT PAID",
             ConfirmText = "Record payment",
             Suggested = supplier.Owed,

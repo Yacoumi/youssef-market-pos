@@ -7,7 +7,7 @@ namespace MarketPos.Views;
 /// In-app confirmation prompt. Replaces MessageBox, which renders as plain Windows
 /// chrome against this borderless design — and can end up behind the main window.
 /// </summary>
-public partial class ConfirmWindow : Window
+public partial class ConfirmWindow : MarketPos.Views.DialogWindow
 {
     public ConfirmWindow(string heading, string? body = null)
     {
@@ -15,8 +15,8 @@ public partial class ConfirmWindow : Window
         Services.Localizer.Apply(this);
         Services.Responsive.Fit(this);
 
-        HeadingText.Text = heading;
-        BodyText.Text = body ?? string.Empty;
+        HeadingText.Text = Services.Loc.T(heading);
+        BodyText.Text = body is null ? string.Empty : Services.Loc.T(body);
         BodyText.Visibility = string.IsNullOrWhiteSpace(body) ? Visibility.Collapsed : Visibility.Visible;
     }
 

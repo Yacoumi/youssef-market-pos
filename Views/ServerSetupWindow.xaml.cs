@@ -13,7 +13,7 @@ namespace MarketPos.Views;
 /// the network, and without one the till stays visibly unconnected instead of silently
 /// inventing one of its own.
 /// </summary>
-public partial class ServerSetupWindow : Window
+public partial class ServerSetupWindow : MarketPos.Views.DialogWindow
 {
     private bool _workingAlone;
 

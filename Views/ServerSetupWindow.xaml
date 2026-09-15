@@ -5,7 +5,8 @@
      button, so the hints say what an address looks like and what Find does.
 
      Written in English, which is the source text every translation is keyed by. -->
-<Window x:Class="MarketPos.Views.ServerSetupWindow"
+<views:DialogWindow x:Class="MarketPos.Views.ServerSetupWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Connect to the shop" Width="460" SizeToContent="Height"
@@ -66,4 +67,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

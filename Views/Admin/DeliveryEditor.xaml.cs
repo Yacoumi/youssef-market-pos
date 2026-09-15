@@ -279,8 +279,8 @@ public partial class DeliveryEditor : UserControl
                     !Known.Any(p => string.Equals(p.Name, typed, StringComparison.CurrentCultureIgnoreCase));
 
         var newNote = _scannedCode is not null && typed.Length == 0
-            ? $"Scanned {_scannedCode} - not in the shop yet. Give it a name.  ·  "
-            : isNew ? $"{typed} is new - it will be added to the shop.  ·  "
+            ? Loc.T("Scanned {0} — not in the shop yet. Give it a name.", _scannedCode) + "  ·  "
+            : isNew ? Loc.T("{0} is new — it goes into stock, not onto the till. Put it on sale from Add product.", typed) + "  ·  "
             : string.Empty;
 
         if (!hasCost || !hasSell)
@@ -292,12 +292,12 @@ public partial class DeliveryEditor : UserControl
 
         var margin = sell - cost;
         var moved = ProductBox.SelectedItem is StockItem && sell != _wasSelling
-            ? $"  ·  price changes from {_wasSelling:N2} to {sell:N2}"
+            ? "  ·  " + Loc.T("price changes from {0} to {1}", Loc.Ltr($"{_wasSelling:N2}"), Loc.Ltr($"{sell:N2}"))
             : string.Empty;
 
         MarginText.Text = newNote + (margin <= 0m
-            ? $"Selling at {sell:N2} loses {-margin:N2} on every one.{moved}"
-            : $"Makes {margin:N2} each, {margin / sell * 100m:0}% of the price.{moved}");
+            ? Loc.T("Selling at {0} loses {1} on every one.", Loc.Ltr($"{sell:N2}"), Loc.Ltr($"{-margin:N2}"))
+            : Loc.T("Makes {0} each, {1} of the price.", Loc.Ltr($"{margin:N2}"), Loc.Ltr($"{margin / sell * 100m:0}%"))) + moved;
 
         MarginText.Foreground = (System.Windows.Media.Brush)FindResource(
             margin <= 0m ? "Brush.Danger" : "Brush.Muted");

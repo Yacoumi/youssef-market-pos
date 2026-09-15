@@ -40,7 +40,7 @@ public sealed record AmountResult(decimal Amount, DateTime Date, string Method, 
 /// These are the same question with a different heading, and three near-identical dialogs
 /// would drift apart the first time one of them gained a validation rule.
 /// </summary>
-public partial class AmountWindow : Window
+public partial class AmountWindow : MarketPos.Views.DialogWindow
 {
     private readonly AmountRequest _request;
 
@@ -53,12 +53,12 @@ public partial class AmountWindow : Window
         Services.Responsive.Fit(this);
         _request = request;
 
-        Title = request.Heading;
-        HeadingText.Text = request.Heading;
-        BlurbText.Text = request.Blurb;
+        Title = Loc.T(request.Heading);
+        HeadingText.Text = Title;
+        BlurbText.Text = Loc.T(request.Blurb);
         BlurbText.Visibility = request.Blurb.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
-        AmountLabel.Text = request.AmountLabel;
-        ConfirmButton.Content = request.ConfirmText;
+        AmountLabel.Text = Loc.T(request.AmountLabel);
+        ConfirmButton.Content = Loc.T(request.ConfirmText);
 
         DateBox.SelectedDate = DateTime.Today;
         MethodBox.ItemsSource = Methods.Select(m => Loc.T(m)).ToList();

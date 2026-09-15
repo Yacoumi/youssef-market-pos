@@ -1,4 +1,5 @@
-<Window x:Class="MarketPos.Views.Admin.ExpenseWindow"
+<views:DialogWindow x:Class="MarketPos.Views.Admin.ExpenseWindow"
+        xmlns:views="clr-namespace:MarketPos.Views"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Expense" Width="480" SizeToContent="Height"
@@ -87,4 +88,4 @@
             </Grid>
         </StackPanel>
     </Border>
-</Window>
+</views:DialogWindow>

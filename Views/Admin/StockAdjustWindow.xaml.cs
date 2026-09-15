@@ -16,7 +16,7 @@ namespace MarketPos.Views.Admin;
 /// changed. The second is converted into a movement of the difference, so the history stays
 /// a continuous chain rather than a series of overwrites.
 /// </summary>
-public partial class StockAdjustWindow : Window
+public partial class StockAdjustWindow : MarketPos.Views.DialogWindow
 {
     private readonly StockItem _item;
 
