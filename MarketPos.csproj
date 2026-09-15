@@ -4,9 +4,12 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>MarketPos</RootNamespace>
-    <AssemblyName>POS-Till</AssemblyName>
+    <!-- Default build is the one-computer shop: till, back office and server in one exe.
+         Pass -p:Till=true for the cashier-only POS-Till.exe that talks to a separate server. -->
+    <AssemblyName>MarketPos</AssemblyName>
+    <AssemblyName Condition="'$(Till)' == 'true'">POS-Till</AssemblyName>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <DefineConstants>$(DefineConstants);TILL_BUILD</DefineConstants>
+    <DefineConstants Condition="'$(Till)' == 'true'">$(DefineConstants);TILL_BUILD</DefineConstants>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
