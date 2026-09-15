@@ -30,6 +30,41 @@ public static class InPage
 
     private static readonly ConditionalWeakTable<Window, Host> Hosts = new();
 
+    /// <summary>
+    /// Windows whose content is drawn inside another window — the back office inside the till.
+    /// A dialog opened by one of them opens in the page of the window it is drawn in.
+    /// </summary>
+    private static readonly ConditionalWeakTable<Window, Window> Embedded = new();
+
+    internal static void Embed(Window inner, Window host)
+    {
+        Embedded.AddOrUpdate(inner, host);
+    }
+
+    internal static void Unembed(Window inner) => Embedded.Remove(inner);
+
+    /// <summary>
+    /// Moves a window's content out of it so it can be drawn somewhere else, taking along what
+    /// XAML resolves through the window: its named elements (animations find their targets by
+    /// name), its own resources, and its data context.
+    /// </summary>
+    internal static FrameworkElement Detach(Window window)
+    {
+        var content = (FrameworkElement)window.Content;
+
+        if (NameScope.GetNameScope(window) is { } names && NameScope.GetNameScope(content) is null)
+            NameScope.SetNameScope(content, names);
+
+        if (window.Resources.Count > 0 || window.Resources.MergedDictionaries.Count > 0)
+            content.Resources.MergedDictionaries.Add(window.Resources);
+
+        if (window.DataContext is not null && content.ReadLocalValue(FrameworkElement.DataContextProperty) == DependencyProperty.UnsetValue)
+            content.DataContext = window.DataContext;
+
+        window.Content = null;
+        return content;
+    }
+
     /// <summary>True while any dialog is open inside this window.</summary>
     public static bool IsOpen(Window? window) =>
         window is not null && Hosts.TryGetValue(window, out var host) && host.Open.Count > 0;
@@ -41,6 +76,7 @@ public static class InPage
     internal static Window? HostFor(Window? owner)
     {
         if (owner is DialogWindow { HostWindow: { } inside }) return inside;
+        if (owner is not null && Embedded.TryGetValue(owner, out var drawnIn)) return drawnIn;
         if (owner is null || owner is DialogWindow || owner is KeyboardWindow) return null;
         if (!Owned.CanOwn(owner) || !owner.IsVisible) return null;
         return owner.Content is UIElement ? owner : null;
@@ -117,8 +153,7 @@ public static class InPage
             _stack = stack;
             _focusBefore = Keyboard.FocusedElement;
 
-            var content = (FrameworkElement)dialog.Content;
-            dialog.Content = null;
+            var content = Detach(dialog);
 
             // The size the dialog asked for as a window becomes the size of its card here.
             if (!double.IsNaN(dialog.Width)) content.Width = dialog.Width;

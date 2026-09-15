@@ -260,7 +260,7 @@ public partial class AddProductPage : AdminPageBase
             CheckFileExists = true,
         };
 
-        if (picker.ShowDialog(Shell) != true) return;
+        if (picker.ShowDialog(Window.GetWindow(this) ?? Shell) != true) return;
 
         _pickedPicture = picker.FileName;
         ShowAddPicture();

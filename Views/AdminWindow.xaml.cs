@@ -72,6 +72,62 @@ public partial class AdminWindow : Window
 
     private AdminPageBase? Current => _pages.GetValueOrDefault(_current);
 
+    // ---------- Drawn inside the till ----------
+
+    /// <summary>True when this back office is drawn inside the till's window, not a window of its own.</summary>
+    public bool IsInsideTheTill { get; private set; }
+
+    /// <summary>Raised when the back office is done — closed, signed out, or Back to the till.</summary>
+    public event EventHandler? LeaveRequested;
+
+    /// <summary>
+    /// Hands over this back office's content to be drawn inside the till, so the owner works in
+    /// the same main window as the cashier with the extra pages their permissions allow.
+    ///
+    /// The window itself is never shown. Its pages, sidebar and code stay exactly as they are;
+    /// dialogs they open go into the till's page, and closing it returns to the till.
+    /// </summary>
+    public FrameworkElement ContentFor(Window till)
+    {
+        IsInsideTheTill = true;
+        WindowControls.Visibility = Visibility.Collapsed;
+
+        var content = InPage.Detach(this);
+        InPage.Embed(this, till);
+
+        // Keys pressed in the back office reach its own handler (Escape, F5), as they did on
+        // its own window.
+        content.PreviewKeyDown += (_, e) =>
+        {
+            if (InPage.IsOpen(till)) return;
+            Window_PreviewKeyDown(this, e);
+        };
+
+        // The window's Loaded handlers set up what this person may see.
+        var announced = false;
+        content.Loaded += (_, _) =>
+        {
+            if (announced) return;
+            announced = true;
+            RaiseEvent(new RoutedEventArgs(LoadedEvent, this));
+        };
+
+        return content;
+    }
+
+    /// <summary>Closes the back office: its window, or its place inside the till.</summary>
+    public new void Close()
+    {
+        if (IsInsideTheTill)
+        {
+            InPage.Unembed(this);
+            LeaveRequested?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        base.Close();
+    }
+
     /// <summary>
     /// What each page is for. The sidebar only offers the ones the signed-in person holds,
     /// which is why a worker with nothing but <see cref="Permission.AddProductAtTill"/> opens

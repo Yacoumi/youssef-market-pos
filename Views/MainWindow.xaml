@@ -149,7 +149,7 @@
                 <!-- Barcode input — the primary input device. Kept focused at all times; see FocusBarcode().
                      Spans the whole row and centers itself so it stays dead-center regardless of what's
                      in the side columns. -->
-                <Grid Grid.Column="0" Grid.ColumnSpan="3" Width="400" HorizontalAlignment="Center"
+                <Grid x:Name="TillSearchBar" Grid.Column="0" Grid.ColumnSpan="3" Width="400" HorizontalAlignment="Center"
                       VerticalAlignment="Center" WindowChrome.IsHitTestVisibleInChrome="True">
                     <TextBox x:Name="BarcodeBox"
                              Style="{StaticResource TextBox.Barcode}"
@@ -279,8 +279,7 @@
 
                     </StackPanel>
                     <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center">
-                        <!-- Opens the back office in its own window rather than switching page, so the
-                             till stays a single-purpose screen a cashier cannot get lost in. -->
+                        <!-- Opens the back office on this same page, beside the rail. -->
                         <RadioButton x:Name="RailAdmin" Style="{StaticResource Button.Rail}" GroupName="rail"
                                      ToolTip="Back office" Checked="Nav_Admin">
                             <Path Style="{StaticResource Icon}" Data="{StaticResource Icon.Lock}"/>
@@ -1132,6 +1131,11 @@
                         </StackPanel>
                     </Grid>
                 </Border>
+
+                <!-- The back office, drawn in the same main page as the till: beside the same
+                     rail, under the same header. What it shows depends on who signed in. -->
+                <Grid x:Name="BackOfficeHost" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2"
+                      Margin="0,-10,12,12" Visibility="Collapsed"/>
             </Grid>
         </Grid>
     </Border>

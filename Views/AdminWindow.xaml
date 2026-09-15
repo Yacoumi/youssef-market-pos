@@ -261,18 +261,22 @@
                                 Click="Refresh_Click" Margin="0,0,6,0">
                             <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Refresh}"/>
                         </Button>
-                        <Button Style="{StaticResource Button.WinControl}" ToolTip="Minimise" Click="Minimise_Click">
-                            <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Minimize}"/>
-                        </Button>
-                        <Button x:Name="SizeButton" Style="{StaticResource Button.WinControl}"
-                                Click="Size_Click" Margin="6,0,0,0">
-                            <Path x:Name="SizeGlyph" Style="{StaticResource Icon.Small}" Width="13" Height="13"
-                                  Data="{StaticResource Icon.Restore}"/>
-                        </Button>
-                        <Button Style="{StaticResource Button.Close}" ToolTip="Close the back office"
-                                Click="Close_Click" Margin="6,0,0,0">
-                            <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Close}"/>
-                        </Button>
+                        <!-- Window controls, for the back office on a window of its own. Inside
+                             the till the till's own controls are the window's, and these go. -->
+                        <StackPanel x:Name="WindowControls" Orientation="Horizontal">
+                            <Button Style="{StaticResource Button.WinControl}" ToolTip="Minimise" Click="Minimise_Click">
+                                <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Minimize}"/>
+                            </Button>
+                            <Button x:Name="SizeButton" Style="{StaticResource Button.WinControl}"
+                                    Click="Size_Click" Margin="6,0,0,0">
+                                <Path x:Name="SizeGlyph" Style="{StaticResource Icon.Small}" Width="13" Height="13"
+                                      Data="{StaticResource Icon.Restore}"/>
+                            </Button>
+                            <Button Style="{StaticResource Button.Close}" ToolTip="Close the back office"
+                                    Click="Close_Click" Margin="6,0,0,0">
+                                <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Close}"/>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
 

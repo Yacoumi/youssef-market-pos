@@ -447,7 +447,7 @@ public partial class MainWindow : Window
     {
         // A form open over the till owns the keyboard: Escape closes the form, it does not
         // cancel the customer's sale behind it.
-        if (InPage.IsOpen(this)) return;
+        if (TillIsBusy) return;
 
         switch (e.Key)
         {
@@ -566,7 +566,7 @@ public partial class MainWindow : Window
     // next scan, and the uncommitted edit) stranded in it. Commit and hand focus back.
     private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (InPage.IsOpen(this)) return;
+        if (TillIsBusy) return;
         if (Keyboard.FocusedElement is not TextBox box || ReferenceEquals(box, BarcodeBox)) return;
         if (e.OriginalSource is DependencyObject clicked && IsWithin(clicked, box)) return;
 
@@ -603,8 +603,8 @@ public partial class MainWindow : Window
     {
         Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
         {
-            // Never out from under a form that is open over the till.
-            if (InPage.IsOpen(this)) return;
+            // Never out from under a form open over the till, or the back office.
+            if (TillIsBusy) return;
 
             BarcodeBox.Focus();
             Keyboard.Focus(BarcodeBox);
@@ -614,9 +614,57 @@ public partial class MainWindow : Window
 
     // ---------- Navigation ----------
 
-    private void Nav_Sale(object sender, RoutedEventArgs e) => GoTo(PageKind.Sale);
-    private void Nav_Products(object sender, RoutedEventArgs e) => GoTo(PageKind.Products);
-    private void Nav_Tickets(object sender, RoutedEventArgs e) => GoTo(PageKind.Tickets);
+    // A rail press while the back office is open goes straight to that till page.
+    private void Nav_Sale(object sender, RoutedEventArgs e) { LeaveBackOffice(restoreRail: false); GoTo(PageKind.Sale); }
+    private void Nav_Products(object sender, RoutedEventArgs e) { LeaveBackOffice(restoreRail: false); GoTo(PageKind.Products); }
+    private void Nav_Tickets(object sender, RoutedEventArgs e) { LeaveBackOffice(restoreRail: false); GoTo(PageKind.Tickets); }
+
+    // ---------- The back office, on this same page ----------
+
+    /// <summary>The back office while it is on screen; null while the till is.</summary>
+    private AdminWindow? _backOffice;
+
+    /// <summary>
+    /// Opens the back office inside this window, beside the same rail the cashier uses. There
+    /// is one main page for everybody: an admin simply has more on it, decided by the
+    /// permissions of whoever signed in.
+    /// </summary>
+    private void ShowBackOffice()
+    {
+        var office = new AdminWindow();
+        office.LeaveRequested += (_, _) => LeaveBackOffice();
+
+        BackOfficeHost.Children.Clear();
+        BackOfficeHost.Children.Add(office.ContentFor(this));
+        BackOfficeHost.Visibility = Visibility.Visible;
+        TillSearchBar.Visibility = Visibility.Hidden;
+        _backOffice = office;
+
+        RailAdmin.IsChecked = true;
+    }
+
+    /// <summary>Back to the till, with whatever the back office changed already on its screen.</summary>
+    private void LeaveBackOffice(bool restoreRail = true)
+    {
+        if (_backOffice is null) return;
+
+        var office = _backOffice;
+        _backOffice = null;
+
+        BackOfficeHost.Children.Clear();
+        BackOfficeHost.Visibility = Visibility.Collapsed;
+        TillSearchBar.Visibility = Visibility.Visible;
+        InPage.Unembed(office);
+
+        Catalog.Reload();
+        Vm.ReloadProducts();
+        UpdateSignInUi();
+        if (restoreRail) RestoreRailSelection();
+        FocusBarcode();
+    }
+
+    /// <summary>True while something other than the sale owns the keyboard.</summary>
+    private bool TillIsBusy => InPage.IsOpen(this) || _backOffice is not null;
 
     /// <summary>
     /// Admin is password-gated. Unlocking lasts until the till is closed, so the owner is not
@@ -626,17 +674,11 @@ public partial class MainWindow : Window
     {
         if (!IsLoaded) return;
 
+        if (_backOffice is not null) return;   // already on it
+
         if (StaffSignInWindow.Ask(this))
         {
-            // The back office is its own window rather than a fourth page in the till. The
-            // till stays a single-purpose screen that a cashier cannot get lost in, and the
-            // office gets the width its tables need.
-            new AdminWindow().By(this).ShowDialog();
-
-            Catalog.Reload();
-            Vm.ReloadProducts();
-            RestoreRailSelection();
-            FocusBarcode();
+            ShowBackOffice();
             return;
         }
 
