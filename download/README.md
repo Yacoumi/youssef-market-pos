@@ -5,27 +5,31 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 2.7
-- **Activation.** Each computer needs its own activation key.
-  - On first start, POS-Server and POS-Till show this computer's **machine code**.
-  - Homayk Studio sends back the key for that code.
-  - A copy moved to another computer shows a different code and does not open without a new key.
-- **Pay** first asks **هل تريد طباعة التذكرة؟** (نعم / لا). The payment is saved either way; the ticket is printed only on نعم.
-- **Refresh button** on the cashier page reloads the products.
-- **Payment confirmed icon** fixed; it was drawn mirrored.
-- **Supplier purchases stay in the Supplier section.**
-  - They no longer create products, add stock, or change a product's cost or price.
-  - Purchases recorded before this update are kept.
-- **Supplier section:** no visible scrollbars. The mouse wheel, touchpad and touch dragging still scroll.
-- **Discount (remise)** comes out of the profit in every report. The purchase cost never changes.
-  - Example: bought for 20, sells for 30, discount 5 → sold for 25, profit 5, cost still 20.
+## What's new in 2.8
+- **No AppData at all.** Everything the software keeps sits in the same folder as its exe:
+  - `marketpos.db`
+  - product photos (`Images`)
+  - `settings.json`
+  - `license.key`
+  - `server.log`
+- **POS-Server shows only what is in the `marketpos.db` next to it.** It ignores any old data in AppData.
+- **POS-Till shows only what that server sends.** The till stores nothing itself.
 
 ## Setup
 1. **Server PC:**
-   1. Copy `marketpos.db` to `%AppData%\MarketPos\`.
-   2. Run **POS-Server.exe**.
-   3. Enter the activation key when asked.
+   1. Put **POS-Server.exe** and **marketpos.db** in the **same folder**.
+   2. Run POS-Server.exe and enter this computer's activation key.
+   3. To start fresh at any time, close POS-Server in Task Manager, replace the `marketpos.db` in that folder, and start it again.
 2. **Each cashier PC:**
-   1. Run **POS-Till.exe**.
-   2. Enter the activation key for that PC.
-   3. In **Settings → Shop server**, enter the server's address, e.g. `192.168.1.20:5000`.
+   1. Run **POS-Till.exe** and enter that computer's activation key.
+   2. In **Settings → Shop server**, enter the server PC's address, e.g. `192.168.1.20:5000`.
+
+- **Activation after this update:** each computer asks for its key once more, because the key is now kept beside the exe. The same key works.
+
+## Also in this version (from 2.7)
+- **Activation:** each computer needs its own key.
+- **Pay:** asks هل تريد طباعة التذكرة؟
+- **Refresh button** on the cashier page.
+- **Payment icon** fixed.
+- **Supplier purchases stay in the Supplier section,** without visible scrollbars.
+- **Discount** is taken from the profit; the purchase cost never changes.

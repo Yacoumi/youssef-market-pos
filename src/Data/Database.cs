@@ -52,10 +52,9 @@ public static class Database
             return overridePath;
         }
 
-        var dir = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MarketPos");
-        Directory.CreateDirectory(dir);
-        return System.IO.Path.Combine(dir, "marketpos.db");
+        // The marketpos.db beside the exe, and nowhere else. Never AppData: whatever another
+        // folder on this computer holds, the shop is this one file.
+        return MarketPos.Services.AppFolder.File("marketpos.db");
     }
 
     private static readonly object Prepared = new();

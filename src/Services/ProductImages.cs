@@ -18,9 +18,8 @@ public static class ProductImages
 
     private static string BuildFolder()
     {
-        var dir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "MarketPos", "Images");
+        // Beside marketpos.db and the exe. Never AppData.
+        var dir = AppFolder.File("Images");
         Directory.CreateDirectory(dir);
         return dir;
     }

@@ -16,11 +16,7 @@ public partial class App : Application
         {
             try
             {
-                System.IO.File.WriteAllText(
-                    System.IO.Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "MarketPos", "crash.log"),
-                    args.Exception.ToString());
+                System.IO.File.WriteAllText(AppFolder.File("crash.log"), args.Exception.ToString());
             }
             catch { /* logging must never mask the original fault */ }
 
@@ -94,10 +90,7 @@ public partial class App : Application
             Console.WriteLine(said);
             try
             {
-                System.IO.File.WriteAllText(
-                    System.IO.Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "MarketPos", "find.log"),
+                System.IO.File.WriteAllText(AppFolder.File("find.log"),
                     $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}  {said}{Environment.NewLine}");
             }
             catch { /* the answer is on screen either way */ }

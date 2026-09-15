@@ -18,9 +18,7 @@ using MarketPos.Services;
 // A console window that opens and shuts itself has told nobody anything, and the machine this
 // runs on is a box in the back that nobody is watching. So everything this server does at
 // startup, and anything that stops it, is written down where it can be read afterwards.
-var diary = System.IO.Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MarketPos",
-    "server.log");
+var diary = AppFolder.File("server.log");
 
 void Note(string line)
 {

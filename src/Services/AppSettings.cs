@@ -167,9 +167,8 @@ public sealed class AppSettings
 
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = true };
 
-    private static string Path => System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "MarketPos", "settings.json");
+    /// <summary>Beside the exe, like everything else the software keeps. Never AppData.</summary>
+    private static string Path => AppFolder.File("settings.json");
 
     private static AppSettings? _current;
 

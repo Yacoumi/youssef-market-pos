@@ -38,8 +38,7 @@ public static class License
     /// <summary>This computer's code, as the owner reads it out: four groups of four.</summary>
     public static string MachineCode { get; } = BuildMachineCode();
 
-    private static string KeyFile => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MarketPos", "license.key");
+    private static string KeyFile => AppFolder.File("license.key");
 
     /// <summary>True when this computer has a valid key, or when this build needs none.</summary>
     public static bool IsActivated
