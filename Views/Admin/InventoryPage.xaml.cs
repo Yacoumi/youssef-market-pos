@@ -274,6 +274,13 @@ public partial class InventoryPage : AdminPageBase
         var item = _rows.FirstOrDefault(i => i.Id == id);
         if (item is null) return;
 
+        // Removing is asked first; putting back is not. A product removed by a stray tap
+        // vanished from the till with no word.
+        if (item.IsActive &&
+            (Shell is null || !ConfirmWindow.Ask(Shell, Loc.T("Remove {0} from the shop?", item.Name),
+                Loc.T("It will no longer show on the till. Show removed on Inventory brings it back."))))
+            return;
+
         Link.Shop.Stock.SetActive(item.Id, item.Name, active: !item.IsActive);
         ReloadAll();
     }

@@ -197,6 +197,11 @@ public partial class AddProductPage : AdminPageBase
         var product = Link.Shop.Stock.Find(id);
         if (product is null) return;
 
+        // Asked first: a product removed by a stray tap vanished from the till with no word.
+        if (Shell is null || !ConfirmWindow.Ask(Shell, Loc.T("Remove {0} from the shop?", product.Name),
+                Loc.T("It will no longer show on the till. Show removed on Inventory brings it back.")))
+            return;
+
         Link.Shop.Stock.SetActive(product.Id, product.Name, active: false);
         Catalog.Reload();
         ShowAddList();

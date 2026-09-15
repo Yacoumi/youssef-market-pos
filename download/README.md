@@ -5,7 +5,13 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 3.3
+## What's new in 3.4
+- **Removing a product now asks first:** "هل تريد إزالة … من المتجر؟" نعم / لا.
+  - Before, one tap on the red remove button took the product off the till with no warning.
+  - This applies on both the Inventory list and the Add product list.
+  - Putting a removed product back (Inventory → Show removed) does not ask.
+
+## From 3.3
 - **Find and install any printer:** Settings → Receipt printer → **Find printers**. It scans for:
   - printers already installed,
   - USB printers plugged in without a driver,

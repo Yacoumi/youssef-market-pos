@@ -1966,6 +1966,12 @@ public static class Translations
             ["Installing a printer needs permission. Press Yes when Windows asks."] =
                 ("L'installation d'une imprimante demande une autorisation. Appuyez sur Oui quand Windows le demande.",
                  "تثبيت الطابعة يحتاج إذناً. اضغط نعم عندما يطلب ويندوز."),
+            ["Remove {0} from the shop?"] =
+                ("Retirer {0} du magasin ?",
+                 "هل تريد إزالة {0} من المتجر؟"),
+            ["It will no longer show on the till. Show removed on Inventory brings it back."] =
+                ("Il n'apparaîtra plus à la caisse. Afficher les retirés dans l'Inventaire le fait revenir.",
+                 "لن يظهر بعد الآن في الصندوق. يمكن إرجاعه من المخزون عبر عرض المُزال."),
             ["Use at least 4 characters."] =
                 ("Utilisez au moins 4 caractères.",
                  "استخدم 4 محارف على الأقل."),
