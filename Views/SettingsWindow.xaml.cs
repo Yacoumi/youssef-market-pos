@@ -144,6 +144,25 @@ public partial class SettingsWindow : MarketPos.Views.DialogWindow
         }
     }
 
+    /// <summary>
+    /// Scans for printers and installs a new one, then puts it in the list and selects it. It is
+    /// saved with the rest of the settings when Save is pressed.
+    /// </summary>
+    private void FindPrinters_Click(object sender, RoutedEventArgs e)
+    {
+        var chosen = PrinterScanWindow.Ask(this);
+
+        var printers = ReceiptPrinter.InstalledPrinters();
+        if (chosen is not null && !printers.Contains(chosen)) printers.Add(chosen);
+        PrinterBox.ItemsSource = printers;
+
+        if (chosen is not null)
+        {
+            PrinterBox.SelectedItem = chosen;
+            PrinterHint.Text = Loc.T("{0} is selected. Press Test print, then Save.", chosen);
+        }
+    }
+
     /// <summary>Turns what was typed into an address the till can actually call.</summary>
     private static string Address(string? typed)
     {

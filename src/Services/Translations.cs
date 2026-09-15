@@ -1864,6 +1864,108 @@ public static class Translations
             ["Another worker already has this name. Give each worker their own."] =
                 ("Un autre employé porte déjà ce nom. Donnez à chacun le sien.",
                  "يوجد عامل آخر بهذا الاسم. أعطِ كل عامل اسماً خاصاً به."),
+            ["Find printers"] =
+                ("Trouver les imprimantes",
+                 "البحث عن الطابعات"),
+            ["Plug the printer in or connect it to the shop's network, then scan. Installing sets it up in Windows and installs its driver."] =
+                ("Branchez l'imprimante ou connectez-la au réseau du magasin, puis lancez la recherche. L'installation la configure dans Windows avec son pilote.",
+                 "وصّل الطابعة بالحاسوب أو بشبكة المتجر، ثم ابحث. التثبيت يضبطها في ويندوز ويثبّت برنامج تشغيلها."),
+            ["Scan"] =
+                ("Rechercher",
+                 "بحث"),
+            ["Install"] =
+                ("Installer",
+                 "تثبيت"),
+            ["Use"] =
+                ("Utiliser",
+                 "استخدام"),
+            ["Install a driver from a file"] =
+                ("Installer un pilote depuis un fichier",
+                 "تثبيت برنامج تشغيل من ملف"),
+            ["Windows printers"] =
+                ("Imprimantes Windows",
+                 "طابعات ويندوز"),
+            ["Looking for printers on this computer and the shop's network…"] =
+                ("Recherche des imprimantes sur cet ordinateur et le réseau du magasin…",
+                 "جارٍ البحث عن الطابعات في هذا الحاسوب وشبكة المتجر…"),
+            ["No printer found. Check it is switched on and plugged in, or connected to the same network."] =
+                ("Aucune imprimante trouvée. Vérifiez qu'elle est allumée et branchée, ou sur le même réseau.",
+                 "لم يتم العثور على أي طابعة. تأكد أنها مشغّلة وموصولة، أو متصلة بنفس الشبكة."),
+            ["{0} printer(s) to install."] =
+                ("{0} imprimante(s) à installer.",
+                 "{0} طابعة للتثبيت."),
+            ["Every printer found is already installed."] =
+                ("Toutes les imprimantes trouvées sont déjà installées.",
+                 "كل الطابعات التي تم العثور عليها مثبتة مسبقاً."),
+            ["Installing {0}… Press Yes if Windows asks for permission."] =
+                ("Installation de {0}… Appuyez sur Oui si Windows demande l'autorisation.",
+                 "جارٍ تثبيت {0}… اضغط نعم إذا طلب ويندوز الإذن."),
+            ["Choose the printer driver (.inf file)"] =
+                ("Choisissez le pilote de l'imprimante (fichier .inf)",
+                 "اختر برنامج تشغيل الطابعة (ملف ‎.inf)"),
+            ["Printer driver"] =
+                ("Pilote d'imprimante",
+                 "برنامج تشغيل الطابعة"),
+            ["Installing the driver… Press Yes if Windows asks for permission."] =
+                ("Installation du pilote… Appuyez sur Oui si Windows demande l'autorisation.",
+                 "جارٍ تثبيت برنامج التشغيل… اضغط نعم إذا طلب ويندوز الإذن."),
+            ["{0} is selected. Press Test print, then Save."] =
+                ("{0} est sélectionnée. Faites un test d'impression, puis Enregistrer.",
+                 "تم اختيار {0}. اضغط تجربة الطباعة ثم حفظ."),
+            ["Network printer {0}"] =
+                ("Imprimante réseau {0}",
+                 "طابعة شبكة {0}"),
+            ["Office printer on the network, not set up on this computer."] =
+                ("Imprimante de bureau sur le réseau, non configurée sur cet ordinateur.",
+                 "طابعة مكتبية على الشبكة، غير مضبوطة على هذا الحاسوب."),
+            ["Receipt printer on the network, not set up on this computer."] =
+                ("Imprimante de tickets sur le réseau, non configurée sur cet ordinateur.",
+                 "طابعة تذاكر على الشبكة، غير مضبوطة على هذا الحاسوب."),
+            ["Installed and ready. Driver: {0}"] =
+                ("Installée et prête. Pilote : {0}",
+                 "مثبتة وجاهزة. برنامج التشغيل: {0}"),
+            ["USB printer on {0}"] =
+                ("Imprimante USB sur {0}",
+                 "طابعة USB على {0}"),
+            ["Plugged in, but no printer is set up for it."] =
+                ("Branchée, mais aucune imprimante n'est configurée.",
+                 "موصولة، لكن لم تُضبط لها أي طابعة."),
+            ["Unknown printer"] =
+                ("Imprimante inconnue",
+                 "طابعة غير معروفة"),
+            ["Plugged in, but its driver is not installed."] =
+                ("Branchée, mais son pilote n'est pas installé.",
+                 "موصولة، لكن برنامج تشغيلها غير مثبت."),
+            ["{0} is ready."] =
+                ("{0} est prête.",
+                 "{0} جاهزة."),
+            ["Nothing to install."] =
+                ("Rien à installer.",
+                 "لا شيء للتثبيت."),
+            ["Windows did not start the installer."] =
+                ("Windows n'a pas lancé l'installation.",
+                 "لم يبدأ ويندوز التثبيت."),
+            ["Windows is taking too long. Try again in a moment."] =
+                ("Windows met trop de temps. Réessayez dans un instant.",
+                 "ويندوز يستغرق وقتاً طويلاً. حاول مرة أخرى بعد قليل."),
+            ["{0} is installed and ready."] =
+                ("{0} est installée et prête.",
+                 "تم تثبيت {0} وهي جاهزة."),
+            ["The driver is installed. Press Scan again to see the printer."] =
+                ("Le pilote est installé. Relancez la recherche pour voir l'imprimante.",
+                 "تم تثبيت برنامج التشغيل. اضغط بحث مرة أخرى لرؤية الطابعة."),
+            ["Windows found no driver for this printer. Install the manufacturer's driver with Install a driver from a file."] =
+                ("Windows n'a trouvé aucun pilote pour cette imprimante. Installez le pilote du fabricant avec Installer un pilote depuis un fichier.",
+                 "لم يجد ويندوز برنامج تشغيل لهذه الطابعة. ثبّت برنامج تشغيل الشركة المصنّعة عبر تثبيت برنامج تشغيل من ملف."),
+            ["Could not install the printer: {0}"] =
+                ("Impossible d'installer l'imprimante : {0}",
+                 "تعذّر تثبيت الطابعة: {0}"),
+            ["Could not install the printer."] =
+                ("Impossible d'installer l'imprimante.",
+                 "تعذّر تثبيت الطابعة."),
+            ["Installing a printer needs permission. Press Yes when Windows asks."] =
+                ("L'installation d'une imprimante demande une autorisation. Appuyez sur Oui quand Windows le demande.",
+                 "تثبيت الطابعة يحتاج إذناً. اضغط نعم عندما يطلب ويندوز."),
             ["Use at least 4 characters."] =
                 ("Utilisez au moins 4 caractères.",
                  "استخدم 4 محارف على الأقل."),

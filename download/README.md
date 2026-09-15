@@ -5,7 +5,21 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 3.2
+## What's new in 3.3
+- **Find and install any printer:** Settings → Receipt printer → **Find printers**. It scans for:
+  - printers already installed,
+  - USB printers plugged in without a driver,
+  - USB printer ports with no printer set up,
+  - receipt printers and office printers on the shop's network.
+- **Install** sets the printer up automatically:
+  - Windows (and Windows Update) is asked for the driver first.
+  - A receipt printer with no driver is set up on Windows' built-in receipt driver.
+  - Office network printers are set up with Windows' own IPP driver.
+  - Windows asks for permission; press **Yes**.
+- **Install a driver from a file** takes the manufacturer's driver (.inf) from a download or the CD.
+- After installing, the printer is selected. Press **Test print**, then **Save**.
+
+## From 3.2
 - **Worker accounts:**
   - When you add a worker, you set their password right in the form.
   - They sign in to the back office with their name and that password.
