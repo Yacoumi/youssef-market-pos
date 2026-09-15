@@ -124,8 +124,8 @@ public partial class DeliveryEditor : UserControl
         {
             ProductBox.Focus();
             return _scannedCode is null
-                ? "Name what arrived, or pick it from the list."
-                : $"{_scannedCode} is not in the shop yet. Give it a name.";
+                ? Loc.T("Name what arrived, or pick it from the list.")
+                : Loc.T("{0} is not in the shop yet. Give it a name.", _scannedCode);
         }
 
         // A run of digits is a barcode somebody scanned or typed, and no shop calls a product
@@ -135,7 +135,7 @@ public partial class DeliveryEditor : UserControl
             _scannedCode = typed;
             ProductBox.Text = string.Empty;
             ProductBox.Focus();
-            return $"{typed} is not in the shop yet. Give it a name, not its number.";
+            return Loc.T("{0} is not in the shop yet. Give it a name, not its number.", typed);
         }
         if (!TryMoney(QuantityBox.Text, out var quantity) || quantity <= 0m)
         {
@@ -145,7 +145,7 @@ public partial class DeliveryEditor : UserControl
         if (!TryMoney(CostBox.Text, out var cost) || cost < 0m)
         {
             CostBox.Focus();
-            return "Enter what each one cost.";
+            return Loc.T("Enter what each one cost.");
         }
 
         // A sell price is only carried when one was actually typed. Left blank, the shelf
@@ -157,7 +157,7 @@ public partial class DeliveryEditor : UserControl
         if (product is null && sellPrice is null)
         {
             SellBox.Focus();
-            return $"Enter what {typed} sells for - it is new to the shop.";
+            return Loc.T("Enter what {0} sells for - it is new to the shop.", typed);
         }
 
         var name = product?.Name ?? typed;

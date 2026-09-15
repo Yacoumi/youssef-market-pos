@@ -40,8 +40,8 @@ public static class Export
         {
             i.Name, i.Barcode, i.Sku, i.Category, i.Unit, i.Cost, i.Price, i.MarginPercent,
             i.Stock, i.MinStock, i.StockValue, i.SupplierName, i.Shelf,
-            i.ExpiresOn?.ToString("yyyy-MM-dd"), i.StatusLabel, i.ShowInPos ? "yes" : "no",
-            i.IsActive ? "yes" : "no",
+            i.ExpiresOn?.ToString("yyyy-MM-dd"), i.StatusLabel, Loc.T(i.ShowInPos ? "yes" : "no"),
+            Loc.T(i.IsActive ? "yes" : "no"),
         }));
 
     public static string Sales(IReadOnlyList<SaleSummaryEx> sales) => Write("sales",
@@ -51,7 +51,7 @@ public static class Export
         {
             s.InvoiceNumber, s.SoldAt.ToString("yyyy-MM-dd"), s.SoldAt.ToString("HH:mm:ss"),
             s.CashierLabel, s.LineCount, s.DiscountAmount, s.Total, s.Refunded, s.NetTotal,
-            s.CostTotal, s.Profit, s.PaymentMethod, s.StatusLabel,
+            s.CostTotal, s.Profit, Loc.T(s.PaymentMethod.ToString()), s.StatusLabel,
         }));
 
     public static string StockMovements(IReadOnlyList<StockMovement> movements) => Write("stock-movements",
@@ -68,8 +68,8 @@ public static class Export
         ["Date", "Name", "Category", "Amount", "Payment", "Recurring", "Note"],
         expenses.Select(e => new object?[]
         {
-            e.SpentOn.ToString("yyyy-MM-dd"), e.Name, e.Category, e.Amount, e.Method,
-            e.Recurring == Recurrence.None ? string.Empty : e.Recurring.ToString(), e.Note,
+            e.SpentOn.ToString("yyyy-MM-dd"), e.Name, Loc.T(e.Category), e.Amount, Loc.T(e.Method),
+            e.RepeatLabel, e.Note,
         }));
 
     public static string Purchases(IReadOnlyList<Purchase> purchases) => Write("supplier-purchases",
@@ -77,14 +77,14 @@ public static class Export
         purchases.Select(p => new object?[]
         {
             p.PurchasedOn.ToString("yyyy-MM-dd"), p.SupplierName, p.InvoiceNumber, p.Total,
-            p.Paid, p.Remaining, p.PaymentStatus, p.DueOn?.ToString("yyyy-MM-dd"), p.Method, p.Note,
+            p.Paid, p.Remaining, Loc.T(p.PaymentStatus.ToString()), p.DueOn?.ToString("yyyy-MM-dd"), Loc.T(p.Method), p.Note,
         }));
 
     public static string SupplierPayments(IReadOnlyList<SupplierPayment> payments) => Write("supplier-payments",
         ["Date", "Supplier", "Purchase", "Amount", "Method", "Note"],
         payments.Select(p => new object?[]
         {
-            p.PaidOn.ToString("yyyy-MM-dd"), p.SupplierName, p.PurchaseId, p.Amount, p.Method, p.Note,
+            p.PaidOn.ToString("yyyy-MM-dd"), p.SupplierName, p.PurchaseId, p.Amount, Loc.T(p.Method), p.Note,
         }));
 
     public static string SalaryPayments(IReadOnlyList<SalaryPayment> payments) => Write("worker-payments",
@@ -92,7 +92,7 @@ public static class Export
         payments.Select(p => new object?[]
         {
             p.PaidOn.ToString("yyyy-MM-dd"), p.WorkerName, p.PeriodStart.ToString("yyyy-MM-dd"),
-            p.PeriodEnd.ToString("yyyy-MM-dd"), p.AmountDue, p.AmountPaid, p.Method, p.Note,
+            p.PeriodEnd.ToString("yyyy-MM-dd"), p.AmountDue, p.AmountPaid, Loc.T(p.Method), p.Note,
         }));
 
     /// <summary>
@@ -104,7 +104,8 @@ public static class Export
         var f = Link.Shop.Reports.Money(range);
         // Collection-expression elements would be parsed as indexer initialisers inside a
         // collection initialiser, so each row is an explicit array.
-        object?[] Row(string label, object? value, string meaning = "") => new object?[] { label, value, meaning };
+        object?[] Row(string label, object? value, string meaning = "") =>
+            new object?[] { Loc.T(label), value is string text ? Loc.T(text) : value, Loc.T(meaning) };
 
         var rows = new List<object?[]>
         {
@@ -156,7 +157,7 @@ public static class Export
         var path = Path.Combine(Folder, $"{name}-{DateTime.Now:yyyy-MM-dd-HHmm}.csv");
         var text = new StringBuilder();
 
-        text.AppendLine(string.Join(",", headers.Select(Escape)));
+        text.AppendLine(string.Join(",", headers.Select(h => Escape(Loc.T(h)))));
         var count = 0;
         foreach (var row in rows)
         {
@@ -167,7 +168,7 @@ public static class Export
         File.WriteAllText(path, text.ToString(), new UTF8Encoding(true));
 
         ActivityRepository.Record("exported data", "Export", name, newValue: $"{count} rows",
-            detail: $"exported {count} rows of {name.Replace('-', ' ')}");
+            detail: ActivityRepository.Say("exported {0} rows of {1}", count, Loc.T(name.Replace('-', ' '))));
         return path;
     }
 
@@ -190,8 +191,9 @@ public static class Export
     {
         if (owner is null) return;
 
-        var open = Views.ConfirmWindow.Ask(owner, "Export saved",
-            $"{Path.GetFileName(path)} was saved to {Path.GetDirectoryName(path)}.\n\nOpen the folder?");
+        var open = Views.ConfirmWindow.Ask(owner, Loc.T("Export saved"),
+            Loc.T("{0} was saved to {1}.", Path.GetFileName(path), Path.GetDirectoryName(path) ?? string.Empty)
+            + "\n\n" + Loc.T("Open the folder?"));
 
         if (!open) return;
 

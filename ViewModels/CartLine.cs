@@ -131,7 +131,7 @@ public sealed class CartLine : ViewModelBase
     }
 
     public string QuantityDisplay => Product.Unit == Unit.Kg
-        ? $"{Quantity:0.000} kg"
+        ? $"{Quantity:0.000} {MarketPos.Services.Loc.T("kg")}"
         : $"{Quantity:0}";
 
     /// <summary>Tax-inclusive line total (this is what the customer pays for this line).</summary>

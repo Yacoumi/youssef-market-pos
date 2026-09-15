@@ -32,9 +32,8 @@ public partial class AdminLoginWindow : MarketPos.Views.DialogWindow
             var replacing = AdminAccount.IsConfigured;
             HeadingText.Text = Loc.T(replacing ? "Change admin password" : "Set admin password");
             SubText.Text = replacing
-                ? "Enter the new password twice. The old one stops working straight away."
-                : "This will start protecting the back office. Leave both boxes empty and save "
-                  + "to turn the password off again.";
+                ? Loc.T("Enter the new password twice. The old one stops working straight away.")
+                : Loc.T("This will start protecting the back office. Leave both boxes empty and save to turn the password off again.");
             FirstLabel.Text = Loc.T(replacing ? "NEW PASSWORD" : "PASSWORD");
             ConfirmSection.Visibility = Visibility.Visible;
             SubmitButton.Content = Loc.T(replacing ? "Change" : "Set password");

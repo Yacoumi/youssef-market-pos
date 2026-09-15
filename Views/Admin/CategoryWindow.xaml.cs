@@ -76,7 +76,7 @@ public partial class CategoryWindow : MarketPos.Views.DialogWindow
     {
         var picker = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Choose a picture for this category",
+            Title = Loc.T("Choose a picture for this category"),
             Filter = "Pictures|*.png;*.jpg;*.jpeg;*.webp;*.bmp|All files|*.*",
             CheckFileExists = true,
         };

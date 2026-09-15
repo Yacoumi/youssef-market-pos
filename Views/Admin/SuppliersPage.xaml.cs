@@ -135,9 +135,8 @@ public partial class SuppliersPage : AdminPageBase
 
         EmptyTitle.Text = Loc.T(filtered ? "Nothing matches" : "No suppliers yet");
         EmptyBody.Text = filtered
-            ? "Try a different name, or clear the filter."
-            : "Add the wholesalers the shop buys from. Once a delivery is recorded against one, "
-            + "what is owed to them shows up here.";
+            ? Loc.T("Try a different name, or clear the filter.")
+            : Loc.T("Add the wholesalers the shop buys from. Once a delivery is recorded against one, what is owed to them shows up here.");
     }
 
     // ============================== The picked supplier ==============================

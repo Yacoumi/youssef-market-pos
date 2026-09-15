@@ -24,19 +24,19 @@ public sealed class HeldTicket
 
     /// <summary>Deliberately NOT "Ticket": receipts use that word, and a cashier
     /// typing a hold number into Reprint finds nothing and assumes it is broken.</summary>
-    public string Label => $"Hold {Number}";
+    public string Label => MarketPos.Services.Loc.T("Hold {0}", Number);
 
     /// <summary>"Milk 1L +2 · 25.40 DH" — enough for the cashier to tell tickets apart at a glance.</summary>
     public string Summary
     {
         get
         {
-            var first = Lines.Count > 0 ? Lines[0].Product.Name : "Empty";
+            var first = Lines.Count > 0 ? Lines[0].Product.Name : MarketPos.Services.Loc.T("Empty");
             var extra = Lines.Count - 1;
             var items = extra > 0 ? $"{first} +{extra}" : first;
             return $"{items}  ·  {Total.ToString("N2", CultureInfo.InvariantCulture)} DH";
         }
     }
 
-    public string HeldAtLabel => $"Held at {HeldAt:HH:mm}";
+    public string HeldAtLabel => MarketPos.Services.Loc.T("Held at {0}", HeldAt.ToString("HH:mm"));
 }

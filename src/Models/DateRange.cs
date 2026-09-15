@@ -65,7 +65,7 @@ public readonly record struct DateRange(DateTime From, DateTime To, DatePreset P
     public DateRange Previous()
     {
         var span = To - From;
-        return new DateRange(From - span, From, Preset, "Previous " + Label.ToLowerInvariant());
+        return new DateRange(From - span, From, Preset, Services.Loc.T("Previous {0}", Services.Loc.T(Label)));
     }
 
     public int Days => Math.Max(1, (int)(To - From).TotalDays);

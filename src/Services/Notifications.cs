@@ -159,11 +159,11 @@ public static class Notifications
         var list = names.ToList();
         return list.Count <= max
             ? string.Join(", ", list)
-            : string.Join(", ", list.Take(max)) + $" and {list.Count - max} more";
+            : string.Join(", ", list.Take(max)) + " " + Loc.T("and {0} more", list.Count - max);
     }
 
     private static string Soon(DateTime date) =>
-        date.Date == DateTime.Today ? "today"
-        : date.Date == DateTime.Today.AddDays(1) ? "tomorrow"
-        : $"on {date:d MMM}";
+        date.Date == DateTime.Today ? Loc.T("today")
+        : date.Date == DateTime.Today.AddDays(1) ? Loc.T("tomorrow")
+        : Loc.T("on {0}", date.ToString("d MMM"));
 }

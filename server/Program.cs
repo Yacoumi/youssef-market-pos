@@ -80,6 +80,10 @@ app.UseCors();
 // broken install finds out when it starts the server, not when a customer is waiting.
 Database.Initialize();
 
+// In the shop's language. Everything the server writes for a person — notifications, refusals,
+// error messages — is built here, and without this it was all in English.
+Loc.Load();
+
 // And the back office starts behind the password every install ships with.
 //
 // Only the all-in-one used to do this, so a shop running this server had no owner password set

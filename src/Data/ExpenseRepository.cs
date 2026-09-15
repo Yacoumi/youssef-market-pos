@@ -74,7 +74,7 @@ public static class ExpenseRepository
     {
         Session.Require(Permission.ManageExpenses);
         if (expense.Amount <= 0m)
-            throw new ArgumentException("An expense must be greater than zero.", nameof(expense));
+            throw new ArgumentException(Loc.T("An expense must be greater than zero."), nameof(expense));
 
         using var connection = Database.Open();
         using var command = connection.CreateCommand();

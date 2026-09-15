@@ -2389,6 +2389,702 @@ public static class Translations
             ["Makes {0} each, {1} of the price."] =
                 ("Rapporte {0} par article, {1} du prix.",
                  "يربح {0} للقطعة، {1} من السعر."),
+            ["A product needs a name."] =
+                ("Un produit doit avoir un nom.",
+                 "يجب أن يكون للمنتج اسم."),
+            ["A purchase needs at least one product line."] =
+                ("Un achat doit avoir au moins une ligne.",
+                 "يجب أن يحتوي الشراء على منتج واحد على الأقل."),
+            ["An expense must be greater than zero."] =
+                ("Une dépense doit être supérieure à zéro.",
+                 "يجب أن يكون المصروف أكبر من صفر."),
+            ["Cancelled by {0}"] =
+                ("Annulée par {0}",
+                 "ألغاها {0}"),
+            ["Cannot reach server at {0}: {1}"] =
+                ("Impossible de joindre le serveur à {0} : {1}",
+                 "تعذّر الوصول إلى الخادم على {0}: {1}"),
+            ["Cannot return {0} of {1}; only {2} is left to return."] =
+                ("Impossible de retourner {0} de {1} ; il ne reste que {2} à retourner.",
+                 "لا يمكن إرجاع {0} من {1}؛ المتبقي للإرجاع {2} فقط."),
+            ["Choose a picture for this category"] =
+                ("Choisir une image pour cette catégorie",
+                 "اختر صورة لهذه الفئة"),
+            ["Choose at least one line to return."] =
+                ("Choisissez au moins une ligne à retourner.",
+                 "اختر سطراً واحداً على الأقل للإرجاع."),
+            ["Configured printer \"{0}\" is a file printer — pick a real thermal printer"] =
+                ("L'imprimante \"{0}\" est une imprimante de fichiers — choisissez une vraie imprimante thermique",
+                 "الطابعة \"{0}\" طابعة ملفات — اختر طابعة إيصالات حقيقية"),
+            ["Discount -{0}"] =
+                ("Remise -{0}",
+                 "خصم -{0}"),
+            ["Empty"] =
+                ("Vide",
+                 "فارغ"),
+            ["Enter the new password twice. The old one stops working straight away."] =
+                ("Saisissez le nouveau mot de passe deux fois. L'ancien cesse de fonctionner immédiatement.",
+                 "أدخل كلمة المرور الجديدة مرتين. تتوقف القديمة عن العمل فوراً."),
+            ["Enter what each one cost."] =
+                ("Indiquez le coût de chaque article.",
+                 "أدخل تكلفة القطعة الواحدة."),
+            ["Enter what {0} sells for - it is new to the shop."] =
+                ("Indiquez le prix de vente de {0} — il est nouveau dans le magasin.",
+                 "أدخل سعر بيع {0} — إنه جديد في المتجر."),
+            ["Export saved"] =
+                ("Export enregistré",
+                 "تم حفظ التصدير"),
+            ["Held at {0}"] =
+                ("En attente depuis {0}",
+                 "معلقة منذ {0}"),
+            ["Hold {0}"] =
+                ("Attente {0}",
+                 "معلقة {0}"),
+            ["Invalid recovery PIN."] =
+                ("Code de récupération invalide.",
+                 "رمز الاسترداد غير صحيح."),
+            ["Market POS"] =
+                ("Market POS",
+                 "نقطة البيع"),
+            ["Market POS error"] =
+                ("Erreur Market POS",
+                 "خطأ في نقطة البيع"),
+            ["Name what arrived, or pick it from the list."] =
+                ("Nommez ce qui est arrivé, ou choisissez-le dans la liste.",
+                 "اكتب اسم ما وصل، أو اختره من القائمة."),
+            ["No completed sales yet. Finish a sale with Pay and its receipt number will appear here."] =
+                ("Aucune vente terminée. Terminez une vente avec Payer et son numéro de reçu apparaîtra ici.",
+                 "لا توجد مبيعات مكتملة بعد. أكمل عملية بالدفع وسيظهر رقم إيصالها هنا."),
+            ["No product with id {0}."] =
+                ("Aucun produit avec l'identifiant {0}.",
+                 "لا يوجد منتج بالرقم {0}."),
+            ["No receipt printer found — please connect your receipt printer"] =
+                ("Aucune imprimante de reçus trouvée — branchez votre imprimante",
+                 "لم يتم العثور على طابعة إيصالات — يرجى توصيل الطابعة"),
+            ["No sale with receipt number {0}."] =
+                ("Aucune vente avec le reçu n°{0}.",
+                 "لا توجد عملية بإيصال رقم {0}."),
+            ["No sales today yet"] =
+                ("Aucune vente aujourd'hui",
+                 "لا مبيعات اليوم بعد"),
+            ["Not available to you"] =
+                ("Non disponible pour vous",
+                 "غير متاح لك"),
+            ["Not signed in."] =
+                ("Non connecté.",
+                 "لم يتم تسجيل الدخول."),
+            ["Nothing selected yet."] =
+                ("Rien de sélectionné.",
+                 "لم يتم اختيار شيء بعد."),
+            ["Open the folder?"] =
+                ("Ouvrir le dossier ?",
+                 "فتح المجلد؟"),
+            ["Previous {0}"] =
+                ("{0} précédent",
+                 "السابق: {0}"),
+            ["Quantity must be greater than zero."] =
+                ("La quantité doit être supérieure à zéro.",
+                 "يجب أن تكون الكمية أكبر من صفر."),
+            ["That line is not part of this sale."] =
+                ("Cette ligne ne fait pas partie de la vente.",
+                 "هذا السطر ليس جزءاً من هذه العملية."),
+            ["That product no longer exists."] =
+                ("Ce produit n'existe plus.",
+                 "هذا المنتج لم يعد موجوداً."),
+            ["That sale no longer exists."] =
+                ("Cette vente n'existe plus.",
+                 "هذه العملية لم تعد موجودة."),
+            ["That shift no longer exists."] =
+                ("Ce service n'existe plus.",
+                 "هذه النوبة لم تعد موجودة."),
+            ["The back office is version {0} and this till is {1}. Update them both."] =
+                ("La gestion est en version {0} et cette caisse en {1}. Mettez les deux à jour.",
+                 "إصدار الإدارة {0} وإصدار هذا الصندوق {1}. حدّث الاثنين."),
+            ["The shop did not allow that. Sign in as somebody who may do it."] =
+                ("Le magasin ne l'a pas autorisé. Connectez-vous avec un compte autorisé.",
+                 "لم يسمح المتجر بذلك. سجّل الدخول بحساب مسموح له."),
+            ["The shop did not answer."] =
+                ("Le magasin n'a pas répondu.",
+                 "لم يستجب المتجر."),
+            ["The shop did not send its figures."] =
+                ("Le magasin n'a pas envoyé ses chiffres.",
+                 "لم يرسل المتجر أرقامه."),
+            ["The shop does not know who this till is. Sign in again."] =
+                ("Le magasin ne reconnaît pas cette caisse. Reconnectez-vous.",
+                 "المتجر لا يعرف هذا الصندوق. سجّل الدخول مرة أخرى."),
+            ["The till could not open its database."] =
+                ("La caisse n'a pas pu ouvrir sa base de données.",
+                 "تعذّر على الصندوق فتح قاعدة البيانات."),
+            ["There is already a category with that name."] =
+                ("Une catégorie porte déjà ce nom.",
+                 "توجد فئة بهذا الاسم بالفعل."),
+            ["There is nothing in the basket."] =
+                ("Le panier est vide.",
+                 "السلة فارغة."),
+            ["This is a cashier's till: it has no shop database. Whatever asked for one should be asking the shop's server instead."] =
+                ("Ceci est une caisse : elle n'a pas de base de données. Il faut interroger le serveur du magasin.",
+                 "هذا صندوق كاشير: لا يحتوي على قاعدة بيانات المتجر. يجب الرجوع إلى خادم المتجر."),
+            ["This machine has not been told where the shop is."] =
+                ("Cet ordinateur ne sait pas où est le magasin.",
+                 "لم يُحدَّد لهذا الجهاز مكان المتجر."),
+            ["This request did not say who it was from."] =
+                ("Cette demande n'indique pas qui l'envoie.",
+                 "هذا الطلب لا يذكر مَن أرسله."),
+            ["This till has no shop to sell for."] =
+                ("Cette caisse n'est reliée à aucun magasin.",
+                 "هذا الصندوق غير مرتبط بأي متجر."),
+            ["This will start protecting the back office. Leave both boxes empty and save to turn the password off again."] =
+                ("Cela protégera la gestion. Laissez les deux cases vides et enregistrez pour désactiver le mot de passe.",
+                 "سيبدأ هذا بحماية الإدارة. اترك الحقلين فارغين واحفظ لإيقاف كلمة المرور."),
+            ["This worker is inactive."] =
+                ("Cet employé est inactif.",
+                 "هذا العامل غير نشط."),
+            ["Try a different search, or another kind."] =
+                ("Essayez une autre recherche ou un autre type.",
+                 "جرّب بحثاً آخر أو نوعاً آخر."),
+            ["No admin password is set, so this opens on a press. Set one under Settings, and give your staff their own under Workers."] =
+                ("Aucun mot de passe administrateur : l'accès est libre. Définissez-en un dans Paramètres, et donnez à vos employés le leur dans Employés.",
+                 "لا توجد كلمة مرور للمدير، لذا يُفتح بضغطة. عيّن واحدة من الإعدادات، وأعطِ موظفيك كلماتهم من صفحة العمال."),
+            ["You are not allowed to manage categories."] =
+                ("Vous n'êtes pas autorisé à gérer les catégories.",
+                 "غير مسموح لك بإدارة الفئات."),
+            ["and {0} more"] =
+                ("et {0} de plus",
+                 "و{0} أخرى"),
+            ["at a loss"] =
+                ("à perte",
+                 "بخسارة"),
+            ["kg"] =
+                ("kg",
+                 "كغ"),
+            ["left"] =
+                ("restant",
+                 "متبقٍ"),
+            ["no"] =
+                ("non",
+                 "لا"),
+            ["yes"] =
+                ("oui",
+                 "نعم"),
+            ["on {0}"] =
+                ("le {0}",
+                 "في {0}"),
+            ["tomorrow"] =
+                ("demain",
+                 "غداً"),
+            ["paid up"] =
+                ("réglé",
+                 "مدفوع بالكامل"),
+            ["shelf {0}"] =
+                ("rayon {0}",
+                 "الرف {0}"),
+            ["{0} ({1}) is not allowed to {2}."] =
+                ("{0} ({1}) n'est pas autorisé à {2}.",
+                 "غير مسموح لـ {0} ({1}) بـ {2}."),
+            ["{0} Press to try again."] =
+                ("{0} Appuyez pour réessayer.",
+                 "{0} اضغط للمحاولة مرة أخرى."),
+            ["{0} already has a shift open."] =
+                ("{0} a déjà un service ouvert.",
+                 "لدى {0} نوبة مفتوحة بالفعل."),
+            ["{0} already returned"] =
+                ("{0} déjà retourné",
+                 "أُرجع {0} بالفعل"),
+            ["{0} is not in the shop yet. Give it a name, not its number."] =
+                ("{0} n'est pas encore dans le magasin. Donnez-lui un nom, pas son numéro.",
+                 "{0} غير موجود في المتجر بعد. أعطه اسماً وليس رقمه."),
+            ["{0} is not in the shop yet. Give it a name."] =
+                ("{0} n'est pas encore dans le magasin. Donnez-lui un nom.",
+                 "{0} غير موجود في المتجر بعد. أعطه اسماً."),
+            ["{0} item"] =
+                ("{0} article",
+                 "{0} منتج"),
+            ["{0} items"] =
+                ("{0} articles",
+                 "{0} منتجات"),
+            ["{0} need restocking"] =
+                ("{0} à réapprovisionner",
+                 "{0} تحتاج إعادة تخزين"),
+            ["{0} needs restocking"] =
+                ("{0} à réapprovisionner",
+                 "{0} يحتاج إعادة تخزين"),
+            ["{0} of what was spent"] =
+                ("{0} des dépenses",
+                 "{0} من المصروفات"),
+            ["{0} put {1} onto {2} — {3} to {4}."] =
+                ("{0} a ajouté {1} à {2} — de {3} à {4}.",
+                 "أضاف {0} {1} إلى {2} — من {3} إلى {4}."),
+            ["{0} took {1} off {2} — {3} to {4}."] =
+                ("{0} a retiré {1} de {2} — de {3} à {4}.",
+                 "خصم {0} {1} من {2} — من {3} إلى {4}."),
+            ["{0} sale today  ·  {1}"] =
+                ("{0} vente aujourd'hui  ·  {1}",
+                 "{0} عملية اليوم  ·  {1}"),
+            ["{0} sales today  ·  {1}"] =
+                ("{0} ventes aujourd'hui  ·  {1}",
+                 "{0} عمليات اليوم  ·  {1}"),
+            ["{0} since {1}."] =
+                ("{0} depuis le {1}.",
+                 "{0} منذ {1}."),
+            ["{0} was saved to {1}."] =
+                ("{0} a été enregistré dans {1}.",
+                 "حُفظ {0} في {1}."),
+            ["{0} {1} — below the {2} you asked for"] =
+                ("{0} {1} — en dessous des {2} demandés",
+                 "{0} {1} — أقل من الحد {2} الذي حددته"),
+            ["{0}h {1}m"] =
+                ("{0} h {1} min",
+                 "{0} س {1} د"),
+            ["{0}m"] =
+                ("{0} min",
+                 "{0} د"),
+            ["day"] =
+                ("jour",
+                 "يوم"),
+            ["week"] =
+                ("semaine",
+                 "أسبوع"),
+            ["month"] =
+                ("mois",
+                 "شهر"),
+            ["a day"] =
+                ("par jour",
+                 "في اليوم"),
+            ["a week"] =
+                ("par semaine",
+                 "في الأسبوع"),
+            ["a month"] =
+                ("par mois",
+                 "في الشهر"),
+            ["StockWorker"] =
+                ("Magasinier",
+                 "عامل المخزون"),
+            ["Supplier purchase"] =
+                ("Achat fournisseur",
+                 "شراء من مورد"),
+            ["Customer return"] =
+                ("Retour client",
+                 "إرجاع من زبون"),
+            ["Supplier return"] =
+                ("Retour fournisseur",
+                 "إرجاع إلى مورد"),
+            ["Internal use"] =
+                ("Usage interne",
+                 "استخدام داخلي"),
+            ["Manual correction"] =
+                ("Correction manuelle",
+                 "تصحيح يدوي"),
+            ["Opening stock"] =
+                ("Stock initial",
+                 "المخزون الافتتاحي"),
+            ["Damaged"] =
+                ("Endommagé",
+                 "تالف"),
+            ["Lost"] =
+                ("Perdu",
+                 "مفقود"),
+            ["Stolen"] =
+                ("Volé",
+                 "مسروق"),
+            ["Used in the shop"] =
+                ("Utilisé dans le magasin",
+                 "مستخدم في المتجر"),
+            ["Returned to supplier"] =
+                ("Retourné au fournisseur",
+                 "مُرجع إلى المورد"),
+            ["Unpaid"] =
+                ("Impayé",
+                 "غير مدفوع"),
+            ["PartiallyPaid"] =
+                ("Partiellement payé",
+                 "مدفوع جزئياً"),
+            ["view business financials"] =
+                ("voir les finances",
+                 "رؤية المالية"),
+            ["view worker salaries"] =
+                ("voir les salaires",
+                 "رؤية الرواتب"),
+            ["record salary payments"] =
+                ("enregistrer les salaires",
+                 "تسجيل دفع الرواتب"),
+            ["change business settings"] =
+                ("modifier les paramètres",
+                 "تغيير إعدادات المتجر"),
+            ["refund a sale"] =
+                ("rembourser une vente",
+                 "استرداد عملية بيع"),
+            ["apply a discount"] =
+                ("appliquer une remise",
+                 "تطبيق خصم"),
+            ["use the till"] =
+                ("utiliser la caisse",
+                 "استخدام الصندوق"),
+            ["see their own sales"] =
+                ("voir ses ventes",
+                 "رؤية مبيعاته"),
+            ["see all sales"] =
+                ("voir toutes les ventes",
+                 "رؤية كل المبيعات"),
+            ["manage products"] =
+                ("gérer les produits",
+                 "إدارة المنتجات"),
+            ["manage categories"] =
+                ("gérer les catégories",
+                 "إدارة الفئات"),
+            ["manage stock"] =
+                ("gérer le stock",
+                 "إدارة المخزون"),
+            ["see stock movements"] =
+                ("voir les mouvements de stock",
+                 "رؤية حركات المخزون"),
+            ["manage suppliers"] =
+                ("gérer les fournisseurs",
+                 "إدارة الموردين"),
+            ["record supplier deliveries"] =
+                ("enregistrer les livraisons",
+                 "تسجيل التوريدات"),
+            ["manage workers"] =
+                ("gérer les employés",
+                 "إدارة العمال"),
+            ["manage expenses"] =
+                ("gérer les dépenses",
+                 "إدارة المصروفات"),
+            ["manage the cash drawer"] =
+                ("gérer la caisse",
+                 "إدارة درج النقود"),
+            ["see reports"] =
+                ("voir les rapports",
+                 "رؤية التقارير"),
+            ["see the activity log"] =
+                ("voir le journal",
+                 "رؤية سجل النشاط"),
+            ["export data"] =
+                ("exporter les données",
+                 "تصدير البيانات"),
+            ["add products at the till"] =
+                ("ajouter des produits à la caisse",
+                 "إضافة منتجات من الصندوق"),
+            ["Name"] =
+                ("Nom",
+                 "الاسم"),
+            ["Barcode"] =
+                ("Code-barres",
+                 "الباركود"),
+            ["SKU"] =
+                ("Réf.",
+                 "الرمز الداخلي"),
+            ["Unit"] =
+                ("Unité",
+                 "الوحدة"),
+            ["Cost"] =
+                ("Coût",
+                 "التكلفة"),
+            ["Price"] =
+                ("Prix",
+                 "السعر"),
+            ["Margin %"] =
+                ("Marge %",
+                 "الهامش %"),
+            ["Stock"] =
+                ("Stock",
+                 "المخزون"),
+            ["Min stock"] =
+                ("Stock min.",
+                 "الحد الأدنى"),
+            ["Stock value"] =
+                ("Valeur du stock",
+                 "قيمة المخزون"),
+            ["Shelf"] =
+                ("Rayon",
+                 "الرف"),
+            ["Expires"] =
+                ("Expire",
+                 "ينتهي"),
+            ["Status"] =
+                ("Statut",
+                 "الحالة"),
+            ["In POS"] =
+                ("En caisse",
+                 "في الصندوق"),
+            ["Active"] =
+                ("Actif",
+                 "نشط"),
+            ["Receipt"] =
+                ("Reçu",
+                 "الإيصال"),
+            ["Date"] =
+                ("Date",
+                 "التاريخ"),
+            ["Time"] =
+                ("Heure",
+                 "الوقت"),
+            ["Lines"] =
+                ("Lignes",
+                 "الأسطر"),
+            ["Net"] =
+                ("Net",
+                 "الصافي"),
+            ["Profit"] =
+                ("Bénéfice",
+                 "الربح"),
+            ["Payment"] =
+                ("Paiement",
+                 "الدفع"),
+            ["Reason"] =
+                ("Motif",
+                 "السبب"),
+            ["Before"] =
+                ("Avant",
+                 "قبل"),
+            ["After"] =
+                ("Après",
+                 "بعد"),
+            ["Unit cost"] =
+                ("Coût unitaire",
+                 "تكلفة الوحدة"),
+            ["Value"] =
+                ("Valeur",
+                 "القيمة"),
+            ["Reference"] =
+                ("Référence",
+                 "المرجع"),
+            ["Note"] =
+                ("Note",
+                 "ملاحظة"),
+            ["Amount"] =
+                ("Montant",
+                 "المبلغ"),
+            ["Recurring"] =
+                ("Récurrent",
+                 "متكرر"),
+            ["Invoice"] =
+                ("Facture",
+                 "الفاتورة"),
+            ["Remaining"] =
+                ("Reste",
+                 "المتبقي"),
+            ["Due"] =
+                ("Échéance",
+                 "المستحق"),
+            ["Method"] =
+                ("Mode",
+                 "طريقة الدفع"),
+            ["Paid on"] =
+                ("Payé le",
+                 "تاريخ الدفع"),
+            ["Period start"] =
+                ("Début de période",
+                 "بداية الفترة"),
+            ["Period end"] =
+                ("Fin de période",
+                 "نهاية الفترة"),
+            ["Figure"] =
+                ("Indicateur",
+                 "البند"),
+            ["Meaning"] =
+                ("Signification",
+                 "المعنى"),
+            ["Period"] =
+                ("Période",
+                 "الفترة"),
+            ["From"] =
+                ("Du",
+                 "من"),
+            ["To"] =
+                ("Au",
+                 "إلى"),
+            ["Cost of goods sold"] =
+                ("Coût des ventes",
+                 "تكلفة البضاعة المباعة"),
+            ["Gross profit"] =
+                ("Marge brute",
+                 "الربح الإجمالي"),
+            ["Operating expenses"] =
+                ("Charges",
+                 "المصروفات التشغيلية"),
+            ["Worker salaries"] =
+                ("Salaires",
+                 "رواتب العمال"),
+            ["Stock written off"] =
+                ("Stock perdu",
+                 "المخزون المشطوب"),
+            ["Net profit"] =
+                ("Bénéfice net",
+                 "صافي الربح"),
+            ["Cash collected"] =
+                ("Espèces encaissées",
+                 "النقد المحصل"),
+            ["Card collected"] =
+                ("Carte encaissée",
+                 "المحصل بالبطاقة"),
+            ["Supplier payments"] =
+                ("Paiements fournisseurs",
+                 "مدفوعات الموردين"),
+            ["Stock received"] =
+                ("Stock reçu",
+                 "المخزون المستلم"),
+            ["Money spent"] =
+                ("Argent dépensé",
+                 "الأموال المصروفة"),
+            ["Sales"] =
+                ("Ventes",
+                 "المبيعات"),
+            ["Items sold"] =
+                ("Articles vendus",
+                 "القطع المباعة"),
+            ["Average basket"] =
+                ("Panier moyen",
+                 "متوسط السلة"),
+            ["Discounts given"] =
+                ("Remises accordées",
+                 "الخصومات الممنوحة"),
+            ["Completed sales, less refunds"] =
+                ("Ventes terminées, moins les remboursements",
+                 "المبيعات المكتملة ناقص المسترد"),
+            ["Cost of the items actually sold"] =
+                ("Coût des articles vendus",
+                 "تكلفة القطع المباعة فعلاً"),
+            ["Revenue - COGS"] =
+                ("CA - coût des ventes",
+                 "الإيرادات - تكلفة البضاعة"),
+            ["Rent, power, water and the rest"] =
+                ("Loyer, électricité, eau et le reste",
+                 "الإيجار والكهرباء والماء وغيرها"),
+            ["Salary payments made in the period"] =
+                ("Salaires payés sur la période",
+                 "الرواتب المدفوعة في الفترة"),
+            ["Damaged, expired, lost or stolen, at cost"] =
+                ("Endommagé, périmé, perdu ou volé, au coût",
+                 "تالف أو منتهي أو مفقود أو مسروق، بسعر التكلفة"),
+            ["Gross profit - operating costs"] =
+                ("Marge brute - charges",
+                 "الربح الإجمالي - التكاليف التشغيلية"),
+            ["Money paid out to suppliers"] =
+                ("Argent versé aux fournisseurs",
+                 "الأموال المدفوعة للموردين"),
+            ["Value delivered - an asset, not an expense"] =
+                ("Valeur livrée — un actif, pas une charge",
+                 "قيمة المستلم — أصل وليس مصروفاً"),
+            ["Supplier payments + expenses + salaries"] =
+                ("Fournisseurs + dépenses + salaires",
+                 "الموردون + المصروفات + الرواتب"),
+            ["Bigger keyboard"] =
+                ("Clavier plus grand",
+                 "لوحة مفاتيح أكبر"),
+            ["Smaller keyboard"] =
+                ("Clavier plus petit",
+                 "لوحة مفاتيح أصغر"),
+            ["Show the keyboard"] =
+                ("Afficher le clavier",
+                 "إظهار لوحة المفاتيح"),
+            ["Drag to move the keyboard"] =
+                ("Glisser pour déplacer le clavier",
+                 "اسحب لتحريك لوحة المفاتيح"),
+            ["Remove this supplier"] =
+                ("Supprimer ce fournisseur",
+                 "إزالة هذا المورد"),
+            ["Type or scan its barcode instead"] =
+                ("Saisir ou scanner son code-barres",
+                 "اكتب أو امسح الباركود بدلاً من ذلك"),
+            ["1 kg"] =
+                ("1 kg",
+                 "1 كغ"),
+            ["250 g"] =
+                ("250 g",
+                 "250 غ"),
+            ["500 g"] =
+                ("500 g",
+                 "500 غ"),
+            ["Of which VAT"] =
+                ("Dont TVA",
+                 "منها الضريبة"),
+            ["Net takings"] =
+                ("Recette nette",
+                 "صافي المقبوض"),
+            ["Cost of goods"] =
+                ("Coût des marchandises",
+                 "تكلفة البضاعة"),
+            ["Runs the shop floor: products, stock, suppliers, purchases, staff and reports. Cannot see profit, salaries, supplier debt or settings."] =
+                ("Gère le magasin : produits, stock, fournisseurs, achats, employés et rapports. Ne voit pas les bénéfices, salaires, dettes fournisseurs ni paramètres.",
+                 "يدير المتجر: المنتجات والمخزون والموردين والمشتريات والعمال والتقارير. لا يرى الأرباح والرواتب وديون الموردين والإعدادات."),
+            ["deleted category {0}"] =
+                ("a supprimé la catégorie {0}",
+                 "حذف الفئة {0}"),
+            ["deleted supplier {0}"] =
+                ("a supprimé le fournisseur {0}",
+                 "حذف المورد {0}"),
+            ["The server answered with nothing."] =
+                ("Le serveur a répondu vide.",
+                 "ردّ الخادم بلا شيء."),
+            ["The server sent no catalogue."] =
+                ("Le serveur n'a envoyé aucun catalogue.",
+                 "لم يرسل الخادم قائمة المنتجات."),
+            ["The server did not say what it did with the sales."] =
+                ("Le serveur n'a pas indiqué ce qu'il a fait des ventes.",
+                 "لم يوضح الخادم ما فعله بالمبيعات."),
+            ["The server did not say what it did with the product."] =
+                ("Le serveur n'a pas indiqué ce qu'il a fait du produit.",
+                 "لم يوضح الخادم ما فعله بالمنتج."),
+            ["The server did not say what it did with the sale."] =
+                ("Le serveur n'a pas indiqué ce qu'il a fait de la vente.",
+                 "لم يوضح الخادم ما فعله بعملية البيع."),
+            ["Loss"] =
+                ("Perte",
+                 "خسارة"),
+            ["Stock count"] =
+                ("Inventaire",
+                 "جرد المخزون"),
+            ["Sale #{0}"] =
+                ("Vente n°{0}",
+                 "بيع رقم {0}"),
+            ["Return on sale #{0}"] =
+                ("Retour sur la vente n°{0}",
+                 "إرجاع من عملية رقم {0}"),
+            ["Sale #{0} cancelled"] =
+                ("Vente n°{0} annulée",
+                 "إلغاء عملية رقم {0}"),
+            ["Received at till"] =
+                ("Reçu à la caisse",
+                 "استلام في الصندوق"),
+            ["Purchase #{0}"] =
+                ("Achat n°{0}",
+                 "شراء رقم {0}"),
+            ["Purchase #{0} cancelled"] =
+                ("Achat n°{0} annulé",
+                 "إلغاء شراء رقم {0}"),
+            ["Paid on delivery"] =
+                ("Payé à la livraison",
+                 "مدفوع عند الاستلام"),
+            ["Manual"] =
+                ("Manuel",
+                 "يدوي"),
+            ["exported {0} rows of {1}"] =
+                ("a exporté {0} lignes de {1}",
+                 "صدّر {0} سطراً من {1}"),
+            ["products"] =
+                ("produits",
+                 "المنتجات"),
+            ["sales"] =
+                ("ventes",
+                 "المبيعات"),
+            ["stock movements"] =
+                ("mouvements de stock",
+                 "حركات المخزون"),
+            ["expenses"] =
+                ("dépenses",
+                 "المصروفات"),
+            ["supplier purchases"] =
+                ("achats fournisseurs",
+                 "مشتريات الموردين"),
+            ["supplier payments"] =
+                ("paiements fournisseurs",
+                 "مدفوعات الموردين"),
+            ["worker payments"] =
+                ("salaires",
+                 "مدفوعات العمال"),
+            ["profit report"] =
+                ("rapport de bénéfices",
+                 "تقرير الأرباح"),
             ["Quantity: {0}"] =
                 ("Quantité : {0}",
                  "الكمية: {0}"),

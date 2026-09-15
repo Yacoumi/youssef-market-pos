@@ -53,8 +53,7 @@ public partial class ReprintWindow : MarketPos.Views.DialogWindow
         if (recent.Count == 0)
             RecentList.Items.Add(new TextBlock
             {
-                Text = "No completed sales yet. Finish a sale with Pay and its receipt "
-                     + "number will appear here.",
+                Text = Loc.T("No completed sales yet. Finish a sale with Pay and its receipt number will appear here."),
                 TextWrapping = TextWrapping.Wrap,
                 MaxWidth = 400,
                 Style = (Style)FindResource("Text.Muted"),

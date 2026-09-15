@@ -441,8 +441,9 @@ public sealed class SaleViewModel : ViewModelBase
             }
 
             TicketsHeadline = list.TodayCount == 0
-                ? "No sales today yet"
-                : $"{list.TodayCount} {(list.TodayCount == 1 ? "sale" : "sales")} today  ·  {list.TodayTotal:N2} DH";
+                ? Loc.T("No sales today yet")
+                : Loc.T(list.TodayCount == 1 ? "{0} sale today  ·  {1}" : "{0} sales today  ·  {1}",
+                        list.TodayCount, Loc.Ltr($"{list.TodayTotal:N2} DH"));
 
             OnPropertyChanged(nameof(HasTickets));
             return;
@@ -453,8 +454,9 @@ public sealed class SaleViewModel : ViewModelBase
 
         var (count, total) = SaleRepository.DayTotals(DateTime.Now);
         TicketsHeadline = count == 0
-            ? "No sales today yet"
-            : $"{count} {(count == 1 ? "sale" : "sales")} today  ·  {total:N2} DH";
+            ? Loc.T("No sales today yet")
+            : Loc.T(count == 1 ? "{0} sale today  ·  {1}" : "{0} sales today  ·  {1}",
+                    count, Loc.Ltr($"{total:N2} DH"));
 
         OnPropertyChanged(nameof(HasTickets));
     }
@@ -535,7 +537,7 @@ public sealed class SaleViewModel : ViewModelBase
 
     /// <summary>Distinct lines, not units — "3 items" alongside a 2.4 kg line reads better than "5.4".</summary>
     public int ItemCount => Cart.Count;
-    public string ItemCountLabel => ItemCount == 1 ? "1 item" : $"{ItemCount} items";
+    public string ItemCountLabel => Loc.T(ItemCount == 1 ? "{0} item" : "{0} items", ItemCount);
 
     public RelayCommand SubmitBarcodeCommand { get; }
     /// <summary>

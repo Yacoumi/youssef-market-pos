@@ -44,7 +44,7 @@ public static class InventoryRepository
                 read.With("$id", productId);
                 using var reader = read.ExecuteReader();
                 if (!reader.Read())
-                    throw new InvalidOperationException($"No product with id {productId}.");
+                    throw new InvalidOperationException(Loc.T("No product with id {0}.", productId));
                 before = reader.Dec(0);
                 cost = reader.Dec(1);
             }
@@ -129,9 +129,9 @@ public static class InventoryRepository
                                   StockReason reason, string note = "")
     {
         Session.Require(Permission.ManageInventory);
-        if (quantity <= 0m) throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
+        if (quantity <= 0m) throw new ArgumentException(Loc.T("Quantity must be greater than zero."), nameof(quantity));
 
-        Move(productId, -quantity, reason, reference: "Loss", note: note);
+        Move(productId, -quantity, reason, reference: Loc.T("Loss"), note: note);
         ActivityRepository.Record("recorded stock loss", "Product", productId,
             newValue: $"-{quantity:0.###}",
             detail: ActivityRepository.Say("recorded {0} of {1} as {2}",
@@ -158,7 +158,7 @@ public static class InventoryRepository
         var delta = counted - before;
         if (delta == 0m) return;
 
-        Move(productId, delta, StockReason.ManualCorrection, reference: "Stock count", note: note,
+        Move(productId, delta, StockReason.ManualCorrection, reference: Loc.T("Stock count"), note: note,
              connection: connection);
         ActivityRepository.Record("changed stock", "Product", productId,
             oldValue: before.ToString("0.###"), newValue: counted.ToString("0.###"),

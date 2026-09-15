@@ -38,7 +38,7 @@ public static class ShiftRepository
     public static int Start(int workerId, string workerName, decimal openingCash, string note = "")
     {
         if (OpenShift(workerId) is not null)
-            throw new InvalidOperationException($"{workerName} already has a shift open.");
+            throw new InvalidOperationException(Loc.T("{0} already has a shift open.", workerName));
 
         using var connection = Database.Open();
         using var command = connection.CreateCommand();
@@ -60,7 +60,7 @@ public static class ShiftRepository
     /// <summary>Closes the shift against a counted figure and returns the difference.</summary>
     public static decimal End(int shiftId, decimal countedCash, string note = "")
     {
-        var shift = Find(shiftId) ?? throw new InvalidOperationException("That shift no longer exists.");
+        var shift = Find(shiftId) ?? throw new InvalidOperationException(Loc.T("That shift no longer exists."));
         var difference = countedCash - shift.ExpectedCash;
 
         using var connection = Database.Open();

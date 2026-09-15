@@ -24,7 +24,7 @@ public partial class App : Application
             }
             catch { /* logging must never mask the original fault */ }
 
-            MessageBox.Show(args.Exception.Message, "Market POS error",
+            MessageBox.Show(args.Exception.Message, Loc.T("Market POS error"),
                 MessageBoxButton.OK, MessageBoxImage.Error);
             args.Handled = true;
         };
@@ -138,8 +138,8 @@ public partial class App : Application
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"The till could not open its database.\n\n{ex.Message}\n\n{MarketPos.Data.Database.Path}",
-                "Market POS", MessageBoxButton.OK, MessageBoxImage.Error);
+                Loc.T("The till could not open its database.") + $"\n\n{ex.Message}\n\n{MarketPos.Data.Database.Path}",
+                Loc.T("Market POS"), MessageBoxButton.OK, MessageBoxImage.Error);
 
             Shutdown(1);
             return;

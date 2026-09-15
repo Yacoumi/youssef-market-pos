@@ -75,7 +75,7 @@ public abstract class AdminPageBase : UserControl
                 {
                     new TextBlock
                     {
-                        Text = "Not available to you",
+                        Text = MarketPos.Services.Loc.T("Not available to you"),
                         Style = (Style)FindResource("Text.EmptyTitle"),
                     },
                     new TextBlock

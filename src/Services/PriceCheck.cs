@@ -52,7 +52,7 @@ public sealed class PriceCheck
             var parts = new List<string>();
             if (Item.Category.Length > 0) parts.Add(Item.Category);
             if (Item.Barcode.Length > 0) parts.Add(Item.Barcode);
-            if (Item.Shelf.Length > 0) parts.Add($"shelf {Item.Shelf}");
+            if (Item.Shelf.Length > 0) parts.Add(Loc.T("shelf {0}", Item.Shelf));
             return string.Join(" · ", parts);
         }
     }
@@ -60,7 +60,7 @@ public sealed class PriceCheck
     /// <summary>The figure the customer is waiting for.</summary>
     public string PriceText => Item is null
         ? string.Empty
-        : Loc.Ltr(Item.Unit == Unit.Kg ? $"{Item.Price:N2} DH/kg" : $"{Item.Price:N2} DH");
+        : Loc.Ltr(Item.Unit == Unit.Kg ? $"{Item.Price:N2} DH/{Loc.T("kg")}" : $"{Item.Price:N2} DH");
 
     /// <summary>
     /// How many are left, in the words a shopkeeper uses. "0" is a number; "none left on the
@@ -72,13 +72,14 @@ public sealed class PriceCheck
         {
             if (Item is null) return string.Empty;
 
-            var unit = Item.Unit == Unit.Kg ? "kg" : Item.Stock == 1m ? "left" : "left";
+            var unit = Loc.T(Item.Unit == Unit.Kg ? "kg" : "left");
             return Item.Status switch
             {
                 StockStatus.OutOfStock => Loc.T("none left on the shelf"),
                 StockStatus.LowStock when Item.MinStock > 0m =>
-                    $"{Item.Stock:0.###} {unit} — below the {Item.MinStock:0.###} you asked for",
-                _ => $"{Item.Stock:0.###} {unit}",
+                    Loc.T("{0} {1} — below the {2} you asked for", Loc.Ltr($"{Item.Stock:0.###}"), unit,
+                          Loc.Ltr($"{Item.MinStock:0.###}")),
+                _ => $"{Loc.Ltr($"{Item.Stock:0.###}")} {unit}",
             };
         }
     }

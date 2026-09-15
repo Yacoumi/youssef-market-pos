@@ -97,12 +97,12 @@ public sealed class Worker
 
     public string SalaryLabel => Salary <= 0m
         ? "—"
-        : $"{Salary:N2} DH / {SalaryPeriod switch
+        : $"{Salary:N2} DH / {Services.Loc.T(SalaryPeriod switch
         {
             Models.SalaryPeriod.Daily => "day",
             Models.SalaryPeriod.Weekly => "week",
             _ => "month",
-        }}";
+        })}";
 }
 
 /// <summary>A worker's pay position for one period — due, paid and what is still owed.</summary>
@@ -244,7 +244,7 @@ public sealed class PurchaseLine
     public string MarginLabel => Margin switch
     {
         null => string.Empty,
-        <= 0m => "at a loss",
+        <= 0m => Services.Loc.T("at a loss"),
         var m when SellPrice > 0m => $"+{m:N2} ({m / SellPrice!.Value * 100m:0}%)",
         var m => $"+{m:N2}",
     };
@@ -305,13 +305,13 @@ public sealed class Expense
     /// <summary>True for a bill that comes back — the ones a shop has to cover before it earns.</summary>
     public bool Repeats => Recurring != Recurrence.None;
 
-    public string RepeatLabel => Recurring switch
+    public string RepeatLabel => Services.Loc.T(Recurring switch
     {
         Recurrence.Weekly => "Weekly",
         Recurrence.Monthly => "Monthly",
         Recurrence.Yearly => "Yearly",
         _ => string.Empty,
-    };
+    });
 }
 
 public sealed class StockMovement
@@ -331,7 +331,7 @@ public sealed class StockMovement
 
     public decimal Value => Math.Round(Math.Abs(Quantity) * UnitCost, 2);
 
-    public string ReasonLabel => Reason switch
+    public string ReasonLabel => Services.Loc.T(Reason switch
     {
         StockReason.SupplierPurchase => "Supplier purchase",
         StockReason.CustomerReturn => "Customer return",
@@ -340,7 +340,7 @@ public sealed class StockMovement
         StockReason.ManualCorrection => "Manual correction",
         StockReason.OpeningStock => "Opening stock",
         _ => Reason.ToString(),
-    };
+    });
 
     /// <summary>True for the reasons that destroy value rather than move it — the loss report.</summary>
     public bool IsLoss => Reason is StockReason.Damaged or StockReason.Expired
@@ -379,8 +379,8 @@ public sealed class Shift
         {
             var span = (EndedAt ?? DateTime.Now) - StartedAt;
             return span.TotalHours >= 1
-                ? $"{(int)span.TotalHours}h {span.Minutes}m"
-                : $"{span.Minutes}m";
+                ? Services.Loc.T("{0}h {1}m", (int)span.TotalHours, span.Minutes)
+                : Services.Loc.T("{0}m", span.Minutes);
         }
     }
 
@@ -567,7 +567,7 @@ public sealed class StockItem
     /// facts, and a stock list that shows both as "3" is one a shopkeeper cannot count against.
     /// </summary>
     public string StockLabel => Services.Loc.Ltr(Unit == Unit.Kg
-        ? $"{Stock:0.###} kg"
+        ? $"{Stock:0.###} {Services.Loc.T("kg")}"
         : Stock.ToString("0.###"));
 
     /// <summary>
@@ -654,8 +654,8 @@ public sealed class CategoryRow
     public string LowLabel => LowCount switch
     {
         0 => string.Empty,
-        1 => "1 needs restocking",
-        _ => $"{LowCount} need restocking",
+        1 => Services.Loc.T("{0} needs restocking", 1),
+        _ => Services.Loc.T("{0} need restocking", LowCount),
     };
 }
 

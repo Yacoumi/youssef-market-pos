@@ -22,12 +22,12 @@ public sealed class RefundLine : ViewModelBase
     public decimal LineTotal => Source.LineTotal;
 
     public string QuantityLabel => Source.Unit == Unit.Kg
-        ? $"{Source.Quantity:0.###} kg"
-        : $"{Source.Quantity:0.###}";
+        ? Loc.Ltr($"{Source.Quantity:0.###} {Loc.T("kg")}")
+        : Loc.Ltr($"{Source.Quantity:0.###}");
 
     public string ReturnedNote => Source.ReturnedQty <= 0m
         ? string.Empty
-        : $"{Source.ReturnedQty:0.###} already returned";
+        : Loc.T("{0} already returned", Loc.Ltr($"{Source.ReturnedQty:0.###}"));
 
     /// <summary>A line that has been fully returned cannot be returned again.</summary>
     public bool CanReturn => Source.Returnable > 0m;
@@ -71,7 +71,7 @@ public partial class SaleDetailWindow : MarketPos.Views.DialogWindow
         Services.Responsive.Fit(this);
 
         _sale = Link.Shop.Sales.Find(invoiceNumber)
-                ?? throw new InvalidOperationException($"No sale with receipt number {invoiceNumber}.");
+                ?? throw new InvalidOperationException(Loc.T("No sale with receipt number {0}.", invoiceNumber));
 
         ReasonBox.ItemsSource = new[]
         {
@@ -168,7 +168,7 @@ public partial class SaleDetailWindow : MarketPos.Views.DialogWindow
 
         var name = new TextBlock
         {
-            Text = label,
+            Text = Loc.T(label),
             Style = (Style)FindResource(muted ? "Text.CellMuted" : "Text.Cell"),
         };
         if (big) name.FontWeight = FontWeights.SemiBold;
@@ -194,7 +194,7 @@ public partial class SaleDetailWindow : MarketPos.Views.DialogWindow
         if (!_refunding) return;
         var total = _lines.Where(l => l.Selected).Sum(l => l.ReturnValue);
         RefundTotalText.Text = total <= 0m
-            ? "Nothing selected yet."
+            ? Loc.T("Nothing selected yet.")
             : Loc.T("Refunding {0}", Loc.Ltr($"{total:N2} DH"));
     }
 
@@ -263,7 +263,7 @@ public partial class SaleDetailWindow : MarketPos.Views.DialogWindow
 
         try
         {
-            Link.Shop.Sales.Cancel(_sale.InvoiceNumber, "Cancelled by " + Session.CurrentName);
+            Link.Shop.Sales.Cancel(_sale.InvoiceNumber, Loc.T("Cancelled by {0}", Session.CurrentName));
             _changed = true;
             _sale = Link.Shop.Sales.Find(_sale.InvoiceNumber)!;
             Bind();

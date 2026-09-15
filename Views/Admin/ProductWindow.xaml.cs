@@ -121,7 +121,7 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
     }
 
     private static string StockLabel(decimal stock, Unit unit) =>
-        unit == Unit.Kg ? $"{stock:0.###} kg" : $"{stock:0.###}";
+        unit == Unit.Kg ? $"{stock:0.###} {Loc.T("kg")}" : $"{stock:0.###}";
 
     private Unit SelectedUnit => Units[Math.Clamp(UnitBox.SelectedIndex, 0, Units.Length - 1)].Unit;
 
@@ -381,7 +381,7 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
     {
         var picker = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Choose a photo for this product",
+            Title = Loc.T("Choose a photo for this product"),
             Filter = "Pictures|*.png;*.jpg;*.jpeg;*.webp;*.bmp|All files|*.*",
             CheckFileExists = true,
         };

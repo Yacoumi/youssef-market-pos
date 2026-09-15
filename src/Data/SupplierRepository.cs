@@ -205,7 +205,7 @@ public static class SupplierRepository
     {
         Session.Require(Permission.ManagePurchases);
         if (purchase.Lines.Count == 0)
-            throw new ArgumentException("A purchase needs at least one product line.");
+            throw new ArgumentException(Loc.T("A purchase needs at least one product line."));
 
         // Repricing the shelf is a different power from recording what arrived, so it is
         // asked for separately — and only when a line actually carries a new price.
@@ -263,7 +263,7 @@ public static class SupplierRepository
             if (!addToStock) continue;
 
             InventoryRepository.Move(line.ProductId, line.Quantity, StockReason.SupplierPurchase,
-                reference: $"Purchase #{purchaseId}", unitCost: line.UnitCost, connection: connection);
+                reference: Loc.T("Purchase #{0}", purchaseId), unitCost: line.UnitCost, connection: connection);
 
             // The delivered cost becomes the product's cost, so COGS on the next sale uses
             // what this shop actually paid rather than a figure typed in months ago.
@@ -304,7 +304,7 @@ public static class SupplierRepository
 
         if (amountPaidNow > 0m)
             InsertPayment(connection, purchase.SupplierId, purchaseId, amountPaidNow,
-                          purchase.PurchasedOn, purchase.Method, "Paid on delivery");
+                          purchase.PurchasedOn, purchase.Method, Loc.T("Paid on delivery"));
 
         ActivityRepository.Record("recorded supplier purchase", "Purchase", purchaseId,
             newValue: $"{total:0.00} DH",
@@ -547,7 +547,7 @@ public static class SupplierRepository
         {
             foreach (var line in ListPurchaseLines(purchaseId))
                 InventoryRepository.Move(line.ProductId, -line.Quantity, StockReason.SupplierReturn,
-                    reference: $"Purchase #{purchaseId} cancelled", note: reason,
+                    reference: Loc.T("Purchase #{0} cancelled", purchaseId), note: reason,
                     unitCost: line.UnitCost, connection: connection);
         }
 

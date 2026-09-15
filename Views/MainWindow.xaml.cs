@@ -242,7 +242,7 @@ public partial class MainWindow : Window
         LinkChip.ToolTip = ShopLink.IsOnline
             ? Loc.T("Connected to {0} at {1}. Press to send now.",
                     ShopLink.ShopName, Loc.Ltr(ShopLink.Address))
-            : $"{ShopLink.LastProblem} Press to try again.";
+            : Loc.T("{0} Press to try again.", ShopLink.LastProblem);
     }
 
     private void ShowLooking()

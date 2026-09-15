@@ -37,7 +37,7 @@ public static class ShopTill
         if (sale.Lines.Count == 0)
         {
             status = 400;
-            return new CheckoutDone(false, 0, false, "There is nothing in the basket.");
+            return new CheckoutDone(false, 0, false, Services.Loc.T("There is nothing in the basket."));
         }
 
         try
@@ -101,7 +101,7 @@ public static class ShopTill
 
         if (arriving.Name.Trim().Length == 0)
         {
-            problem = "A product needs a name.";
+            problem = Services.Loc.T("A product needs a name.");
             return null;
         }
 

@@ -29,7 +29,7 @@ public static class ShopCategoriesApi
         catch (UnauthorizedAccessException)
         {
             // The shop decides who may do this, not the screen that asked.
-            return new CategorySaved(false, 0, "You are not allowed to manage categories.");
+            return new CategorySaved(false, 0, Services.Loc.T("You are not allowed to manage categories."));
         }
         catch (Exception problem)
         {
@@ -46,7 +46,7 @@ public static class ShopCategoriesApi
         }
         catch (UnauthorizedAccessException)
         {
-            return new CategorySaved(false, id, "You are not allowed to manage categories.");
+            return new CategorySaved(false, id, Services.Loc.T("You are not allowed to manage categories."));
         }
         catch (Exception problem)
         {
@@ -66,7 +66,7 @@ public static class ShopCategoriesApi
         }
         catch (UnauthorizedAccessException)
         {
-            return new CategorySaved(false, id, "You are not allowed to manage categories.");
+            return new CategorySaved(false, id, Services.Loc.T("You are not allowed to manage categories."));
         }
         catch (Exception problem)
         {
@@ -86,7 +86,7 @@ public static class ShopCategoriesApi
         }
         catch (UnauthorizedAccessException)
         {
-            return new CategorySaved(false, id, "You are not allowed to manage categories.");
+            return new CategorySaved(false, id, Services.Loc.T("You are not allowed to manage categories."));
         }
         catch (Exception problem)
         {
@@ -100,6 +100,6 @@ public static class ShopCategoriesApi
     /// </summary>
     private static string Plainly(Exception problem) =>
         problem.Message.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase)
-            ? "There is already a category with that name."
+            ? Services.Loc.T("There is already a category with that name.")
             : problem.Message;
 }

@@ -106,7 +106,7 @@ public static class ReceiptPrinter
 
                 if (queue is null)
                 {
-                    return "No receipt printer found — please connect your receipt printer";
+                    return Loc.T("No receipt printer found — please connect your receipt printer");
                 }
 
                 if (!IsVirtualPrinter(queue.Name))
@@ -118,7 +118,7 @@ public static class ReceiptPrinter
 
             if (IsVirtualPrinter(queue.Name) && !allowVirtual)
             {
-                return $"Configured printer \"{queue.Name}\" is a file printer — pick a real thermal printer";
+                return Loc.T("Configured printer \"{0}\" is a file printer — pick a real thermal printer", queue.Name);
             }
 
             // For thermal/POS receipt printers, use direct ESC/POS raw raster printing
@@ -144,7 +144,7 @@ public static class ReceiptPrinter
         }
         catch (Exception ex)
         {
-            return "Could not print: " + ex.Message;
+            return Loc.T("Could not print: {0}", ex.Message);
         }
     }
 

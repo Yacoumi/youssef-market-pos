@@ -37,16 +37,16 @@ public partial class WorkersPage : AdminPageBase
         /// <summary>The wage as agreed — "3,000.00 DH a month" — not a figure for this period.</summary>
         public string WageLabel => Worker.Salary <= 0m
             ? "—"
-            : $"{Worker.Salary:N2} {Worker.SalaryPeriod switch
+            : $"{Worker.Salary:N2} {Loc.T(Worker.SalaryPeriod switch
             {
                 SalaryPeriod.Daily => "a day",
                 SalaryPeriod.Weekly => "a week",
                 _ => "a month",
-            }}";
+            })}";
 
         public string DueLabel => Due <= 0m ? "—" : $"{Due:N2}";
         public string PaidLabel => Paid <= 0m ? "—" : $"{Paid:N2}";
-        public string OwedLabel => Owed <= 0m ? "paid up" : $"{Owed:N2}";
+        public string OwedLabel => Owed <= 0m ? Loc.T("paid up") : $"{Owed:N2}";
     }
 
     private List<Row> _rows = new();

@@ -183,7 +183,7 @@ public sealed class RemoteStock : IStockService
     /// </summary>
     private static StockSaved Saved(StockSaved? said)
     {
-        if (said is null) throw new ShopUnreachable("The shop did not answer.");
+        if (said is null) throw new ShopUnreachable(Services.Loc.T("The shop did not answer."));
         if (said.Ok) return said;
 
         throw said.Refusal switch

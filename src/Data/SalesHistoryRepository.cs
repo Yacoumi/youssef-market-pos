@@ -218,8 +218,8 @@ public static class SalesHistoryRepository
     {
         Session.Require(Permission.Refund);
 
-        var sale = Find(invoiceNumber) ?? throw new InvalidOperationException("That sale no longer exists.");
-        if (items.Count == 0) throw new ArgumentException("Choose at least one line to return.");
+        var sale = Find(invoiceNumber) ?? throw new InvalidOperationException(Loc.T("That sale no longer exists."));
+        if (items.Count == 0) throw new ArgumentException(Loc.T("Choose at least one line to return."));
 
         var lines = sale.Lines.ToDictionary(l => l.Id);
         var refundTotal = 0m;
@@ -227,10 +227,10 @@ public static class SalesHistoryRepository
         foreach (var (lineId, quantity) in items)
         {
             if (!lines.TryGetValue(lineId, out var line))
-                throw new InvalidOperationException("That line is not part of this sale.");
+                throw new InvalidOperationException(Loc.T("That line is not part of this sale."));
             if (quantity <= 0m || quantity > line.Returnable)
                 throw new InvalidOperationException(
-                    $"Cannot return {quantity:0.###} of {line.Name}; only {line.Returnable:0.###} is left to return.");
+                    Loc.T("Cannot return {0} of {1}; only {2} is left to return.", $"{quantity:0.###}", line.Name, $"{line.Returnable:0.###}"));
 
             refundTotal += Math.Round(quantity * line.UnitPrice, 2);
         }
@@ -284,7 +284,7 @@ public static class SalesHistoryRepository
 
             if (restock && line.ProductId is { } pid)
                 InventoryRepository.Move(pid, quantity, StockReason.CustomerReturn,
-                    reference: $"Return on sale #{invoiceNumber}", note: reason,
+                    reference: Loc.T("Return on sale #{0}", invoiceNumber), note: reason,
                     unitCost: line.UnitCost, connection: connection);
         }
 
@@ -316,7 +316,7 @@ public static class SalesHistoryRepository
     {
         Session.Require(Permission.Refund);
 
-        var sale = Find(invoiceNumber) ?? throw new InvalidOperationException("That sale no longer exists.");
+        var sale = Find(invoiceNumber) ?? throw new InvalidOperationException(Loc.T("That sale no longer exists."));
         if (sale.Status == SaleStatus.Cancelled) return;
 
         using var connection = Database.Open();
@@ -324,7 +324,7 @@ public static class SalesHistoryRepository
 
         foreach (var line in sale.Lines.Where(l => l.ProductId is not null))
             InventoryRepository.Move(line.ProductId!.Value, line.Quantity - line.ReturnedQty,
-                StockReason.CustomerReturn, reference: $"Sale #{invoiceNumber} cancelled",
+                StockReason.CustomerReturn, reference: Loc.T("Sale #{0} cancelled", invoiceNumber),
                 note: reason, unitCost: line.UnitCost, connection: connection);
 
         using (var update = connection.CreateCommand())

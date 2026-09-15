@@ -109,8 +109,10 @@ public partial class ActivityPage : AdminPageBase
             var size = Math.Abs(m.Quantity);
 
             var sentence = m.Quantity >= 0m
-                ? $"{who} put {size:0.###} onto {m.ProductName} — {m.BeforeQty:0.###} to {m.AfterQty:0.###}."
-                : $"{who} took {size:0.###} off {m.ProductName} — {m.BeforeQty:0.###} to {m.AfterQty:0.###}.";
+                ? Loc.T("{0} put {1} onto {2} — {3} to {4}.", who, Loc.Ltr($"{size:0.###}"), m.ProductName,
+                        Loc.Ltr($"{m.BeforeQty:0.###}"), Loc.Ltr($"{m.AfterQty:0.###}"))
+                : Loc.T("{0} took {1} off {2} — {3} to {4}.", who, Loc.Ltr($"{size:0.###}"), m.ProductName,
+                        Loc.Ltr($"{m.BeforeQty:0.###}"), Loc.Ltr($"{m.AfterQty:0.###}"));
 
             if (m.Note.Length > 0) sentence += $" {m.Note}";
 
@@ -155,7 +157,7 @@ public partial class ActivityPage : AdminPageBase
 
         EmptyTitle.Text = Loc.T(filtered ? "Nothing matches" : "Nothing happened");
         EmptyBody.Text = filtered
-            ? "Try a different search, or another kind."
+            ? Loc.T("Try a different search, or another kind.")
             : Loc.T("No changes and no stock moved {0}.",
                     Loc.T(Dates.RangeLabel).ToLowerInvariant());
     }

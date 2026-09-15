@@ -133,7 +133,7 @@ public partial class ExpenseWindow : MarketPos.Views.DialogWindow
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Choose a photo of the receipt",
+            Title = Loc.T("Choose a photo of the receipt"),
             Filter = "Images and PDF|*.jpg;*.jpeg;*.png;*.pdf|All files|*.*",
         };
 

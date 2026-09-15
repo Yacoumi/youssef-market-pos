@@ -41,7 +41,7 @@ public sealed class RemoteSuppliers : ISupplierService
     public bool Delete(int id, string name, out bool removed, out string problem)
     {
         var said = Api.Delete<SupplierGone>($"suppliers/{id}")
-                   ?? throw new ShopUnreachable("The shop did not answer.");
+                   ?? throw new ShopUnreachable(Services.Loc.T("The shop did not answer."));
 
         // Not allowed is the shop's decision and is thrown, the way the repository throws it,
         // so a page written against the repository behaves the same here.
@@ -193,7 +193,7 @@ public sealed class RemoteReports : IReportService
 {
     public Financials Money(DateRange range) =>
         Api.Get<Financials>("reports/money" + Api.When(range))
-        ?? throw new ShopUnreachable("The shop did not send its figures.");
+        ?? throw new ShopUnreachable(Services.Loc.T("The shop did not send its figures."));
 
     public List<Finance.Point> Series(DateRange range, SeriesKind kind) =>
         Api.Get<List<Finance.Point>>($"reports/series" + Api.When(range, $"kind={kind}"))

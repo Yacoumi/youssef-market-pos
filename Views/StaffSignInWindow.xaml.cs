@@ -157,8 +157,7 @@ public partial class StaffSignInWindow : MarketPos.Views.DialogWindow
         NoteText.Visibility = Visible(!needs);
         NoteText.Text = needs
             ? string.Empty
-            : "No admin password is set, so this opens on a press. Set one under Settings, "
-            + "and give your staff their own under Workers.";
+            : Loc.T("No admin password is set, so this opens on a press. Set one under Settings, and give your staff their own under Workers.");
 
         ConfirmButton.Content = Loc.T(needs ? "Sign in" : "Continue");
 

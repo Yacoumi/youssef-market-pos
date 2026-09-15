@@ -159,5 +159,5 @@ public static class ShopTokens
 /// </summary>
 public sealed class NotSignedIn : Exception
 {
-    public NotSignedIn() : base("This request did not say who it was from.") { }
+    public NotSignedIn() : base(Services.Loc.T("This request did not say who it was from.")) { }
 }

@@ -142,7 +142,7 @@ public partial class StockAdjustWindow : MarketPos.Views.DialogWindow
                     return;
                 }
 
-                Link.Shop.Stock.Move(_item.Id, _item.Name, delta, reason, reference: "Manual",
+                Link.Shop.Stock.Move(_item.Id, _item.Name, delta, reason, reference: Loc.T("Manual"),
                                      note: NoteBox.Text.Trim(), unitCost: null);
             }
 

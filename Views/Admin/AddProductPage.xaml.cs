@@ -100,7 +100,7 @@ public partial class AddProductPage : AdminPageBase
             // somebody might price against.
             CostLabel = p.Cost > 0m ? Loc.Ltr($"{p.Cost:N2} DH") : "\u2014",
             PriceLabel = Loc.Ltr($"{p.Price:N2} DH"),
-            StockLabel = p.Unit == Unit.Kg ? $"{p.Stock:0.###} kg" : $"{p.Stock:0.###}",
+            StockLabel = Loc.Ltr(p.Unit == Unit.Kg ? $"{p.Stock:0.###} {Loc.T("kg")}" : $"{p.Stock:0.###}"),
             AddedLabel = Ago(p),
             ExpiryLabel = p.ExpiryLabel,
             ExpiryNeedsAttention = p.ExpiryNeedsAttention,
@@ -255,7 +255,7 @@ public partial class AddProductPage : AdminPageBase
     {
         var picker = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Choose a photo for this product",
+            Title = Loc.T("Choose a photo for this product"),
             Filter = "Pictures|*.png;*.jpg;*.jpeg;*.webp;*.bmp|All files|*.*",
             CheckFileExists = true,
         };

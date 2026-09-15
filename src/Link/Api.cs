@@ -68,7 +68,7 @@ public static class Api
     public static byte[]? Bytes(string what)
     {
         if (Address.Length == 0)
-            throw new ShopUnreachable("This machine has not been told where the shop is.");
+            throw new ShopUnreachable(Services.Loc.T("This machine has not been told where the shop is."));
 
         return Task.Run(async () =>
         {
@@ -85,7 +85,7 @@ public static class Api
     private static T? Send<T>(HttpMethod how, string what, object? body) where T : class
     {
         if (Address.Length == 0)
-            throw new ShopUnreachable("This machine has not been told where the shop is.");
+            throw new ShopUnreachable(Services.Loc.T("This machine has not been told where the shop is."));
 
         try
         {
@@ -113,7 +113,7 @@ public static class Api
 
                 if (response.StatusCode is System.Net.HttpStatusCode.Forbidden)
                     throw new UnauthorizedAccessException(
-                        "The shop did not allow that. Sign in as somebody who may do it.");
+                        Services.Loc.T("The shop did not allow that. Sign in as somebody who may do it."));
 
                 if (response.StatusCode is System.Net.HttpStatusCode.NotFound
                                         or System.Net.HttpStatusCode.Conflict
@@ -178,7 +178,7 @@ public static class Api
     /// </summary>
     public static Saved Must(Saved? said)
     {
-        if (said is null) throw new ShopUnreachable("The shop did not answer.");
+        if (said is null) throw new ShopUnreachable(Services.Loc.T("The shop did not answer."));
         if (said.Ok) return said;
 
         throw said.Refusal switch
@@ -209,7 +209,7 @@ public static class Api
 public sealed class ShopUnreachable : Exception
 {
     public ShopUnreachable(string reason)
-        : base($"Cannot reach the shop's server. {reason}") { }
+        : base(Services.Loc.T("Cannot reach the shop's server. {0}", reason)) { }
 }
 
 /// <summary>
@@ -221,5 +221,5 @@ public sealed class ShopUnreachable : Exception
 public sealed class NotSignedInAtTheShop : Exception
 {
     public NotSignedInAtTheShop()
-        : base("The shop does not know who this till is. Sign in again.") { }
+        : base(Services.Loc.T("The shop does not know who this till is. Sign in again.")) { }
 }

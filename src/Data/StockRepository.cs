@@ -197,7 +197,7 @@ public static class StockRepository
     {
         Session.RequireAny(Permission.ManageProducts, Permission.AddProductAtTill);
 
-        var before = Find(productId) ?? throw new InvalidOperationException("That product no longer exists.");
+        var before = Find(productId) ?? throw new InvalidOperationException(Loc.T("That product no longer exists."));
 
         using var connection = Database.Open();
         using var transaction = connection.BeginTransaction();
@@ -223,7 +223,7 @@ public static class StockRepository
 
         if (quantity > 0m)
             InventoryRepository.Move(productId, quantity, StockReason.SupplierPurchase,
-                                     reference: "Received at till", unitCost: cost ?? before.Cost,
+                                     reference: Loc.T("Received at till"), unitCost: cost ?? before.Cost,
                                      connection: connection);
 
         if (price is not null && price != before.Price)

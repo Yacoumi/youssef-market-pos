@@ -62,8 +62,8 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
         {
             HeadingText.Text = existing.Name;
             SubText.Text = existing.IsActive
-                ? $"{existing.RoleLabel} since {existing.StartedOn:d MMMM yyyy}."
-                : "This worker is inactive.";
+                ? Loc.T("{0} since {1}.", existing.RoleLabel, existing.StartedOn.ToString("d MMMM yyyy"))
+                : Loc.T("This worker is inactive.");
             NameBox.Text = existing.Name;
             PhoneBox.Text = existing.Phone;
             EmailBox.Text = existing.Email;

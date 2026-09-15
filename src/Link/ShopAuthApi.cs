@@ -51,7 +51,7 @@ public static class ShopAuthApi
     {
         bool valid = recoveryKey is "9988" or "123456" or "0000";
         if (!valid)
-            return new Answered(false, "Invalid recovery PIN.");
+            return new Answered(false, Services.Loc.T("Invalid recovery PIN."));
 
         AdminAccount.SetPassword(AdminAccount.Starting);
         return new Answered(true);
@@ -87,7 +87,7 @@ public static class ShopAuthApi
         var (name, role) = ShopTokens.Whose(token);
 
         return name.Length == 0
-            ? new SignedInAs(false, string.Empty, string.Empty, string.Empty, true, "Not signed in.")
+            ? new SignedInAs(false, string.Empty, string.Empty, string.Empty, true, Services.Loc.T("Not signed in."))
             : new SignedInAs(true, string.Empty, name, role.ToString(), true, string.Empty);
     }
 }

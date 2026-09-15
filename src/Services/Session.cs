@@ -156,7 +156,7 @@ public static class Session
     {
         if (permissions.Any(Can)) return;
         throw new UnauthorizedAccessException(
-            $"{CurrentName} ({CurrentRole}) is not allowed to {Describe(permissions[0])}.");
+            Loc.T("{0} ({1}) is not allowed to {2}.", CurrentName, Loc.T(CurrentRole.ToString()), Describe(permissions[0])));
     }
 
     /// <summary>Throws when the current user may not do this. Repositories call it before writing.</summary>
@@ -164,10 +164,10 @@ public static class Session
     {
         if (Can(permission)) return;
         throw new UnauthorizedAccessException(
-            $"{CurrentName} ({CurrentRole}) is not allowed to {Describe(permission)}.");
+            Loc.T("{0} ({1}) is not allowed to {2}.", CurrentName, Loc.T(CurrentRole.ToString()), Describe(permission)));
     }
 
-    private static string Describe(Permission permission) => permission switch
+    private static string Describe(Permission permission) => Loc.T(permission switch
     {
         Permission.SeeFinancials => "view business financials",
         Permission.SeeSalaries => "view worker salaries",
@@ -175,6 +175,22 @@ public static class Session
         Permission.ManageSettings => "change business settings",
         Permission.Refund => "refund a sale",
         Permission.Discount => "apply a discount",
+        Permission.UsePos => "use the till",
+        Permission.SeeOwnSales => "see their own sales",
+        Permission.SeeAllSales => "see all sales",
+        Permission.ManageProducts => "manage products",
+        Permission.ManageCategories => "manage categories",
+        Permission.ManageInventory => "manage stock",
+        Permission.SeeStockMovements => "see stock movements",
+        Permission.ManageSuppliers => "manage suppliers",
+        Permission.ManagePurchases => "record supplier deliveries",
+        Permission.ManageWorkers => "manage workers",
+        Permission.ManageExpenses => "manage expenses",
+        Permission.ManageCash => "manage the cash drawer",
+        Permission.SeeReports => "see reports",
+        Permission.SeeActivityLog => "see the activity log",
+        Permission.ExportData => "export data",
+        Permission.AddProductAtTill => "add products at the till",
         _ => permission.ToString(),
-    };
+    });
 }

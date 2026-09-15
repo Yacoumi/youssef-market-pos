@@ -29,7 +29,7 @@ public partial class ExpensesPage : AdminPageBase
         public double BarWidth { get; set; }
 
         public string AmountLabel => Loc.Ltr($"{Amount:N2} {AppSettings.Current.Currency}");
-        public string ShareLabel => $"{Share * 100m:0}% of what was spent";
+        public string ShareLabel => Loc.T("{0} of what was spent", Loc.Ltr($"{Share * 100m:0}%"));
     }
 
     /// <summary>How wide the biggest bar is drawn. Everything else is a share of it.</summary>
@@ -223,7 +223,7 @@ public partial class ExpensesPage : AdminPageBase
 
         EmptyTitle.Text = Loc.T(filtered ? "Nothing matches" : "No bills recorded");
         EmptyBody.Text = filtered
-            ? "Try a different search, or another kind."
+            ? Loc.T("Try a different search, or another kind.")
             : Loc.T("Put in the rent, the light, the water and the internet. Mark the ones "
                   + "that come back every month and the shop will know what it has to take "
                   + "before it makes anything.");

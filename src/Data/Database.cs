@@ -37,8 +37,7 @@ public static class Database
         if (!NotOnThisMachine) return;
 
         throw new InvalidOperationException(
-            "This is a cashier's till: it has no shop database. Whatever asked for one should "
-            + "be asking the shop's server instead.");
+            MarketPos.Services.Loc.T("This is a cashier's till: it has no shop database. Whatever asked for one should be asking the shop's server instead."));
     }
 
     private static string BuildPath()
@@ -59,37 +58,128 @@ public static class Database
         return System.IO.Path.Combine(dir, "marketpos.db");
     }
 
+    private static readonly object Prepared = new();
+    private static string? _preparedPath;
+
     public static SqliteConnection Open()
     {
         RefuseIfTill();
+        PrepareTheFile();
 
         var connection = new SqliteConnection($"Data Source={Path}");
         connection.Open();
 
         using var pragma = connection.CreateCommand();
 
-        // Three settings, and every one of them is about more than one thing touching this file
-        // at once — which is what a shop's server is, once two tills are ringing up sales.
-        //
         //   foreign_keys  the relationships in the schema are enforced rather than decorative.
         //
-        //   journal_mode  write-ahead logging. In the default rollback journal a single writer
-        //                 blocks every reader, so a till asking for the catalogue would be
-        //                 refused while another till was paying. Under WAL, readers carry on
-        //                 against the last committed state while a write is in flight. It is a
-        //                 property of the file, so setting it once would do — it is set on every
-        //                 connection because that costs nothing and cannot be forgotten.
+        //   journal_mode  DELETE: every committed write is in marketpos.db itself, and the
+        //                 short-lived -journal file is gone the moment the write finishes. The
+        //                 shop's data is one file and only one file. Write-ahead logging kept
+        //                 recent sales in marketpos.db-wal instead, so replacing or copying
+        //                 marketpos.db on its own brought back — or lost — whatever that second
+        //                 file held.
         //
-        //   busy_timeout  five seconds of waiting for a lock instead of failing instantly.
-        //                 Two tills paying in the same second is not an error; it is a Saturday.
+        //   busy_timeout  five seconds of waiting for a lock instead of failing instantly. With a
+        //                 rollback journal a write briefly blocks readers, and two tills paying in
+        //                 the same second simply take turns.
         pragma.CommandText = """
             PRAGMA foreign_keys = ON;
-            PRAGMA journal_mode = WAL;
             PRAGMA busy_timeout = 5000;
+            PRAGMA journal_mode = DELETE;
             """;
         pragma.ExecuteNonQuery();
 
         return connection;
+    }
+
+    /// <summary>
+    /// Makes marketpos.db the whole of the database, once per run, before anything reads it.
+    ///
+    /// <para>
+    /// A marketpos.db-wal or -shm beside a database that is not in write-ahead mode belongs to
+    /// some other, older file: somebody replaced marketpos.db and left its companions behind.
+    /// SQLite would replay that log into the new file as if it were unsaved work, and an empty
+    /// database would open full of the old shop. Those leftovers are deleted, never read.
+    /// </para>
+    ///
+    /// <para>
+    /// A database still in write-ahead mode from an earlier version is the opposite case: its
+    /// log is genuinely its own, holding the latest sales. It is folded into marketpos.db and
+    /// the file switched to a rollback journal, after which the log is gone for good.
+    /// </para>
+    /// </summary>
+    private static void PrepareTheFile()
+    {
+        var path = Path;
+        if (_preparedPath == path) return;
+
+        lock (Prepared)
+        {
+            if (_preparedPath == path) return;
+
+            var wal = path + "-wal";
+            var shm = path + "-shm";
+
+            if (!File.Exists(path) || !IsWriteAheadFile(path))
+            {
+                // Not this file's log. Deleted before SQLite can see it.
+                TryDelete(wal);
+                TryDelete(shm);
+            }
+            else
+            {
+                // This file's own log: written into the file, then switched off.
+                using var connection = new SqliteConnection($"Data Source={path}");
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText = """
+                    PRAGMA busy_timeout = 5000;
+                    PRAGMA wal_checkpoint(TRUNCATE);
+                    PRAGMA journal_mode = DELETE;
+                    """;
+                command.ExecuteNonQuery();
+                connection.Close();
+                SqliteConnection.ClearPool(connection);
+
+                TryDelete(wal);
+                TryDelete(shm);
+            }
+
+            _preparedPath = path;
+        }
+    }
+
+    /// <summary>
+    /// Whether the file's header says it is in write-ahead mode — bytes 18 and 19 of an SQLite
+    /// database are 2 in WAL mode and 1 with a rollback journal.
+    /// </summary>
+    private static bool IsWriteAheadFile(string path)
+    {
+        try
+        {
+            using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var header = new byte[20];
+            return file.Read(header, 0, header.Length) == header.Length && header[18] == 2;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Removes a leftover companion file. One held open by another program is in use by it, not
+    /// left over, and is left alone.
+    /// </summary>
+    private static void TryDelete(string file)
+    {
+        try
+        {
+            if (File.Exists(file)) File.Delete(file);
+        }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
     }
 
     /// <summary>Creates the schema on first run. Safe to call on every startup.</summary>

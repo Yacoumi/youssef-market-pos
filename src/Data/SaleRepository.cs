@@ -129,7 +129,7 @@ public static class SaleRepository
             // that committed without moving stock would leave the count permanently wrong.
             if (line.Product.Id > 0)
                 InventoryRepository.Move(line.Product.Id, -line.Quantity, StockReason.Sale,
-                    reference: $"Sale #{invoiceNumber}",
+                    reference: Loc.T("Sale #{0}", invoiceNumber),
                     unitCost: costs.GetValueOrDefault(line.Product.Id), connection: connection);
         }
 

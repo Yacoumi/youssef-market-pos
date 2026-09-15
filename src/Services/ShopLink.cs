@@ -162,8 +162,8 @@ public static class ShopLink
             if (hello is null) return Fail("The server answered with nothing.");
 
             if (hello.Version != Contracts.Version)
-                return Fail($"The back office is version {hello.Version} and this till is "
-                          + $"{Contracts.Version}. Update them both.");
+                return Fail(Loc.T("The back office is version {0} and this till is {1}. Update them both.",
+                                  hello.Version, Contracts.Version));
 
             ShopName = hello.Shop;
             return Succeed();
@@ -380,7 +380,7 @@ public static class ShopLink
     public static async Task<CheckoutDone> Checkout(SaleUpload sale)
     {
         if (!IsConfigured)
-            return new CheckoutDone(false, 0, false, "This till has no shop to sell for.");
+            return new CheckoutDone(false, 0, false, Loc.T("This till has no shop to sell for."));
 
         try
         {
@@ -740,7 +740,7 @@ public static class ShopLink
     {
         var was = IsOnline;
         IsOnline = false;
-        LastProblem = problem;
+        LastProblem = Loc.T(problem);
         if (was) Changed?.Invoke(null, EventArgs.Empty);
         return false;
     }
@@ -756,6 +756,6 @@ public static class ShopLink
             ? bundle.InnerException.Message
             : error.Message;
 
-        return $"Cannot reach server at {Address}: {msg}";
+        return Loc.T("Cannot reach server at {0}: {1}", Address, msg);
     }
 }
