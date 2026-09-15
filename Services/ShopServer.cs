@@ -120,6 +120,12 @@ public static class ShopServer
             app.MapPost("/products/{id:int}/deliveries", (HttpRequest r, int id, ReceiveStock asked) =>
                 Authorised.Answering(r, () => ShopBusinessApi.ReceiveStock(id, asked), s => s.Ok));
 
+            app.MapPost("/products/{id:int}/photo", (HttpRequest r, int id, PhotoUpload asked) =>
+                Authorised.Answering(r, () => ShopBusinessApi.SaveProductPhoto(id, asked), s => s.Ok));
+
+            app.MapPost("/categories/{id:int}/photo", (HttpRequest request, int id, CategoryPhotoUpload asked) =>
+                Authorised.Answering(request, () => ShopCategoriesApi.SavePhoto(id, asked), s => s.Ok, 400));
+
             // ---------------------------------------------------------------- the shelves
             app.MapGet("/inventory/movements", (HttpRequest r, DateTime? from, DateTime? to, int? productId) =>
                 Authorised.Do(r, () => ShopBusinessApi.Movements(ShopBusinessApi.Span(from, to), productId)));
@@ -419,7 +425,8 @@ public static class ShopServer
                 .Append(i.Barcode).Append(':')
                 .Append(i.Name).Append(':')
                 .Append(i.Price.ToString(CultureInfo.InvariantCulture)).Append(':')
-                .Append(i.Stock.ToString(CultureInfo.InvariantCulture)).Append(';');
+                .Append(i.Stock.ToString(CultureInfo.InvariantCulture)).Append(':')
+                .Append(i.HasPhoto ? 'p' : '-').Append(';');
         }
 
         var bytes = System.Security.Cryptography.SHA256.HashData(

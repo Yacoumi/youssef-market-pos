@@ -31,6 +31,9 @@ public interface IStockService
 
     void ReceiveAtTill(int id, decimal quantity, decimal? cost, decimal? price, DateTime? expiresOn);
 
+    /// <summary>Keeps a product's photo with the shop, beside its marketpos.db.</summary>
+    void SavePhoto(int id, string barcode, byte[] png);
+
     // ---- the shelves themselves ----
 
     List<StockMovement> Movements(DateRange? range = null, int? productId = null);
@@ -80,6 +83,9 @@ public sealed class LocalStock : IStockService
 
     public void ReceiveAtTill(int id, decimal quantity, decimal? cost, decimal? price, DateTime? expiresOn) =>
         StockRepository.ReceiveAtTill(id, quantity, cost, price, expiresOn);
+
+    public void SavePhoto(int id, string barcode, byte[] png) =>
+        ShopData.SavePhoto(Services.ProductImages.NameFor(id, barcode), png);
 
     public List<StockMovement> Movements(DateRange? range = null, int? productId = null) =>
         InventoryRepository.ListMovements(range, productId);
@@ -150,6 +156,11 @@ public sealed class RemoteStock : IStockService
         Saved(Api.Post<StockSaved>($"products/{id}/deliveries",
                                    new ReceiveStock(quantity, cost, price, expiresOn)));
 
+    // The picture goes to the shop: a till keeps nothing, and a photo saved only on the counter
+    // that took it was a photo no screen that asks the shop would ever show.
+    public void SavePhoto(int id, string barcode, byte[] png) =>
+        Saved(Api.Post<StockSaved>($"products/{id}/photo", new PhotoUpload(Convert.ToBase64String(png))));
+
     public List<StockMovement> Movements(DateRange? range = null, int? productId = null)
     {
         var query = "inventory/movements?";
@@ -202,6 +213,9 @@ public sealed record SaveProduct(StockItem Item, decimal OpeningStock);
 public sealed record SetProductActive(bool Active);
 
 public sealed record ReceiveStock(decimal Quantity, decimal? Cost, decimal? Price, DateTime? ExpiresOn);
+
+/// <summary>A picture sent to the shop, as PNG bytes in base64.</summary>
+public sealed record PhotoUpload(string Png);
 
 public sealed record CountShelf(decimal Counted, string Note);
 

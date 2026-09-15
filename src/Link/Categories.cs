@@ -26,6 +26,8 @@ public sealed class LocalCategories : ICategoryService
 
     public bool SetActive(int id, string name, bool active, out string problem) =>
         CategoryRepository.SetActive(id, name, active, out problem);
+
+    public void SavePhoto(int id, string fileName, byte[] png) => CategoryImages.Save(id, fileName, png);
 }
 
 /// <summary>
@@ -53,8 +55,15 @@ public sealed class RemoteCategories : ICategoryService
     public int Create(string name, string icon = "", string image = "") =>
         Api.Post<CategorySaved>("categories", new NewCategory(name, icon, image))?.Id ?? 0;
 
-    public void Rename(int id, string oldName, string newName, string icon, string image) =>
-        Api.Put<CategorySaved>($"categories/{id}", new RenameCategory(oldName, newName, icon, image));
+    public void Rename(int id, string oldName, string newName, string icon, string image)
+    {
+        // Said out loud when the shop refuses, instead of the form closing as if the picture
+        // had been kept.
+        var said = Api.Put<CategorySaved>($"categories/{id}", new RenameCategory(oldName, newName, icon, image));
+        if (said is not { Ok: true })
+            throw new InvalidOperationException(said?.Problem is { Length: > 0 } problem
+                ? problem : Loc.T("The shop did not answer."));
+    }
 
     public bool Delete(int id, string name, out string problem)
     {
@@ -69,6 +78,15 @@ public sealed class RemoteCategories : ICategoryService
         problem = said?.Problem ?? string.Empty;
         return said?.Ok ?? false;
     }
+
+    public void SavePhoto(int id, string fileName, byte[] png)
+    {
+        var said = Api.Post<CategorySaved>($"categories/{id}/photo",
+                                           new CategoryPhotoUpload(fileName, Convert.ToBase64String(png)));
+        if (said is not { Ok: true })
+            throw new InvalidOperationException(said?.Problem is { Length: > 0 } problem
+                ? problem : Loc.T("The shop did not answer."));
+    }
 }
 
 // ---------------------------------------------------------------- what crosses the wire
@@ -78,6 +96,9 @@ public sealed record NewCategory(string Name, string Icon, string Image);
 
 /// <summary>A category the shop is being asked to rename.</summary>
 public sealed record RenameCategory(string OldName, string NewName, string Icon, string Image);
+
+/// <summary>A category picture sent to the shop: the name the row stores, and the PNG in base64.</summary>
+public sealed record CategoryPhotoUpload(string FileName, string Png);
 
 /// <summary>Hiding or restoring one.</summary>
 public sealed record SetCategoryActive(bool Active);

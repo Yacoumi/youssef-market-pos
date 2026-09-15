@@ -287,8 +287,10 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
             ShowInPos = true,
 
             // Only a path somebody set deliberately is stored. The catalogue finds the usual
-            // file by barcode on its own.
-            ImagePath = ProductImages.IsTheUsualPlace(_existing?.ImagePath, barcode)
+            // file on its own — and a till's picture link is never a path to store.
+            ImagePath = ShopImages.IsToken(_existing?.ImagePath)
+                        || ProductImages.IsTheUsualPlace(_existing?.ImagePath,
+                               _existing is null ? barcode : ProductImages.NameFor(_existing.Id, _existing.Barcode))
                 ? null
                 : _existing?.ImagePath,
         };
@@ -297,19 +299,26 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
 
         try
         {
+            var savedId = _existing?.Id ?? 0;
+
             if (_existing is null)
             {
-                if (!await Create(item, quantity)) return;
+                savedId = await Create(item, quantity);
+                if (savedId <= 0) return;
             }
             else
             {
+                // A new barcode is a new file name: the photo is carried over to it.
+                if (_pickedFrom is null && (_existing.Barcode ?? "").Trim() != barcode)
+                    _carriedPhoto = CurrentPhotoBytes(_existing);
+
                 Link.Shop.Stock.Update(item);
 
                 if (quantity > 0m)
                     Link.Shop.Stock.ReceiveAtTill(item.Id, quantity, cost: null, price: null, expiresOn: null);
             }
 
-            FilePicture(barcode, _existing?.Barcode);
+            FilePicture(savedId, barcode);
 
             // A till keeps the shop's catalogue in memory; it has to be asked again before the
             // change is on this screen.
@@ -329,14 +338,11 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
         }
     }
 
-    /// <summary>Puts a new product into the shop, wherever the shop is. False when refused.</summary>
-    private async Task<bool> Create(StockItem item, decimal openingStock)
+    /// <summary>Puts a new product into the shop, wherever the shop is. Its id, or 0 when refused.</summary>
+    private async Task<int> Create(StockItem item, decimal openingStock)
     {
         if (!Catalog.BelongsToAServer)
-        {
-            Link.Shop.Stock.Create(item, openingStock);
-            return true;
-        }
+            return Link.Shop.Stock.Create(item, openingStock);
 
         // A till holds a copy of the shop, not the shop: a new product goes to the server,
         // which is the only place the back office and the other tills will look for it.
@@ -348,16 +354,16 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
         if (made is null)
         {
             ErrorText.Text = Loc.T("The shop's server did not take it: {0}", ShopLink.LastProblem);
-            return false;
+            return 0;
         }
 
         if (made.AlreadyHad)
         {
             Fail(Loc.T("This product is already in inventory: {0}", made.Name), BarcodeBox);
-            return false;
+            return 0;
         }
 
-        return true;
+        return made.Id;
     }
 
     /// <summary>
@@ -400,45 +406,52 @@ public partial class ProductWindow : MarketPos.Views.DialogWindow
     {
         if (PictureBox is null) return;
 
-        var path = _pickedFrom ?? (_existing is null ? null : ProductImages.Find(_existing.Barcode));
-        var has = path is not null && System.IO.File.Exists(path);
+        // The photo just picked, or the one the shop already holds: a file here on the shop's
+        // own machine, and on a till the picture asked of the server.
+        var source = _pickedFrom
+            ?? (_existing is null ? null
+                : Catalog.BelongsToAServer ? ShopImages.ProductToken(_existing.Id)
+                : ProductImages.Find(ProductImages.NameFor(_existing.Id, _existing.Barcode)));
 
-        if (has)
-        {
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bitmap.UriSource = new Uri(path!);
-            bitmap.DecodePixelWidth = 190;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            PictureBox.Source = bitmap;
-        }
-        else
-        {
-            PictureBox.Source = null;
-        }
+        PictureBox.Source = new MarketPos.Converters.ImagePathConverter()
+            .Convert(source, typeof(object), null, CultureInfo.InvariantCulture) as System.Windows.Media.ImageSource;
 
-        PicturePrompt.Visibility = has ? Visibility.Collapsed : Visibility.Visible;
+        PicturePrompt.Visibility = PictureBox.Source is null ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private byte[]? _carriedPhoto;
+
+    /// <summary>The photo the shop holds for this product now, as bytes, or null.</summary>
+    private static byte[]? CurrentPhotoBytes(StockItem product)
+    {
+        try
+        {
+            if (Catalog.BelongsToAServer) return ShopImages.Bytes(ShopImages.ProductToken(product.Id));
+            var file = ProductImages.Find(ProductImages.NameFor(product.Id, product.Barcode));
+            return file is null ? null : System.IO.File.ReadAllBytes(file);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     /// <summary>
-    /// Files the photo under the barcode the product is being saved with, and moves an
-    /// existing photo along when the code changed.
+    /// Sends the photo to the shop under the product it belongs to. With or without a barcode:
+    /// the goods with nothing printed on them are the ones the cashier finds by their picture.
     /// </summary>
-    private void FilePicture(string barcode, string? previousBarcode)
+    private void FilePicture(int productId, string barcode)
     {
-        if (previousBarcode is { Length: > 0 } old && old != barcode)
+        if (_carriedPhoto is { } carried && productId > 0)
         {
-            var existingPhoto = ProductImages.Find(old);
-            if (existingPhoto is not null && _pickedFrom is null) _pickedFrom = existingPhoto;
-            ProductImages.Forget(old);
+            _carriedPhoto = null;
+            Link.Shop.Stock.SavePhoto(productId, barcode, carried);
+            ShopImages.Forget();
         }
 
-        if (_pickedFrom is null || barcode.Length == 0) return;
+        if (_pickedFrom is null || productId <= 0) return;
 
-        ProductImageWriter.Save(barcode, _pickedFrom);
+        ProductImageWriter.Save(productId, barcode, _pickedFrom);
     }
 
     // ------------------------------- Helpers -------------------------------

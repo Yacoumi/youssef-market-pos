@@ -5,7 +5,14 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 2.8
+## What's new in 2.9
+- **On-screen keyboard fixed on POS-Till.** The keyboard button no longer disappears after the activation window closes.
+- **Photos fixed.**
+  - Product and category pictures added from a till are now sent to the server and saved in the `Images` folder next to `marketpos.db`.
+  - Every till shows them.
+  - Products **without a barcode** can now have a photo.
+
+## From 2.8
 - **No AppData at all.** Everything the software keeps sits in the same folder as its exe:
   - `marketpos.db`
   - product photos (`Images`)

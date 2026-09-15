@@ -38,8 +38,9 @@ public static class ProductRepository
                 TaxRate = ParseMoney(reader.GetString(6)),
                 // An explicit path in the database wins; otherwise look for a file named
                 // after the barcode, so photos can be added without touching data or code.
-                ImagePath = reader.IsDBNull(7)
-                    ? ProductImages.Find(reader.Str(1))
+                // A till's picture link saved by mistake is not a path: the usual file is used.
+                ImagePath = reader.IsDBNull(7) || ShopImages.IsToken(reader.GetString(7))
+                    ? ProductImages.Find(ProductImages.NameFor(reader.GetInt32(0), reader.Str(1)))
                     : reader.GetString(7),
                 SoldAtTheTill = reader.IsDBNull(8) || reader.GetInt32(8) != 0,
                 Stock = reader.Dec(9),

@@ -19,8 +19,12 @@ public static class ProductImageWriter
     /// <summary>Longest edge kept. Tiles draw at 190px; twice that covers a high-DPI screen.</summary>
     public const int MaxEdge = 380;
 
-    /// <summary>Copies a chosen picture in, replacing whatever was there for this barcode.</summary>
-    public static void Save(string barcode, string sourcePath)
+    /// <summary>
+    /// Sends a chosen picture to the shop, replacing whatever it held for this product. On the
+    /// shop's own machine it is written beside marketpos.db; on a till it travels to the server
+    /// and is written there, so every screen that asks the shop shows it.
+    /// </summary>
+    public static void Save(int productId, string barcode, string sourcePath)
     {
         var source = new BitmapImage();
         source.BeginInit();
@@ -34,13 +38,14 @@ public static class ProductImageWriter
         source.EndInit();
         source.Freeze();
 
-        // The old file goes first: a .jpg left behind would keep winning, because the
-        // catalogue takes the first extension it finds.
-        ProductImages.Forget(barcode);
-
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(source));
-        using var file = File.Create(Path.Combine(ProductImages.Folder, barcode + ".png"));
-        encoder.Save(file);
+        using var png = new MemoryStream();
+        encoder.Save(png);
+
+        Link.Shop.Stock.SavePhoto(productId, barcode, png.ToArray());
+
+        // A till remembers pictures it has already asked for; this one has just changed.
+        ShopImages.Forget();
     }
 }

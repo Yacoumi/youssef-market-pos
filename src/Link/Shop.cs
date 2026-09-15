@@ -102,4 +102,7 @@ public interface ICategoryService
 
     /// <summary>Hides or restores one. False with a reason when the shop refuses.</summary>
     bool SetActive(int id, string name, bool active, out string problem);
+
+    /// <summary>Keeps a category picture with the shop, beside its marketpos.db.</summary>
+    void SavePhoto(int id, string fileName, byte[] png);
 }

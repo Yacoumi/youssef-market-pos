@@ -24,6 +24,14 @@ public static class ProductImages
         return dir;
     }
 
+    /// <summary>
+    /// The file name a product's photo is kept under: its barcode, or "product-{id}" for a product
+    /// with nothing printed on it. Those are exactly the products shown as picture tiles, and
+    /// naming only by barcode left them with nowhere to keep a photo at all.
+    /// </summary>
+    public static string NameFor(int productId, string? barcode) =>
+        string.IsNullOrWhiteSpace(barcode) ? $"product-{productId}" : barcode.Trim();
+
     /// <summary>Full path to this product's photo, or null to fall back to the placeholder glyph.</summary>
     public static string? Find(string barcode)
     {

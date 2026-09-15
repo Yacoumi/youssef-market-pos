@@ -274,27 +274,17 @@ public partial class AddProductPage : AdminPageBase
     {
         if (AddPictureBox is null) return;
 
-        var path = _pickedPicture
-                   ?? (_knownProduct is null ? null : ProductImages.Find(_knownProduct.Barcode));
-        var has = path is not null && System.IO.File.Exists(path);
+        // The photo just picked, or the one the shop already holds for a recognised product: a
+        // file on the shop's own machine, and on a till the picture asked of the server.
+        var source = _pickedPicture
+            ?? (_knownProduct is null ? null
+                : Catalog.BelongsToAServer ? ShopImages.ProductToken(_knownProduct.Id)
+                : ProductImages.Find(ProductImages.NameFor(_knownProduct.Id, _knownProduct.Barcode)));
 
-        if (has)
-        {
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bitmap.UriSource = new Uri(path!);
-            bitmap.DecodePixelWidth = 190;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            AddPictureBox.Source = bitmap;
-        }
-        else
-        {
-            AddPictureBox.Source = null;
-        }
+        AddPictureBox.Source = new MarketPos.Converters.ImagePathConverter()
+            .Convert(source, typeof(object), null, CultureInfo.InvariantCulture) as System.Windows.Media.ImageSource;
 
+        var has = AddPictureBox.Source is not null;
         AddPicturePrompt.Visibility = has ? Visibility.Collapsed : Visibility.Visible;
 
         // What the photo is for depends on whether this thing will ever be a tile.
@@ -588,7 +578,7 @@ public partial class AddProductPage : AdminPageBase
 
                 // A delivery is also the moment somebody finally has the thing in their hand
                 // to photograph it.
-                if (_pickedPicture is not null) ProductImageWriter.Save(known.Barcode, _pickedPicture);
+                if (_pickedPicture is not null) ProductImageWriter.Save(known.Id, known.Barcode, _pickedPicture);
 
                 Done(Loc.T("{0} × {1} added to stock", Loc.Ltr($"{quantity:0.###}"), known.Name));
                 return;
@@ -610,7 +600,7 @@ public partial class AddProductPage : AdminPageBase
                 return;
             }
 
-            Link.Shop.Stock.Create(new StockItem
+            var createdId = Link.Shop.Stock.Create(new StockItem
             {
                 Barcode = barcode,
                 Name = name,
@@ -626,7 +616,7 @@ public partial class AddProductPage : AdminPageBase
 
             // Filed after the save, under the barcode the product ended up with — which may be
             // an in-store code minted a line above this.
-            if (_pickedPicture is not null) ProductImageWriter.Save(barcode, _pickedPicture);
+            if (_pickedPicture is not null && createdId > 0) ProductImageWriter.Save(createdId, barcode, _pickedPicture);
 
             Done(Loc.T("{0} saved · {1} in stock", name, Loc.Ltr($"{quantity:0.###}")));
         }

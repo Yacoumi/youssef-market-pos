@@ -37,6 +37,23 @@ public static class ShopCategoriesApi
         }
     }
 
+    /// <summary>Files a category picture sent by a till or the back office, beside marketpos.db.</summary>
+    public static CategorySaved SavePhoto(int id, CategoryPhotoUpload asked)
+    {
+        if (!Services.Session.Can(Services.Permission.ManageCategories))
+            return new CategorySaved(false, id, Services.Loc.T("You are not allowed to manage categories."));
+
+        try
+        {
+            Services.CategoryImages.Save(id, asked.FileName, Convert.FromBase64String(asked.Png));
+            return new CategorySaved(true, id, string.Empty);
+        }
+        catch (Exception error)
+        {
+            return new CategorySaved(false, id, error.Message);
+        }
+    }
+
     public static CategorySaved Rename(int id, RenameCategory asked)
     {
         try

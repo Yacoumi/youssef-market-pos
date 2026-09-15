@@ -107,7 +107,10 @@ public static class StockRepository
                 ExpiresOn = reader.DateOrNull(15),
                 ShowInPos = reader.Bool(16),
                 IsActive = reader.Bool(17),
-                ImagePath = reader.IsDBNull(18) ? ProductImages.Find(barcode) : reader.Str(18),
+                // A till's picture link saved by mistake is not a path: the usual file is used.
+                ImagePath = reader.IsDBNull(18) || ShopImages.IsToken(reader.Str(18))
+                    ? ProductImages.Find(ProductImages.NameFor(reader.Int(0), barcode))
+                    : reader.Str(18),
                 CreatedAt = reader.Date(19),
             });
         }

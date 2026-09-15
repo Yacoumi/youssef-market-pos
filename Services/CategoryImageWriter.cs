@@ -31,13 +31,15 @@ public static class CategoryImageWriter
         source.Freeze();
 
         var name = $"cat-{categoryId}-{DateTime.UtcNow:yyyyMMddHHmmss}.png";
-        var target = Path.Combine(CategoryImages.Folder, name);
 
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(source));
-        using (var file = File.Create(target)) encoder.Save(file);
+        using var png = new MemoryStream();
+        encoder.Save(png);
 
-        CategoryImages.Forget(categoryId, keep: name);
+        // Kept with the shop, beside marketpos.db — sent there from a till.
+        Link.Shop.Categories.SavePhoto(categoryId, name, png.ToArray());
+        ShopImages.Forget();
         return name;
     }
 }

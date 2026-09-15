@@ -2488,6 +2488,9 @@ public static class Translations
             ["That line is not part of this sale."] =
                 ("Cette ligne ne fait pas partie de la vente.",
                  "هذا السطر ليس جزءاً من هذه العملية."),
+            ["Not a picture this category can keep."] =
+                ("Cette image ne peut pas être gardée pour cette catégorie.",
+                 "لا يمكن حفظ هذه الصورة لهذه الفئة."),
             ["That product no longer exists."] =
                 ("Ce produit n'existe plus.",
                  "هذا المنتج لم يعد موجوداً."),

@@ -240,6 +240,15 @@ public static class ShopBusinessApi
     public static Saved SetProductActive(int id, bool active) => Try(() =>
         StockRepository.SetActive(id, StockRepository.Find(id)?.Name ?? string.Empty, active));
 
+    /// <summary>Files a product photo sent by a till or the back office, beside marketpos.db.</summary>
+    public static Saved SaveProductPhoto(int id, PhotoUpload asked) => Try(() =>
+    {
+        Session.RequireAny(Permission.ManageProducts, Permission.AddProductAtTill);
+        var product = StockRepository.Find(id) ?? throw new InvalidOperationException(Loc.T("That product no longer exists."));
+        ShopData.SavePhoto(ProductImages.NameFor(id, product.Barcode), Convert.FromBase64String(asked.Png));
+        return id;
+    });
+
     public static Saved ReceiveStock(int id, ReceiveStock asked) => Try(() =>
         StockRepository.ReceiveAtTill(id, asked.Quantity, asked.Cost, asked.Price, asked.ExpiresOn));
 

@@ -175,11 +175,13 @@ public static class ShopData
     {
         if (string.IsNullOrWhiteSpace(nameOnDisk) || bytes.Length == 0) return;
 
+        // Any older photo under this name goes first — every extension — and then the new one is
+        // written. The other way round deleted the photo it had just saved.
+        ProductImages.Forget(nameOnDisk);
+
         System.IO.Directory.CreateDirectory(ProductImages.Folder);
         System.IO.File.WriteAllBytes(
             System.IO.Path.Combine(ProductImages.Folder, nameOnDisk + ".png"), bytes);
-
-        ProductImages.Forget(nameOnDisk);
     }
 
     // ---------------------------------------------------------------- how the shop is filed

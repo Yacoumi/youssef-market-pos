@@ -38,6 +38,26 @@ public static class CategoryImages
     }
 
     /// <summary>
+    /// Keeps a category picture that arrived as bytes, under the name the category row stores,
+    /// and drops the category's older ones. The name is checked so a request cannot write
+    /// anywhere but this folder.
+    /// </summary>
+    public static void Save(int categoryId, string fileName, byte[] png)
+    {
+        var expected = $"cat-{categoryId}-";
+        if (bytes(png) || !fileName.StartsWith(expected, StringComparison.Ordinal)
+            || !fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+            || fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            throw new ArgumentException(Loc.T("Not a picture this category can keep."));
+
+        Directory.CreateDirectory(Folder);
+        File.WriteAllBytes(Path.Combine(Folder, fileName), png);
+        Forget(categoryId, keep: fileName);
+
+        static bool bytes(byte[] b) => b is null || b.Length == 0;
+    }
+
+    /// <summary>
     /// Drops this category's other pictures. Called after a save so replacing a picture ten
     /// times leaves one file, not ten — and on removal, where nothing is kept.
     /// </summary>

@@ -74,6 +74,19 @@ public static class TouchKeyboard
 
         WatchWhatHasFocus();
         HideWhileAnotherAppIsInFront();
+
+        // Once everything has settled, make sure the button is really there. The activation
+        // prompt closes just before the till opens, and the "app went to the background" that
+        // its closing produces could arrive after the button was shown and hide it for good.
+        _button.Dispatcher.BeginInvoke(ShowIfThisAppIsInFront,
+            System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+    }
+
+    private static void ShowIfThisAppIsInFront()
+    {
+        if (_started && _button is not null && !_button.IsVisible && SomethingToTypeInto()
+            && Application.Current?.Windows.OfType<Window>().Any(w => w.IsActive) == true)
+            _button.Show();
     }
 
     public static void Stop()
@@ -299,8 +312,18 @@ public static class TouchKeyboard
 
         app.Deactivated += (_, _) =>
         {
-            _keys?.Hide();
-            _button?.Hide();
+            // Checked a moment later: a window of this app closing (the activation prompt, a
+            // sign-in) deactivates the app for an instant while the next one takes over, and
+            // hiding on that instant left the keyboard button gone with the till in front.
+            _button?.Dispatcher.BeginInvoke(() =>
+            {
+                if (Application.Current?.Windows.OfType<Window>().Any(
+                        w => w is not KeyboardWindow and not KeyboardButton && w.IsActive) == true)
+                    return;
+
+                _keys?.Hide();
+                _button?.Hide();
+            }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         };
 
         app.Activated += (_, _) =>
