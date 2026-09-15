@@ -589,7 +589,7 @@ public sealed class SaleViewModel : ViewModelBase
         {
             if (c is CategoryChoice choice) SelectedCategory = choice.Name;
         });
-        IncrementCommand = new RelayCommand(l => { if (l is CartLine line) line.Quantity += line.Step; RaiseTotalsChanged(); });
+        IncrementCommand = new RelayCommand(l => { if (l is CartLine line) Increment(line); });
         DecrementCommand = new RelayCommand(l => { if (l is CartLine line) Decrement(line); });
         RemoveLineCommand = new RelayCommand(l => { if (l is CartLine line) RemoveLine(line); });
         PayCommand = new RelayCommand(_ => RequestPayment(), _ => HasItems);
@@ -729,6 +729,7 @@ public sealed class SaleViewModel : ViewModelBase
             if (scanned.IsOutOfStock && !AlreadyInTheBasket(scanned))
             {
                 Refuse(Loc.T("Error: {0} is out of stock.", scanned.Name));
+                _wantedAfterRestock = null;
                 RanOutOf?.Invoke(this, scanned);
                 return;
             }
@@ -829,6 +830,24 @@ public sealed class SaleViewModel : ViewModelBase
     public void AddAfterRestock(int productId)
     {
         var restocked = Catalog.Products.FirstOrDefault(p => p.Id == productId);
+
+        // A quantity typed into the basket: the line gets what was typed, as far as the shelf
+        // now allows, rather than one more on top of the figure it was held back to.
+        if (restocked is not null && _wantedAfterRestock is { } wanted && wanted.ProductId == productId
+            && Cart.FirstOrDefault(l => l.Product.Id == productId) is { } line)
+        {
+            _wantedAfterRestock = null;
+            _holdingToTheShelf = true;
+            try { line.Quantity = Math.Min(wanted.Quantity, Math.Max(restocked.Stock, 0m)); }
+            finally { _holdingToTheShelf = false; }
+
+            StatusMessage = string.Empty;
+            RaiseTotalsChanged();
+            FocusBarcode();
+            return;
+        }
+
+        _wantedAfterRestock = null;
         if (restocked is not null) AddProduct(restocked);
         else FocusBarcode();
     }
@@ -871,6 +890,7 @@ public sealed class SaleViewModel : ViewModelBase
         // customer's shopping already packed. Better to say it at the scan.
         if (RoomFor(product) < wanted)
         {
+            _wantedAfterRestock = null;
             Refuse(Loc.T("Error: {0} is out of stock.", product.Name));
             RanOutOf?.Invoke(this, product);
             return;
@@ -906,7 +926,10 @@ public sealed class SaleViewModel : ViewModelBase
             RemoveLine(line);
             return;
         }
-        line.Quantity -= line.Step;
+        // Fewer is never more than the shelf holds, so no stock check on the way down.
+        _holdingToTheShelf = true;
+        try { line.Quantity -= line.Step; }
+        finally { _holdingToTheShelf = false; }
         RaiseTotalsChanged();
     }
 
@@ -922,6 +945,57 @@ public sealed class SaleViewModel : ViewModelBase
     {
         if (e.PropertyName is nameof(CartLine.LineTotal))
             RaiseTotalsChanged();
+
+        // A quantity typed into the basket, or a weight button, gets the same stock check as a
+        // scan. Otherwise a product with no barcode, which is never scanned a second time, went
+        // past the shelf here and was only refused at payment.
+        if (e.PropertyName is nameof(CartLine.Quantity) && sender is CartLine line && !_holdingToTheShelf)
+            HoldToTheShelf(line);
+    }
+
+    private bool _holdingToTheShelf;
+    private (int ProductId, decimal Quantity)? _wantedAfterRestock;
+
+    /// <summary>The product as the catalogue knows it now, not the copy put on the line before a restock.</summary>
+    private static Product Current(Product product) =>
+        Catalog.Products.FirstOrDefault(p => p.Id == product.Id) ?? product;
+
+    /// <summary>One more of a line already on the sale. Checked against the shelf exactly like a scan.</summary>
+    private void Increment(CartLine line)
+    {
+        var product = Current(line.Product);
+        if (RoomFor(product) < line.Step)
+        {
+            _wantedAfterRestock = null;
+            Refuse(Loc.T("Error: {0} is out of stock.", product.Name));
+            RanOutOf?.Invoke(this, product);
+            return;
+        }
+
+        _holdingToTheShelf = true;
+        try { line.Quantity += line.Step; }
+        finally { _holdingToTheShelf = false; }
+
+        RaiseTotalsChanged();
+    }
+
+    private void HoldToTheShelf(CartLine line)
+    {
+        var product = Current(line.Product);
+        if (RoomFor(product) >= 0m) return;
+
+        // Back to what the shelf holds, and the shop is asked to add the rest — after the edit
+        // that caused it has finished, not in the middle of it.
+        _wantedAfterRestock = (product.Id, line.Quantity);
+        _holdingToTheShelf = true;
+        try { line.Quantity = Math.Max(product.Stock, 0m); }
+        finally { _holdingToTheShelf = false; }
+
+        RaiseTotalsChanged();
+        Refuse(Loc.T("Error: {0} is out of stock.", product.Name));
+        System.Windows.Application.Current?.Dispatcher.BeginInvoke(
+            new Action(() => RanOutOf?.Invoke(this, product)),
+            System.Windows.Threading.DispatcherPriority.Background);
     }
 
     public void ClearCart()

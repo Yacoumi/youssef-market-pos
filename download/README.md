@@ -5,7 +5,14 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 2.9
+## What's new in 3.0
+- **Products without a barcode now behave like products with one when stock runs out.**
+  - Pressing **+** in the basket past the stock left opens the pop-up asking how many to add to stock.
+  - Typing a bigger quantity, or using a weight button, does the same.
+  - Before, these were only refused at payment.
+  - After the stock is added, the basket gets the quantity you asked for.
+
+## From 2.9
 - **On-screen keyboard fixed on POS-Till.** The keyboard button no longer disappears after the activation window closes.
 - **Photos fixed.**
   - Product and category pictures added from a till are now sent to the server and saved in the `Images` folder next to `marketpos.db`.
