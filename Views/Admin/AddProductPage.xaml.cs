@@ -43,8 +43,15 @@ public partial class AddProductPage : AdminPageBase
         // already in the box the code belongs in.
         _scanner = new BarcodeScanner(this)
         {
+            // Not while somebody is typing in a box (the name, the price): fast typing and the
+            // on-screen keyboard looked like a scan and filled the barcode, and a product the
+            // shop saved without one was hidden from the till's tiles. Nor once "No barcode"
+            // has been chosen.
             ShouldWatch = () => AddScroll.Visibility == Visibility.Visible
-                             && !ReferenceEquals(Keyboard.FocusedElement, AddBarcodeBox),
+                             && AddBarcodeRow.Visibility == Visibility.Visible
+                             && Keyboard.FocusedElement is not System.Windows.Controls.TextBox
+                             && Keyboard.FocusedElement is not System.Windows.Controls.PasswordBox
+                             && Keyboard.FocusedElement is not System.Windows.Controls.ComboBox,
         };
         _scanner.Scanned += (_, code) =>
         {
@@ -591,7 +598,8 @@ public partial class AddProductPage : AdminPageBase
 
             var name = AddNameBox.Text.Trim();
             var category = AddCategoryBox.Text.Trim();
-            var barcode = AddBarcodeBox.Text.Trim();
+            // "No barcode" means none, whatever the hidden box may still hold.
+            var barcode = AddBarcodeRow.Visibility == Visibility.Visible ? AddBarcodeBox.Text.Trim() : string.Empty;
 
             if (name.Length == 0) { Fail("Give the product a name.", AddNameBox); return; }
             if (category.Length == 0) { Fail("Choose or type a category.", AddCategoryBox); return; }

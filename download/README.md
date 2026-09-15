@@ -5,6 +5,13 @@
 
 Publisher: **Homayk Studio**
 
+## What's new in 3.5
+- **Fixed: products added without a barcode didn't show on the cashier screen.**
+  - On Add product, typing quickly (or with the on-screen keyboard) in the name or price box was mistaken for a barcode scan.
+  - The typing was saved as a barcode, and products with a barcode are hidden from the tiles.
+  - Now only a real scan fills the barcode, and **No barcode** always saves with no barcode.
+- **Removing a product asks first** (from 3.4).
+
 ## What's new in 3.4
 - **Removing a product now asks first:** "هل تريد إزالة … من المتجر؟" نعم / لا.
   - Before, one tap on the red remove button took the product off the till with no warning.
