@@ -34,12 +34,13 @@ public static class TouchKeyboard
     /// <summary>
     /// Whether this machine gets an on-screen keyboard.
     ///
-    /// The shop's own answer if it has given one in Settings, and otherwise the machine's:
-    /// a keyboard on a touchscreen till, and nothing at all on a counter that has a real one
-    /// plugged into it. A shop that never opens Settings gets the right thing either way,
-    /// which is the point — most of them never will.
+    /// The shop's own answer if settings.json gives one, and otherwise yes. It used to follow
+    /// the touchscreen report instead, and many touch monitors — USB ones especially — report
+    /// no touch at all to Windows, so the keyboard and its button never appeared on the very
+    /// counters that needed them. The button only wakes when a box is waiting to be typed into,
+    /// and a machine that should never show it sets "OnScreenKeyboard": false.
     /// </summary>
-    public static bool Wanted => AppSettings.Current.OnScreenKeyboard ?? HasATouchscreen;
+    public static bool Wanted => AppSettings.Current.OnScreenKeyboard ?? true;
 
     /// <summary>How many fingers this screen can register. Zero means it is not a touchscreen.</summary>
     public static bool HasATouchscreen

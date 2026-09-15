@@ -59,14 +59,17 @@ public static class Database
     }
 
     private static readonly object Prepared = new();
-    private static string? _preparedPath;
 
     public static SqliteConnection Open()
     {
         RefuseIfTill();
         PrepareTheFile();
 
-        var connection = new SqliteConnection($"Data Source={Path}");
+        // Pooling off: the file is open only while a request is using it. A pooled connection
+        // kept marketpos.db open for as long as the server ran - a server with no window - so
+        // replacing the file with a clean one was refused by Windows or left the server reading
+        // the old one. Now the server always reads whatever marketpos.db is on disk.
+        var connection = new SqliteConnection($"Data Source={Path};Pooling=False");
         connection.Open();
 
         using var pragma = connection.CreateCommand();
@@ -94,7 +97,7 @@ public static class Database
     }
 
     /// <summary>
-    /// Makes marketpos.db the whole of the database, once per run, before anything reads it.
+    /// Makes marketpos.db the whole of the database, before every open.
     ///
     /// <para>
     /// A marketpos.db-wal or -shm beside a database that is not in write-ahead mode belongs to
@@ -112,14 +115,16 @@ public static class Database
     private static void PrepareTheFile()
     {
         var path = Path;
-        if (_preparedPath == path) return;
+        var wal = path + "-wal";
+        var shm = path + "-shm";
+
+        // Checked on every open, not once per run: the file can be replaced while the server is
+        // running, and a leftover beside the new one must not be read. The usual case - no
+        // companion files at all - costs two existence checks.
+        if (!File.Exists(wal) && !File.Exists(shm)) return;
 
         lock (Prepared)
         {
-            if (_preparedPath == path) return;
-
-            var wal = path + "-wal";
-            var shm = path + "-shm";
 
             if (!File.Exists(path) || !IsWriteAheadFile(path))
             {
@@ -130,7 +135,7 @@ public static class Database
             else
             {
                 // This file's own log: written into the file, then switched off.
-                using var connection = new SqliteConnection($"Data Source={path}");
+                using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = """
@@ -140,13 +145,10 @@ public static class Database
                     """;
                 command.ExecuteNonQuery();
                 connection.Close();
-                SqliteConnection.ClearPool(connection);
 
                 TryDelete(wal);
                 TryDelete(shm);
             }
-
-            _preparedPath = path;
         }
     }
 

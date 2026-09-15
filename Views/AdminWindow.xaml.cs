@@ -82,6 +82,16 @@ public partial class AdminWindow : Window
 
     private Window? _till;
 
+    /// <summary>The back office's content while it is the till window's screen.</summary>
+    private FrameworkElement? _screen;
+
+    /// <summary>
+    /// Whether the back office is on screen. The sidebar and the date chips ignore clicks until
+    /// it is; asking the window itself answered "no" for ever once its content was moved into
+    /// the till's window, because this window is never shown - so no sidebar item opened.
+    /// </summary>
+    public new bool IsLoaded => _screen?.IsLoaded ?? base.IsLoaded;
+
     /// <summary>Raised when the back office is done — closed, signed out, or Back to the till.</summary>
     public event EventHandler? LeaveRequested;
 
@@ -98,6 +108,7 @@ public partial class AdminWindow : Window
         _till = till;
 
         var content = InPage.Detach(this);
+        _screen = content;
         InPage.Embed(this, till);
 
         // Keys pressed in the back office reach its own handler (Escape, F5), as they did on
