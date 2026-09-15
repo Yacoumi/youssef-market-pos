@@ -52,6 +52,15 @@ public readonly record struct DateRange(DateTime From, DateTime To, DatePreset P
                                  : $"{from:d MMM} – {to:d MMM yyyy}");
     }
 
+    /// <summary>
+    /// A window exactly as another machine already worked it out — From and To half-open, as
+    /// sent. Custom is for dates a person picked and pushes To to the next midnight; a till's
+    /// "Yesterday" arrives as yesterday→today, and passing that through Custom stretched it to
+    /// take in the whole of today as well.
+    /// </summary>
+    public static DateRange Exact(DateTime from, DateTime to) =>
+        to <= from ? Custom(from, to) : new DateRange(from, to, DatePreset.Custom, string.Empty);
+
     /// <summary>The same length of time immediately before this one, for "vs previous" figures.</summary>
     public DateRange Previous()
     {

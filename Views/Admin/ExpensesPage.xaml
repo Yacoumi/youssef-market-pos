@@ -178,9 +178,9 @@
                                                 </StackPanel>
 
                                                 <TextBlock Grid.Column="2" Style="{StaticResource Text.CellMuted}"
-                                                           Text="{Binding Category}"/>
+                                                           Text="{Binding Category, Converter={StaticResource Translate}}"/>
                                                 <TextBlock Grid.Column="3" Style="{StaticResource Text.CellMuted}"
-                                                           Text="{Binding Method}"/>
+                                                           Text="{Binding Method, Converter={StaticResource Translate}}"/>
                                                 <TextBlock x:Name="amount" Grid.Column="4"
                                                            Style="{StaticResource Text.Money}"
                                                            Text="{Binding Amount, Converter={StaticResource Money}}"/>

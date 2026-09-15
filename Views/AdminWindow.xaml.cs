@@ -135,8 +135,8 @@ public partial class AdminWindow : Window
             // Signed in, but holding nothing this window can show. Say so rather than
             // opening on a page that will only refuse them.
             PageTitle.Text = Loc.T("Nothing here for you");
-            PageSubtitle.Text = $"{Session.CurrentName} has no back-office access. "
-                              + "The owner sets this under Workers.";
+            PageSubtitle.Text = Loc.T("{0} has no back-office access. The owner sets this under Workers.",
+                                      Session.CurrentName);
             return;
         }
 

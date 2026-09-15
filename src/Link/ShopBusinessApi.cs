@@ -31,7 +31,7 @@ public static class ShopBusinessApi
     /// as "everything". Written here so both servers read a query string the same way.
     /// </summary>
     public static DateRange? Span(DateTime? from, DateTime? to) =>
-        from is { } f && to is { } t ? DateRange.Custom(f, t) : null;
+        from is { } f && to is { } t ? DateRange.Exact(f, t) : null;
 
     /// <summary>Runs a write and describes what happened, refusals included.</summary>
     private static Saved Try(Func<int> work)

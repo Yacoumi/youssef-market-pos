@@ -153,14 +153,14 @@ public sealed class RemoteStock : IStockService
     public List<StockMovement> Movements(DateRange? range = null, int? productId = null)
     {
         var query = "inventory/movements?";
-        if (range is { } r) query += $"from={r.From:O}&to={r.To:O}&";
+        if (range is { } r) query += Api.When(r).TrimStart('?') + "&";
         if (productId is { } id) query += $"productId={id}";
 
         return Api.Get<List<StockMovement>>(query) ?? new List<StockMovement>();
     }
 
     public List<(StockReason Reason, decimal Quantity, decimal Value)> LossesByReason(DateRange range) =>
-        (Api.Get<List<LossLine>>($"inventory/losses?from={range.From:O}&to={range.To:O}")
+        (Api.Get<List<LossLine>>("inventory/losses" + Api.When(range))
          ?? new List<LossLine>())
         .Select(l => (l.Reason, l.Quantity, l.Value))
         .ToList();

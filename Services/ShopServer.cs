@@ -125,7 +125,7 @@ public static class ShopServer
                 Authorised.Do(r, () => ShopBusinessApi.Movements(ShopBusinessApi.Span(from, to), productId)));
 
             app.MapGet("/inventory/losses", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.Losses(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.Losses(DateRange.Exact(from, to))));
 
             app.MapPost("/inventory/{id:int}/count", (HttpRequest r, int id, CountShelf asked) =>
                 Authorised.Answering(r, () => ShopBusinessApi.CountShelf(id, asked), s => s.Ok));
@@ -184,10 +184,10 @@ public static class ShopServer
                 Authorised.Answering(r, () => ShopBusinessApi.VoidExpense(id, why.Text), s => s.Ok));
 
             app.MapGet("/expenses/by-category", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.ExpensesByCategory(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.ExpensesByCategory(DateRange.Exact(from, to))));
 
             app.MapGet("/expenses/total", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.ExpenseTotal(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.ExpenseTotal(DateRange.Exact(from, to))));
 
             app.MapGet("/expenses/categories", (HttpRequest r) => Authorised.Do(r, ShopBusinessApi.ExpenseCategories));
 
@@ -211,10 +211,10 @@ public static class ShopServer
                 Authorised.Answering(r, () => ShopBusinessApi.SetEmployeePassword(id, asked.Value), s => s.Ok));
 
             app.MapGet("/employees/salaries", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.Salaries(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.Salaries(DateRange.Exact(from, to))));
 
             app.MapGet("/employees/paid", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.SalariesPaidIn(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.SalariesPaidIn(DateRange.Exact(from, to))));
 
             app.MapPost("/employees/{id:int}/salary-payments", (HttpRequest r, int id, PaySalaryNow asked) =>
                 Authorised.Answering(r, () => ShopBusinessApi.PaySalary(id, asked), s => s.Ok));
@@ -228,10 +228,10 @@ public static class ShopServer
                     productId, categoryId)));
 
             app.MapGet("/sales/products", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.ProductPerformance(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.ProductPerformance(DateRange.Exact(from, to))));
 
             app.MapGet("/sales/cashiers", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.WhoSoldIn(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.WhoSoldIn(DateRange.Exact(from, to))));
 
             app.MapGet("/sales/{invoice:int}", (HttpRequest r, int invoice) =>
                 Authorised.Do(r, () => ShopBusinessApi.Sale(invoice)));
@@ -248,17 +248,17 @@ public static class ShopServer
 
             // ---------------------------------------------------------------- the figures
             app.MapGet("/reports/money", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.Money(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.Money(DateRange.Exact(from, to))));
 
             app.MapGet("/reports/series", (HttpRequest r, DateTime from, DateTime to, string kind) =>
                 Authorised.Do(r, () => ShopBusinessApi.Series(
-                    DateRange.Custom(from, to),
+                    DateRange.Exact(from, to),
                     Enum.TryParse<SeriesKind>(kind, out var which) ? which : SeriesKind.Revenue)));
 
             app.MapGet("/reports/alerts", (HttpRequest r) => Authorised.Do(r, ShopBusinessApi.Alerts));
 
             app.MapGet("/reports/losses", (HttpRequest r, DateTime from, DateTime to) =>
-                Authorised.Do(r, () => ShopBusinessApi.Losses(DateRange.Custom(from, to))));
+                Authorised.Do(r, () => ShopBusinessApi.Losses(DateRange.Exact(from, to))));
 
             // ---------------------------------------------------------------- who is allowed in
             //

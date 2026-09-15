@@ -1,39 +1,42 @@
 using MarketPos.Views;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Windows.Input;
-using MarketPos.Data;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using MarketPos.Models;
 using MarketPos.Services;
 
 namespace MarketPos.Views.Admin;
 
 /// <summary>
-/// Add or edit a product.
+/// Add or edit a product, in the same few questions as the Add product page: barcode, name,
+/// category, how it is sold, what it cost, what it sells for, how many, and when it goes off.
 ///
-/// The one rule the form enforces beyond "fill in the box": on an existing product, stock is
-/// read-only. Correcting a count belongs on the Inventory page, which asks why it changed and
-/// writes a movement. Letting it be typed over here would put a hole in the stock history
-/// that nothing could explain afterwards.
+/// <para>
+/// On an edit the quantity is how many more arrived, not a number to type over. The shelf
+/// count only moves through a stock movement with a reason, so a delivery added here is
+/// recorded as a delivery, and a correction still belongs on Inventory → Adjust.
+/// </para>
+///
+/// <para>
+/// What the short form does not ask — VAT bracket, minimum stock, shelf, supplier, SKU,
+/// whether it shows at the till — is kept as it was on an edit, and takes the shop's default
+/// on a new product.
+/// </para>
 /// </summary>
 public partial class ProductWindow : Window
 {
     private readonly StockItem? _existing;
-    private readonly List<Supplier> _suppliers;
 
     /// <summary>A photo chosen in this dialog but not yet saved. Null means "leave it alone".</summary>
     private string? _pickedFrom;
 
-    /// <summary>True when the owner pressed Remove photo. Distinct from having picked nothing.</summary>
-    private bool _dropPicture;
-
-    private static readonly (string Label, decimal Rate)[] TaxRates =
+    /// <summary>The two ways the shop sells: by the piece, or by the kilo.</summary>
+    private static readonly (string Label, Unit Unit)[] Units =
     [
-        ("0% — basic food", 0m),
-        ("7%", 0.07m),
-        ("10%", 0.10m),
-        ("20% — standard", 0.20m),
+        ("Per unit", Unit.Each),
+        ("Kilogram (kg)", Unit.Kg),
     ];
 
     public ProductWindow(StockItem? existing)
@@ -43,30 +46,16 @@ public partial class ProductWindow : Window
         Services.Responsive.Fit(this);
         _existing = existing;
 
-        UnitBox.ItemsSource = new[] { Loc.T("Each / piece"), Loc.T("Kilogram") };
-        TaxBox.ItemsSource = TaxRates.Select(t => t.Label).ToList();
+        UnitBox.ItemsSource = Units.Select(u => Loc.T(u.Label)).ToList();
+
         // Asked of the shop on a till. This machine has no categories of its own, and a
         // dropdown filled from an empty local table would file every product under nothing.
         CategoryBox.ItemsSource = Link.Shop.Categories.List().Select(c => c.Name).ToList();
 
-        _suppliers = new List<Supplier> { new() { Id = 0, Name = Loc.T("No supplier") } };
-        _suppliers.AddRange(Catalog.BelongsToAServer
-            ? (ShopLink.Now(() => ShopLink.Suppliers()) ?? new List<Link.SupplierName>())
-                .Select(s => new Supplier { Id = s.Id, Name = s.Name })
-            : Link.Shop.Suppliers.List());
-        SupplierBox.ItemsSource = _suppliers;
-
         if (existing is null) FillForNew(); else FillFrom(existing);
 
-        // Only a VAT-registered shop has a bracket to choose. The rest of the form does not
-        // move: the column stays where it is, empty, so the fields either side keep their
-        // places between one shop and another.
-        TaxField.Visibility = AppSettings.Current.TaxId.Trim().Length > 0
-            ? Visibility.Visible
-            : Visibility.Hidden;
-
         ShowPicture();
-        Loaded += (_, _) => NameBox.Focus();
+        UpdateLabels();
     }
 
     public static bool AddNew(Window owner) =>
@@ -74,74 +63,156 @@ public partial class ProductWindow : Window
 
     /// <summary>
     /// The same form, opened already knowing the barcode — the cashier has just scanned
-    /// something the shop does not sell yet, and the number is the one thing about it that is
-    /// already certain. The caret starts on the name, which is the first thing that is not.
+    /// something the shop does not sell yet. The caret starts on the name.
     /// </summary>
     public static bool AddScanned(Window owner, string barcode)
     {
         var form = new ProductWindow(null).By(owner);
         form.BarcodeBox.Text = barcode;
-
-        // The cashier is holding at least one, and it goes straight onto the sale after saving.
-        // Starting at 0 made that sale refuse the product the moment it was created.
-        form.StockBox.Text = "1";
-        form.Loaded += (_, _) => { form.NameBox.Focus(); form.NameBox.SelectAll(); };
-
+        form.FocusOn(form.NameBox);
         return form.ShowDialog() == true;
     }
 
     public static bool Edit(Window owner, StockItem item) =>
         new ProductWindow(item).By(owner).ShowDialog() == true;
 
+    // ------------------------------- Filling in -------------------------------
+
     private void FillForNew()
     {
-        HeadingText.Text = Loc.T("Add product");
-        SubText.Text = Loc.T("It goes on the till as soon as you save.");
+        HeadingText.Text = Loc.T("New product");
+        SubText.Text = Loc.T("Scan the barcode, or leave it empty for goods with nothing printed on them.");
         Title = "Add product";
 
         UnitBox.SelectedIndex = 0;
-        TaxBox.SelectedIndex = 3;
-        SupplierBox.SelectedIndex = 0;
-        StockBox.Text = "0";
-        MinStockBox.Text = AppSettings.Current.DefaultLowStock.ToString("0.###", CultureInfo.InvariantCulture);
-        ShowInPosBox.IsChecked = true;
-        CategoryBox.Text = (CategoryBox.ItemsSource as List<string>)?.FirstOrDefault() ?? "Grocery";
-        UpdateMargin();
+
+        // At least one is in somebody's hand. Starting at 0 made the sale that follows a
+        // scan refuse the product the moment it was created.
+        QuantityBox.Text = "1";
+
+        CategoryBox.Text = (CategoryBox.ItemsSource as List<string>)?.FirstOrDefault() ?? string.Empty;
+        SaveButton.Content = Loc.T("Save product");
+        FocusOn(BarcodeBox);
     }
 
     private void FillFrom(StockItem item)
     {
         HeadingText.Text = item.Name;
-        SubText.Text = $"{item.Barcode} · {item.Category}";
+        SubText.Text = Loc.T("Change the details, or enter how many arrived to add them to stock.");
         Title = item.Name;
+
+        BarcodeBox.Text = item.Barcode;
+        ShowBarcodeRow(item.Barcode.Length > 0);
 
         NameBox.Text = item.Name;
         CategoryBox.Text = item.Category;
-        BarcodeBox.Text = item.Barcode;
-        SkuBox.Text = item.Sku;
         UnitBox.SelectedIndex = item.Unit == Unit.Kg ? 1 : 0;
-        CostBox.Text = item.Cost.ToString("0.00", CultureInfo.InvariantCulture);
+        CostBox.Text = item.Cost > 0m ? item.Cost.ToString("0.00", CultureInfo.InvariantCulture) : string.Empty;
         PriceBox.Text = item.Price.ToString("0.00", CultureInfo.InvariantCulture);
-
-        var taxIndex = Array.FindIndex(TaxRates, t => t.Rate == item.TaxRate);
-        TaxBox.SelectedIndex = taxIndex >= 0 ? taxIndex : 3;
-
-        StockBox.Text = item.Stock.ToString("0.###", CultureInfo.InvariantCulture);
-        StockBox.IsReadOnly = true;
-        StockBox.Opacity = 0.6;
-        StockLabel.Text = Loc.T("STOCK (CHANGE IT ON INVENTORY)");
-        StockBox.ToolTip = Loc.T("Stock is changed on the Inventory page, so every movement has a reason recorded.");
-
-        MinStockBox.Text = item.MinStock.ToString("0.###", CultureInfo.InvariantCulture);
-        ShelfBox.Text = item.Shelf;
         ExpiryBox.SelectedDate = item.ExpiresOn;
-        SupplierBox.SelectedItem = _suppliers.FirstOrDefault(s => s.Id == (item.SupplierId ?? 0)) ?? _suppliers[0];
-        ShowInPosBox.IsChecked = item.ShowInPos;
 
-        UpdateMargin();
+        QuantityBox.Text = "0";
+        InStockText.Visibility = Visibility.Visible;
+        InStockText.Text = Loc.T("In stock now: {0}. The quantity above is added to it.",
+                                 Loc.Ltr(StockLabel(item.Stock, item.Unit)));
+
+        SaveButton.Content = Loc.T("Save changes");
+        FocusOn(NameBox);
     }
 
-    // ------------------------------- Validation -------------------------------
+    private static string StockLabel(decimal stock, Unit unit) =>
+        unit == Unit.Kg ? $"{stock:0.###} kg" : $"{stock:0.###}";
+
+    private Unit SelectedUnit => Units[Math.Clamp(UnitBox.SelectedIndex, 0, Units.Length - 1)].Unit;
+
+    private void Unit_Changed(object sender, RoutedEventArgs e) => UpdateLabels();
+
+    private void UpdateLabels()
+    {
+        if (CostLabel is null || UnitBox.ItemsSource is null) return;
+
+        var weighed = SelectedUnit == Unit.Kg;
+        CostLabel.Text = Loc.T(weighed ? "BOUGHT FOR / KG" : "BOUGHT FOR");
+        PriceLabel.Text = Loc.T(weighed ? "SELLING FOR / KG" : "SELLING FOR");
+        QuantityLabel.Text = Loc.T(_existing is null
+            ? (weighed ? "WEIGHT (KG)" : "QUANTITY")
+            : (weighed ? "ADD WEIGHT (KG)" : "ADD QUANTITY"));
+
+        UpdateTotals();
+    }
+
+    private void Amount_Changed(object sender, RoutedEventArgs e) => UpdateTotals();
+
+    /// <summary>What this delivery cost, and what the shop makes on each sale.</summary>
+    private void UpdateTotals()
+    {
+        if (TotalCostText is null) return;
+
+        var hasCost = TryAmount(CostBox.Text, out var cost);
+        var hasPrice = TryAmount(PriceBox.Text, out var price);
+        var hasQuantity = TryAmount(QuantityBox.Text, out var quantity);
+
+        TotalCostText.Text = hasCost && hasQuantity && cost > 0m && quantity > 0m
+            ? Loc.Ltr($"{Math.Round(cost * quantity, 2):N2} DH")
+            : "—";
+
+        if (!hasPrice || price <= 0m)
+        {
+            MarginText.Text = "—";
+            MarginText.Foreground = (System.Windows.Media.Brush)FindResource("Brush.Muted");
+            return;
+        }
+
+        var margin = price - (hasCost ? cost : 0m);
+        MarginText.Text = Loc.Ltr($"{margin:N2} DH  ·  {margin / price * 100m:0.#}%");
+
+        // Selling below cost loses money on every single sale, quietly.
+        MarginText.Foreground = (System.Windows.Media.Brush)FindResource(
+            margin < 0m ? "Brush.Danger" : "Brush.Accent");
+    }
+
+    // ------------------------------- Barcode -------------------------------
+
+    private void NoBarcode_Click(object sender, RoutedEventArgs e)
+    {
+        BarcodeBox.Clear();
+        ShowBarcodeRow(false);
+        FocusOn(NameBox);
+    }
+
+    private void HasBarcode_Click(object sender, RoutedEventArgs e)
+    {
+        ShowBarcodeRow(true);
+        FocusOn(BarcodeBox);
+    }
+
+    private void ShowBarcodeRow(bool showing)
+    {
+        BarcodeRow.Visibility = showing ? Visibility.Visible : Visibility.Collapsed;
+        NoBarcodeNote.Visibility = showing ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    /// <summary>Says at once when the code belongs to a product the shop already has.</summary>
+    private void Barcode_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    {
+        if (!IsLoaded) return;
+
+        ShowPicture();
+
+        var taken = TakenBy(BarcodeBox.Text.Trim());
+        ErrorText.Text = taken is null
+            ? string.Empty
+            : Loc.T("This product is already in inventory: {0}", taken.Name);
+    }
+
+    /// <summary>The other product already carrying this code, if there is one.</summary>
+    private Product? TakenBy(string barcode)
+    {
+        var found = Catalog.FindByBarcode(barcode);
+        return found is not null && found.Id != (_existing?.Id ?? 0) ? found : null;
+    }
+
+    // ------------------------------- Saving -------------------------------
 
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
@@ -149,128 +220,100 @@ public partial class ProductWindow : Window
 
         var name = NameBox.Text.Trim();
         var category = CategoryBox.Text.Trim();
-        var barcode = BarcodeBox.Text.Trim();
+        var barcode = BarcodeRow.Visibility == Visibility.Visible ? BarcodeBox.Text.Trim() : string.Empty;
 
         if (name.Length == 0) { Fail("Give the product a name.", NameBox); return; }
         if (category.Length == 0) { Fail("Choose or type a category.", CategoryBox); return; }
-        if (barcode.Length == 0) { Fail("Enter a barcode, or press Generate for an in-store code.", BarcodeBox); return; }
 
-        if (!TryMoney(PriceBox.Text, out var price) || price < 0m)
+        if (!TryAmount(PriceBox.Text, out var price) || price <= 0m)
         {
-            Fail("The selling price must be a number, like 8.50.", PriceBox);
+            Fail("Enter what it sells for.", PriceBox);
             return;
         }
-        if (!TryMoney(CostBox.Text, out var cost) || cost < 0m)
+
+        if (!TryAmount(CostBox.Text, out var cost) || cost < 0m)
         {
             Fail("The purchase price must be a number, like 6.20.", CostBox);
             return;
         }
-        if (!TryMoney(MinStockBox.Text, out var minStock) || minStock < 0m)
+
+        if (!TryAmount(QuantityBox.Text, out var quantity) || quantity < 0m)
         {
-            Fail("The minimum stock must be a number.", MinStockBox);
-            return;
-        }
-        if (!TryMoney(StockBox.Text, out var stock) || stock < 0m)
-        {
-            Fail("The stock quantity must be a number.", StockBox);
+            Fail("Enter how many arrived.", QuantityBox);
             return;
         }
 
-        var existingByBarcode = Catalog.FindByBarcode(barcode);
-        if (existingByBarcode != null && (_existing == null || existingByBarcode.Id != _existing.Id))
+        if (_existing is null && quantity <= 0m)
         {
-            Fail(string.Format(Loc.T("This product is already in inventory: {0}"), existingByBarcode.Name), BarcodeBox);
+            Fail("Enter how many arrived.", QuantityBox);
             return;
         }
 
-        // On a till the shop settles this, not the machine: the barcode is sent with the
-        // product and the server answers whether it already has one, which is the only answer
-        // that can be right when two counters are adding stock at once.
-        if (!Catalog.BelongsToAServer && Link.Shop.Stock.BarcodeTaken(barcode, _existing?.Id ?? 0))
+        if (barcode.Length > 0 && TakenBy(barcode) is { } taken)
         {
-            Fail("Another product already uses that barcode.", BarcodeBox);
+            Fail(Loc.T("This product is already in inventory: {0}", taken.Name), BarcodeBox);
             return;
         }
 
-        var supplierId = (SupplierBox.SelectedItem as Supplier)?.Id;
+        // The till's catalogue only holds what is on sale. On the shop's own machine a removed
+        // product still owns its barcode, and only the database can say so.
+        if (barcode.Length > 0 && !Catalog.BelongsToAServer
+            && Link.Shop.Stock.BarcodeTaken(barcode, _existing?.Id ?? 0))
+        {
+            Fail("That barcode already belongs to another product.", BarcodeBox);
+            return;
+        }
+
+        var unit = SelectedUnit;
         var item = new StockItem
         {
             Id = _existing?.Id ?? 0,
             Name = name,
             Category = category,
             Barcode = barcode,
-            Sku = SkuBox.Text.Trim(),
             Cost = cost,
             Price = price,
-            MinStock = minStock,
-            Unit = UnitBox.SelectedIndex == 1 ? Unit.Kg : Unit.Each,
-            TaxRate = TaxRates[Math.Max(0, TaxBox.SelectedIndex)].Rate,
-            Shelf = ShelfBox.Text.Trim(),
-            SupplierId = supplierId is > 0 ? supplierId : null,
+            Unit = unit,
             ExpiresOn = ExpiryBox.SelectedDate,
-            ShowInPos = ShowInPosBox.IsChecked == true,
+
+            // Not on this form: kept as they were, or the shop's defaults for a new product.
+            Sku = _existing?.Sku ?? string.Empty,
+            TaxRate = _existing?.TaxRate ?? VatForCategory(category),
+            MinStock = _existing?.MinStock ?? AppSettings.Current.DefaultLowStock,
+            Shelf = _existing?.Shelf ?? string.Empty,
+            SupplierId = _existing?.SupplierId,
+            ShowInPos = _existing?.ShowInPos ?? true,
 
             // Only a path somebody set deliberately is stored. The catalogue finds the usual
-            // file by barcode on its own, and writing that discovered path back would bake
-            // this machine's own folder into a row a second till has to read.
+            // file by barcode on its own.
             ImagePath = ProductImages.IsTheUsualPlace(_existing?.ImagePath, barcode)
                 ? null
                 : _existing?.ImagePath,
         };
 
+        SaveButton.IsEnabled = false;
+
         try
         {
-            // A till holds a copy of the shop, not the shop. A new product written into that
-            // copy would be overwritten by the server on the next sync, so it goes to the
-            // server — which is also the only place the back office, the stock list and the
-            // other till will ever look for it.
-            if (_existing is null && Catalog.BelongsToAServer)
+            if (_existing is null)
             {
-                var made = await ShopLink.AddProduct(new Link.NewProduct(
-                    barcode, name, category, price, cost, item.TaxRate,
-                    item.Unit.ToString(), stock,
-                    Session.Current?.Name ?? Session.OwnerLabel));
-
-                if (made is null)
-                {
-                    // Deliberately not saved here as a fallback. A product that exists on this
-                    // counter and nowhere else is worse than one that does not exist yet: it
-                    // sells, the stock never moves in the books, and nobody finds out until
-                    // the shelves are counted.
-                    ErrorText.Text = Loc.T("The shop's server did not take it: {0}",
-                                           ShopLink.LastProblem);
-                    return;
-                }
-
-                if (made.AlreadyHad)
-                {
-                    Fail(string.Format(Loc.T("This product is already in inventory: {0}"), made.Name), BarcodeBox);
-                    return;
-                }
-
-                // Straight back down again, so the thing just added is on this till's own
-                // screen before the cashier looks up.
-                await ShopLink.PullCatalogue();
-            }
-            else if (Catalog.BelongsToAServer)
-            {
-                // A till reaching here is a till being asked to change a product it does not
-                // own. There is no local write to fall back to and there must not be one: a
-                // product edited into this machine's database would be edited nowhere.
-                ErrorText.Text = Loc.T("Products are changed on the shop's own computer.");
-                return;
-            }
-            else if (_existing is null)
-            {
-                Link.Shop.Stock.Create(item, openingStock: stock);
+                if (!await Create(item, quantity)) return;
             }
             else
             {
                 Link.Shop.Stock.Update(item);
+
+                if (quantity > 0m)
+                    Link.Shop.Stock.ReceiveAtTill(item.Id, quantity, cost: null, price: null, expiresOn: null);
             }
 
             FilePicture(barcode, _existing?.Barcode);
+
+            // A till keeps the shop's catalogue in memory; it has to be asked again before the
+            // change is on this screen.
+            if (Catalog.BelongsToAServer) await ShopLink.PullCatalogue();
             Catalog.Reload();
+
             DialogResult = true;
             Close();
         }
@@ -278,6 +321,56 @@ public partial class ProductWindow : Window
         {
             ErrorText.Text = error.Message;
         }
+        finally
+        {
+            if (IsLoaded) SaveButton.IsEnabled = true;
+        }
+    }
+
+    /// <summary>Puts a new product into the shop, wherever the shop is. False when refused.</summary>
+    private async Task<bool> Create(StockItem item, decimal openingStock)
+    {
+        if (!Catalog.BelongsToAServer)
+        {
+            Link.Shop.Stock.Create(item, openingStock);
+            return true;
+        }
+
+        // A till holds a copy of the shop, not the shop: a new product goes to the server,
+        // which is the only place the back office and the other tills will look for it.
+        var made = await ShopLink.AddProduct(new Link.NewProduct(
+            item.Barcode, item.Name, item.Category, item.Price, item.Cost, item.TaxRate,
+            item.Unit.ToString(), openingStock,
+            Session.Current?.Name ?? Session.OwnerLabel));
+
+        if (made is null)
+        {
+            ErrorText.Text = Loc.T("The shop's server did not take it: {0}", ShopLink.LastProblem);
+            return false;
+        }
+
+        if (made.AlreadyHad)
+        {
+            Fail(Loc.T("This product is already in inventory: {0}", made.Name), BarcodeBox);
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Borrows the VAT bracket from whatever else is in that category, which is right far more
+    /// often than a fixed default. A brand new category falls back to the standard rate.
+    /// </summary>
+    private static decimal VatForCategory(string category)
+    {
+        var siblings = Catalog.Products
+            .Where(p => string.Equals(p.Category, category, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return siblings.Count == 0
+            ? 0.20m
+            : siblings.GroupBy(p => p.TaxRate).OrderByDescending(g => g.Count()).First().Key;
     }
 
     // ------------------------------- Photo -------------------------------
@@ -294,28 +387,18 @@ public partial class ProductWindow : Window
         if (picker.ShowDialog(this) != true) return;
 
         _pickedFrom = picker.FileName;
-        _dropPicture = false;
-        ShowPicture();
-    }
-
-    private void RemovePicture_Click(object sender, RoutedEventArgs e)
-    {
-        _pickedFrom = null;
-        _dropPicture = true;
         ShowPicture();
     }
 
     /// <summary>
     /// Draws whichever photo is current: the one just chosen, or the one already on file.
-    /// Loaded with OnLoad so the file is not left open — the same photo has to be replaceable
-    /// without closing the back office.
+    /// Loaded with OnLoad so the file is not left open.
     /// </summary>
     private void ShowPicture()
     {
-        var path = _dropPicture
-            ? null
-            : _pickedFrom ?? (_existing is null ? null : ProductImages.Find(_existing.Barcode));
+        if (PictureBox is null) return;
 
+        var path = _pickedFrom ?? (_existing is null ? null : ProductImages.Find(_existing.Barcode));
         var has = path is not null && System.IO.File.Exists(path);
 
         if (has)
@@ -336,108 +419,52 @@ public partial class ProductWindow : Window
         }
 
         PicturePrompt.Visibility = has ? Visibility.Collapsed : Visibility.Visible;
-        RemovePicture.Visibility = has ? Visibility.Visible : Visibility.Collapsed;
-
-        // Says what the photo is actually for, which depends on whether this product will
-        // ever appear as something to press.
-        var scanned = BarcodeBox.Text.Trim().Length > 0;
-        PictureNote.Text = scanned
-            ? "Optional. This product is scanned, so the photo only shows on receipts and lists."
-            : "Shown on the till, where the cashier presses it. Worth adding for anything without a barcode.";
     }
 
     /// <summary>
-    /// Files the photo under the barcode the product is being saved with. Done after the save
-    /// because a new product has no barcode until Generate has run, and because a rename of
-    /// the code has to take its picture with it.
+    /// Files the photo under the barcode the product is being saved with, and moves an
+    /// existing photo along when the code changed.
     /// </summary>
     private void FilePicture(string barcode, string? previousBarcode)
     {
         if (previousBarcode is { Length: > 0 } old && old != barcode)
         {
-            // The code changed. Move the photo rather than orphaning it.
             var existingPhoto = ProductImages.Find(old);
-            if (existingPhoto is not null && _pickedFrom is null && !_dropPicture)
-                _pickedFrom = existingPhoto;
+            if (existingPhoto is not null && _pickedFrom is null) _pickedFrom = existingPhoto;
             ProductImages.Forget(old);
         }
 
-        if (_dropPicture) { ProductImages.Forget(barcode); return; }
-        if (_pickedFrom is null) return;
+        if (_pickedFrom is null || barcode.Length == 0) return;
 
         ProductImageWriter.Save(barcode, _pickedFrom);
+    }
+
+    // ------------------------------- Helpers -------------------------------
+
+    /// <summary>Accepts both "8.50" and "8,50", and an empty box as zero.</summary>
+    private static bool TryAmount(string? text, out decimal value)
+    {
+        var trimmed = (text ?? string.Empty).Trim();
+        if (trimmed.Length == 0) { value = 0m; return true; }
+
+        return decimal.TryParse(trimmed.Replace(',', '.'), NumberStyles.Number,
+                                CultureInfo.InvariantCulture, out value);
     }
 
     private void Fail(string message, System.Windows.Controls.Control focus)
     {
         ErrorText.Text = Loc.T(message);
-        focus.Focus();
+        FocusOn(focus);
     }
 
-    /// <summary>
-    /// Accepts both "8.50" and "8,50" — a Moroccan keyboard and a French Windows will both
-    /// happen on this counter, and rejecting one of them is a support call every week.
-    /// </summary>
-    private static bool TryMoney(string text, out decimal value) =>
-        decimal.TryParse((text ?? string.Empty).Trim().Replace(',', '.'),
-                         NumberStyles.Number, CultureInfo.InvariantCulture, out value)
-        || (string.IsNullOrWhiteSpace(text) && (value = 0m) == 0m);
-
-    // ------------------------------- Live margin -------------------------------
-
-    private void Money_Changed(object sender, RoutedEventArgs e) => UpdateMargin();
-
-    /// <summary>
-    /// Shows the margin as the prices are typed. An owner pricing a shelf wants to know what
-    /// they are making before they save, not after the month's report.
-    /// </summary>
-    private void UpdateMargin()
-    {
-        if (MarginText is null) return;
-
-        TryMoney(CostBox.Text, out var cost);
-        TryMoney(PriceBox.Text, out var price);
-
-        if (price <= 0m)
+    /// <summary>Focus at Background priority: a field just shown is not yet focusable.</summary>
+    private void FocusOn(System.Windows.Controls.Control control) =>
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
         {
-            MarginText.Text = "—";
-            MarginWarning.Visibility = Visibility.Collapsed;
-            return;
-        }
-
-        var margin = price - cost;
-        var percent = margin / price * 100m;
-        MarginText.Text = $"{margin:0.00} DH · {percent:0.#}%";
-
-        MarginText.Foreground = (System.Windows.Media.Brush)FindResource(
-            margin < 0m ? "Brush.Danger" : "Brush.Text");
-        MarginWarning.Visibility = margin < 0m ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    private void Barcode_Changed(object sender, System.Windows.Controls.TextChangedEventArgs e)
-    {
-        if (IsLoaded)
-        {
-            ShowPicture();
-            var code = BarcodeBox.Text.Trim();
-            if (code.Length > 0)
-            {
-                var already = Catalog.FindByBarcode(code);
-                if (already != null && (_existing == null || already.Id != _existing.Id))
-                {
-                    ErrorText.Text = string.Format(Loc.T("This product is already in inventory: {0}"), already.Name);
-                }
-                else if (ErrorText.Text.StartsWith(Loc.T("This product is already in inventory: {0}").Split('{')[0]))
-                {
-                    ErrorText.Text = string.Empty;
-                }
-            }
-            else if (ErrorText.Text.StartsWith(Loc.T("This product is already in inventory: {0}").Split('{')[0]))
-            {
-                ErrorText.Text = string.Empty;
-            }
-        }
-    }
+            control.Focus();
+            Keyboard.Focus(control);
+            if (control is System.Windows.Controls.TextBox box) box.SelectAll();
+        }));
 
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {

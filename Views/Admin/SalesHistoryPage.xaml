@@ -194,7 +194,7 @@
                                                        FontWeight="Normal"
                                                        Text="{Binding ProfitLabel}"/>
                                             <TextBlock Grid.Column="6" Style="{StaticResource Text.CellMuted}"
-                                                       Margin="16,0,0,0" Text="{Binding PaymentMethod}"/>
+                                                       Margin="16,0,0,0" Text="{Binding PaymentMethod, Converter={StaticResource Translate}}"/>
 
                                             <Border x:Name="badge" Grid.Column="7"
                                                     Style="{StaticResource Badge.Neutral}">

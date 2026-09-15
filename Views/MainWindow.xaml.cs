@@ -815,7 +815,7 @@ public partial class MainWindow : Window
         }
 
         Session.SignOut();
-        Vm.Announce($"{who} signed out");
+        Vm.Announce(Loc.T("{0} signed out", who));
         FocusBarcode();
     }
 

@@ -191,7 +191,15 @@ public sealed class SupplierGoods
 
     public string LastBoughtLabel => LastBought == default
         ? string.Empty
-        : Services.Loc.T("last {0}", LastBought.ToString("d MMM yyyy"));
+        : Services.Loc.T("last {0}", Services.Loc.Ltr(LastBought.ToString("dd/MM/yyyy")));
+
+    /// <summary>
+    /// The line under the product's name, built whole in the shop's language. It used to be
+    /// three labels side by side, which in Arabic came out as "bought 10" in English order.
+    /// </summary>
+    public string SummaryLabel => LastBought == default
+        ? Services.Loc.T("Quantity: {0}", QuantityLabel)
+        : $"{Services.Loc.T("Quantity: {0}", QuantityLabel)}  ·  {LastBoughtLabel}";
 }
 
 public sealed class PurchaseLine

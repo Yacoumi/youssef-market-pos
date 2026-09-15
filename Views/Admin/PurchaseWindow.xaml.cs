@@ -17,6 +17,10 @@ namespace MarketPos.Views.Admin;
 /// </summary>
 public partial class PurchaseWindow : Window
 {
+    /// <summary>How a delivery was paid, as stored; shown in the shop's language.</summary>
+    private static readonly string[] PayMethods =
+        { "Cash", "Bank transfer", "Cheque", "Card", "Credit — pay later" };
+
     public PurchaseWindow(int? supplierId)
     {
         InitializeComponent();
@@ -27,11 +31,7 @@ public partial class PurchaseWindow : Window
         SupplierBox.ItemsSource = suppliers;
         SupplierBox.SelectedItem = suppliers.FirstOrDefault(s => s.Id == supplierId) ?? suppliers.FirstOrDefault();
 
-        MethodBox.ItemsSource = new[]
-        {
-            Loc.T("Cash"), Loc.T("Bank transfer"), Loc.T("Cheque"),
-            Loc.T("Card"), Loc.T("Credit — pay later"),
-        };
+        MethodBox.ItemsSource = PayMethods.Select(m => Loc.T(m)).ToList();
         MethodBox.SelectedIndex = 0;
 
         DateBox.SelectedDate = DateTime.Today;
@@ -123,7 +123,7 @@ public partial class PurchaseWindow : Window
         }
         if (paid > total)
         {
-            ErrorText.Text = $"You cannot pay more than the {total:N2} DH invoice.";
+            ErrorText.Text = Loc.T("You cannot pay more than the {0} invoice.", Loc.Ltr($"{total:N2} DH"));
             return;
         }
 
@@ -134,7 +134,7 @@ public partial class PurchaseWindow : Window
             InvoiceNumber = InvoiceBox.Text.Trim(),
             PurchasedOn = DateBox.SelectedDate ?? DateTime.Today,
             DueOn = DueBox.SelectedDate,
-            Method = MethodBox.SelectedItem as string ?? "Cash",
+            Method = PayMethods[Math.Max(0, MethodBox.SelectedIndex)],
             Note = NoteBox.Text.Trim(),
             Lines = Editor.Lines.ToList(),
         };

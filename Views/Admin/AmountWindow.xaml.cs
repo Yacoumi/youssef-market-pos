@@ -44,6 +44,8 @@ public partial class AmountWindow : Window
 {
     private readonly AmountRequest _request;
 
+    private static readonly string[] Methods = { "Cash", "Bank transfer", "Cheque", "Card", "Other" };
+
     public AmountWindow(AmountRequest request)
     {
         InitializeComponent();
@@ -59,11 +61,7 @@ public partial class AmountWindow : Window
         ConfirmButton.Content = request.ConfirmText;
 
         DateBox.SelectedDate = DateTime.Today;
-        MethodBox.ItemsSource = new[]
-        {
-            Loc.T("Cash"), Loc.T("Bank transfer"), Loc.T("Cheque"),
-            Loc.T("Card"), Loc.T("Other"),
-        };
+        MethodBox.ItemsSource = Methods.Select(m => Loc.T(m)).ToList();
         MethodBox.SelectedIndex = 0;
         MethodSection.Visibility = request.AskMethod ? Visibility.Visible : Visibility.Collapsed;
         DateSection.Visibility = request.AskDateAndNote ? Visibility.Visible : Visibility.Collapsed;
@@ -108,14 +106,15 @@ public partial class AmountWindow : Window
 
         if (_request.Maximum is { } max && amount > max)
         {
-            ErrorText.Text = $"That is more than the {max:N2} DH outstanding.";
+            ErrorText.Text = Loc.T("That is more than the {0} outstanding.", Loc.Ltr($"{max:N2} DH"));
             return;
         }
 
         Result = new AmountResult(
             amount,
             DateBox.SelectedDate ?? DateTime.Today,
-            _request.AskMethod ? MethodBox.SelectedItem as string ?? "Cash" : "Cash",
+            // Stored in English and shown translated, so a report can group "Cash" as one.
+            _request.AskMethod ? Methods[Math.Max(0, MethodBox.SelectedIndex)] : "Cash",
             NoteBox.Text.Trim());
 
         DialogResult = true;

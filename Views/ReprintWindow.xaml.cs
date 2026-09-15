@@ -70,7 +70,7 @@ public partial class ReprintWindow : Window
         {
             PreviewTray.Visibility = Visibility.Collapsed;
             EmptyText.Visibility = Visibility.Visible;
-            EmptyText.Text = $"No receipt #{invoiceNumber}. Receipt numbers are printed on completed sales — they are not the same as a held ticket.";
+            EmptyText.Text = Loc.T("No receipt #{0}. Receipt numbers are printed on completed sales — they are not the same as a held ticket.", invoiceNumber);
             PrintButton.IsEnabled = false;
             return;
         }

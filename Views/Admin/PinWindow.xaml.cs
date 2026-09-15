@@ -24,9 +24,8 @@ public partial class PinWindow : Window
         Services.Responsive.Fit(this);
 
         HeadingText.Text = Loc.T(hasPin ? "Change till PIN" : "Set a till PIN");
-        SubText.Text = $"{workerName} types this to sign in at the till, so their sales and shifts "
-                     + "are recorded against them."
-                     + (hasPin ? " The old PIN stops working straight away." : string.Empty);
+        SubText.Text = Loc.T("{0} types this to sign in at the till, so their sales and shifts are recorded against them.", workerName)
+                     + (hasPin ? " " + Loc.T("The old PIN stops working straight away.") : string.Empty);
         Title = HeadingText.Text;
 
         Loaded += (_, _) => PinBox.Focus();

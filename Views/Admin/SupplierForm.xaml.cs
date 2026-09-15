@@ -18,6 +18,10 @@ namespace MarketPos.Views.Admin;
 /// </summary>
 public partial class SupplierForm : UserControl
 {
+    /// <summary>How a delivery was paid, as stored; shown in the shop's language.</summary>
+    private static readonly string[] PayMethods =
+        { "Cash", "Bank transfer", "Cheque", "Card", "Credit — pay later" };
+
     private readonly Supplier? _existing;
 
     public SupplierForm(Supplier? existing)
@@ -32,11 +36,7 @@ public partial class SupplierForm : UserControl
                                + "and it is recorded with them.");
 
             GoodsSection.Visibility = Visibility.Visible;
-            MethodBox.ItemsSource = new[]
-            {
-                Loc.T("Cash"), Loc.T("Bank transfer"), Loc.T("Cheque"),
-                Loc.T("Card"), Loc.T("Credit — pay later"),
-            };
+            MethodBox.ItemsSource = PayMethods.Select(m => Loc.T(m)).ToList();
             MethodBox.SelectedIndex = 0;
             PaidBox.Text = "0";
             ShowTotal();
@@ -63,9 +63,10 @@ public partial class SupplierForm : UserControl
 
             BalanceCard.Visibility = Visibility.Visible;
             BalanceText.Text = existing.Owed > 0m
-                ? $"{existing.Owed:N2} DH still owed"
-                : "Nothing outstanding";
-            BalanceNote.Text = $"{existing.TotalPurchased:N2} DH purchased, {existing.TotalPaid:N2} DH paid.";
+                ? Loc.T("{0} still owed", Loc.Ltr($"{existing.Owed:N2} DH"))
+                : Loc.T("Nothing outstanding");
+            BalanceNote.Text = Loc.T("{0} purchased, {1} paid.",
+                                     Loc.Ltr($"{existing.TotalPurchased:N2} DH"), Loc.Ltr($"{existing.TotalPaid:N2} DH"));
         }
 
         Loaded += (_, _) => { NameBox.Focus(); NameBox.SelectAll(); };
@@ -117,7 +118,7 @@ public partial class SupplierForm : UserControl
             }
             if (paid > total)
             {
-                ErrorText.Text = $"You cannot pay more than the {total:N2} DH delivery.";
+                ErrorText.Text = Loc.T("You cannot pay more than the {0} delivery.", Loc.Ltr($"{total:N2} DH"));
                 return;
             }
 
@@ -146,7 +147,7 @@ public partial class SupplierForm : UserControl
                     SupplierId = Created,
                     SupplierName = supplier.Name,
                     PurchasedOn = DateTime.Today,
-                    Method = MethodBox.SelectedItem as string ?? "Cash",
+                    Method = PayMethods[Math.Max(0, MethodBox.SelectedIndex)],
                     Lines = lines,
                 }, paid);
             }

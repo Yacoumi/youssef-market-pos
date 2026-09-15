@@ -303,17 +303,9 @@
                                                        Style="{StaticResource Text.Cell}"
                                                        FontWeight="SemiBold"
                                                        TextTrimming="CharacterEllipsis"/>
-                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                                                <TextBlock Text="{Binding QuantityLabel}"
-                                                           Style="{StaticResource Text.Muted}"
-                                                           FontSize="11"/>
-                                                <TextBlock Text=" bought &#183; "
-                                                           Style="{StaticResource Text.Muted}"
-                                                           FontSize="11"/>
-                                                <TextBlock Text="{Binding LastBoughtLabel}"
-                                                           Style="{StaticResource Text.Muted}"
-                                                           FontSize="11"/>
-                                            </StackPanel>
+                                            <TextBlock Text="{Binding SummaryLabel}" Margin="0,2,0,0"
+                                                       Style="{StaticResource Text.Muted}"
+                                                       FontSize="11"/>
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1">
@@ -419,7 +411,7 @@
                                         <StackPanel>
                                             <TextBlock Text="{Binding PaidOn, StringFormat='d MMM yyyy'}"
                                                        Style="{StaticResource Text.Cell}"/>
-                                            <TextBlock Text="{Binding Method}"
+                                            <TextBlock Text="{Binding Method, Converter={StaticResource Translate}}"
                                                        Style="{StaticResource Text.Muted}"
                                                        FontSize="11" Margin="0,2,0,0"/>
                                         </StackPanel>

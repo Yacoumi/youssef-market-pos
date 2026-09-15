@@ -99,18 +99,18 @@ public partial class SaleDetailWindow : Window
 
     private void Bind()
     {
-        Title = $"Receipt #{_sale.InvoiceNumber}";
-        HeadingText.Text = $"Receipt #{_sale.InvoiceNumber}";
-        SubText.Text = $"{_sale.SoldAt:dddd d MMMM yyyy, HH:mm} · "
-                     + $"{(string.IsNullOrWhiteSpace(_sale.CashierName) ? "till" : _sale.CashierName)} · "
-                     + $"{_sale.PaymentMethod}";
+        Title = Loc.T("Receipt #{0}", _sale.InvoiceNumber);
+        HeadingText.Text = Title;
+        SubText.Text = $"{Loc.Ltr(_sale.SoldAt.ToString("dd/MM/yyyy HH:mm"))} · "
+                     + $"{(string.IsNullOrWhiteSpace(_sale.CashierName) ? Loc.T("till") : _sale.CashierName)} · "
+                     + Loc.T(_sale.PaymentMethod.ToString());
 
         StatusText.Text = _sale.Status switch
         {
-            SaleStatus.Refunded => "Refunded",
-            SaleStatus.PartlyRefunded => "Partly refunded",
-            SaleStatus.Cancelled => "Cancelled",
-            _ => "Completed",
+            SaleStatus.Refunded => Loc.T("Refunded"),
+            SaleStatus.PartlyRefunded => Loc.T("Partly refunded"),
+            SaleStatus.Cancelled => Loc.T("Cancelled"),
+            _ => Loc.T("Completed"),
         };
         StatusBadge.Style = (Style)FindResource(_sale.Status switch
         {

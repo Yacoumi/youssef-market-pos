@@ -41,10 +41,11 @@ public partial class StockAdjustWindow : Window
         _item = item;
 
         HeadingText.Text = item.Name;
-        SubText.Text = $"{item.Stock:0.###} in stock · {item.Barcode}";
-        Title = $"Adjust {item.Name}";
+        SubText.Text = Loc.T("{0} in stock", Loc.Ltr($"{item.Stock:0.###}"))
+                       + (item.Barcode.Length > 0 ? $" · {item.Barcode}" : string.Empty);
+        Title = Loc.T("Adjust {0}", item.Name);
 
-        ReasonBox.ItemsSource = Reasons.Select(r => r.Label).ToList();
+        ReasonBox.ItemsSource = Reasons.Select(r => Loc.T(r.Label)).ToList();
         ReasonBox.SelectedIndex = 0;
         UpdatePreview();
 
@@ -85,11 +86,12 @@ public partial class StockAdjustWindow : Window
         var after = _item.Stock + delta;
 
         PreviewText.Text = delta == 0m
-            ? $"No change — {_item.Name} stays at {_item.Stock:0.###}."
-            : $"{_item.Name}: {_item.Stock:0.###} → {after:0.###} ({(delta > 0 ? "+" : "−")}{Math.Abs(delta):0.###}).";
+            ? Loc.T("No change — {0} stays at {1}.", _item.Name, Loc.Ltr($"{_item.Stock:0.###}"))
+            : $"{_item.Name}: " + Loc.Ltr($"{_item.Stock:0.###} → {after:0.###} ({(delta > 0 ? "+" : "−")}{Math.Abs(delta):0.###})");
 
         ValueText.Text = _item.Cost > 0m && delta != 0m
-            ? $"{(delta < 0 ? "Value removed" : "Value added")}: {Math.Abs(delta) * _item.Cost:N2} DH at cost."
+            ? Loc.T(delta < 0 ? "Value removed: {0} at cost." : "Value added: {0} at cost.",
+                    Loc.Ltr($"{Math.Abs(delta) * _item.Cost:N2} DH"))
             : string.Empty;
 
         PreviewText.Foreground = (System.Windows.Media.Brush)FindResource(
@@ -135,8 +137,8 @@ public partial class StockAdjustWindow : Window
 
                 if (_item.Stock + delta < 0m)
                 {
-                    ErrorText.Text = $"That would take {_item.Name} to {_item.Stock + delta:0.###}. "
-                                   + $"There are only {_item.Stock:0.###} in stock.";
+                    ErrorText.Text = Loc.T("That would take {0} below zero. There are only {1} in stock.",
+                                           _item.Name, Loc.Ltr($"{_item.Stock:0.###}"));
                     return;
                 }
 

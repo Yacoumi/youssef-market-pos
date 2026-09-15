@@ -20,6 +20,16 @@ public partial class ExpenseWindow : Window
     private readonly Expense? _existing;
     private string? _receiptPath;
 
+    /// <summary>
+    /// How it was paid, as stored. The list shows these in the shop's language, but the book
+    /// keeps the English word: the box used to select "Cash" out of a list of Arabic words,
+    /// found nothing, and stayed empty.
+    /// </summary>
+    private static readonly string[] Methods = { "Cash", "Bank transfer", "Cheque", "Card", "Other" };
+
+    /// <summary>The shop's categories as stored, in the same order as the list shows them.</summary>
+    private readonly List<string> _categories;
+
     public ExpenseWindow(Expense? existing, Expense? template = null)
     {
         InitializeComponent();
@@ -27,12 +37,9 @@ public partial class ExpenseWindow : Window
         Services.Responsive.Fit(this);
         _existing = existing;
 
-        CategoryBox.ItemsSource = Link.Shop.Expenses.Categories().Select(c => Loc.T(c.Name)).ToList();
-        MethodBox.ItemsSource = new[]
-        {
-            Loc.T("Cash"), Loc.T("Bank transfer"), Loc.T("Cheque"),
-            Loc.T("Card"), Loc.T("Other"),
-        };
+        _categories = Link.Shop.Expenses.Categories().Select(c => c.Name).ToList();
+        CategoryBox.ItemsSource = _categories.Select(c => Loc.T(c)).ToList();
+        MethodBox.ItemsSource = Methods.Select(m => Loc.T(m)).ToList();
         RepeatBox.ItemsSource = new[]
         {
             Loc.T("Does not repeat"), Loc.T("Weekly"), Loc.T("Monthly"), Loc.T("Yearly"),
@@ -47,7 +54,7 @@ public partial class ExpenseWindow : Window
         }
         else if (template is not null)
         {
-            HeadingText.Text = $"{template.Name} — this month";
+            HeadingText.Text = Loc.T("{0} — this month", template.Name);
             SubText.Text = Loc.T("Copied from last month. Check the amount before saving: bills change.");
             SaveButton.Content = Loc.T("Add this one");
         }
@@ -60,9 +67,9 @@ public partial class ExpenseWindow : Window
         if (source is not null)
         {
             NameBox.Text = source.Name;
-            CategoryBox.Text = source.Category;
+            CategoryBox.Text = Loc.T(source.Category);
             AmountBox.Text = source.Amount.ToString("0.00", CultureInfo.InvariantCulture);
-            MethodBox.SelectedItem = source.Method;
+            MethodBox.SelectedIndex = MethodIndex(source.Method);
             NoteBox.Text = source.Note;
             RepeatBox.SelectedIndex = source.Recurring switch
             {
@@ -78,7 +85,7 @@ public partial class ExpenseWindow : Window
             RepeatBox.SelectedIndex = 0;
         }
 
-        MethodBox.SelectedItem ??= "Cash";
+        if (MethodBox.SelectedIndex < 0) MethodBox.SelectedIndex = 0;
         // A repeated bill belongs to this month, not to the month it was copied from.
         DateBox.SelectedDate = existing?.SpentOn ?? DateTime.Today;
         ShowReceipt();
@@ -94,6 +101,24 @@ public partial class ExpenseWindow : Window
 
     public static bool Repeat(Window owner, Expense template) =>
         new ExpenseWindow(null, template).By(owner).ShowDialog() == true;
+
+    /// <summary>Where a stored method sits in the list — older rows may hold the translated word.</summary>
+    private static int MethodIndex(string stored)
+    {
+        var index = Array.FindIndex(Methods, m =>
+            string.Equals(m, stored, StringComparison.OrdinalIgnoreCase) || Loc.T(m) == stored);
+        return Math.Max(0, index);
+    }
+
+    /// <summary>
+    /// The category as the shop stores it. Picking "صيانة" from the list means Maintenance, and
+    /// saving the Arabic word would have started a second Maintenance beside the first.
+    /// </summary>
+    private string StoredCategory(string shown)
+    {
+        var index = _categories.FindIndex(c => Loc.T(c) == shown || c == shown);
+        return index >= 0 ? _categories[index] : shown;
+    }
 
     private void ShowReceipt() =>
         ReceiptText.Text = string.IsNullOrWhiteSpace(_receiptPath)
@@ -138,7 +163,7 @@ public partial class ExpenseWindow : Window
             return;
         }
 
-        var category = CategoryBox.Text.Trim();
+        var category = StoredCategory(CategoryBox.Text.Trim());
         if (category.Length == 0) category = "Other";
 
         try
@@ -151,7 +176,7 @@ public partial class ExpenseWindow : Window
                 Category = category,
                 Amount = amount,
                 SpentOn = DateBox.SelectedDate ?? DateTime.Today,
-                Method = MethodBox.SelectedItem as string ?? "Cash",
+                Method = Methods[Math.Max(0, MethodBox.SelectedIndex)],
                 Note = NoteBox.Text.Trim(),
                 ReceiptPath = _receiptPath,
                 Recurring = RepeatBox.SelectedIndex switch

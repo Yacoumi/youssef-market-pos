@@ -150,7 +150,7 @@ public static class ShopTill
                 return Convert.ToInt32(command.ExecuteScalar());
             }
 
-            var today = DateTime.Today.ToString("O");
+            var today = Db.Stamp(DateTime.Today);
             well = true;
             return new Health(
                 "ok",

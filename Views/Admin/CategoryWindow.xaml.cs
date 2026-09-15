@@ -45,7 +45,9 @@ public partial class CategoryWindow : Window
         else
         {
             HeadingText.Text = Loc.T("Edit category");
-            SubText.Text = $"{existing.ProductCount} product{(existing.ProductCount == 1 ? string.Empty : "s")} in this category.";
+            SubText.Text = Loc.T(existing.ProductCount == 1 ? "{0} product in this category."
+                                                      : "{0} products in this category.",
+                                  existing.ProductCount);
             NameBox.Text = existing.Name;
             IconBox.Text = existing.Icon;
             _image = existing.Image;

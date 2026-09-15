@@ -91,7 +91,7 @@ public static class SaleRepository
         sale.Parameters.AddWithValue("$tillReference", tillReference);
         sale.Parameters.AddWithValue("$shiftId", (object?)shiftId ?? DBNull.Value);
         sale.Parameters.AddWithValue("$invoice", invoiceNumber);
-        sale.Parameters.AddWithValue("$soldAt", soldAt.ToString("O", CultureInfo.InvariantCulture));
+        sale.Parameters.AddWithValue("$soldAt", Db.Stamp(soldAt));
         sale.Parameters.AddWithValue("$subtotal", Money(subtotal));
         sale.Parameters.AddWithValue("$tax", Money(tax));
         sale.Parameters.AddWithValue("$total", Money(total));
@@ -314,8 +314,8 @@ public static class SaleRepository
         command.CommandText = @"
             SELECT COUNT(*), COALESCE(SUM(CAST(total AS REAL)), 0)
             FROM sales WHERE is_voided = 0 AND sold_at >= $from AND sold_at < $to;";
-        command.Parameters.AddWithValue("$from", day.Date.ToString("O", CultureInfo.InvariantCulture));
-        command.Parameters.AddWithValue("$to", day.Date.AddDays(1).ToString("O", CultureInfo.InvariantCulture));
+        command.Parameters.AddWithValue("$from", Db.Stamp(day.Date));
+        command.Parameters.AddWithValue("$to", Db.Stamp(day.Date.AddDays(1)));
         using var reader = command.ExecuteReader();
         if (!reader.Read()) return (0, 0m);
         return (reader.GetInt32(0), (decimal)reader.GetDouble(1));

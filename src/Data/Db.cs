@@ -15,7 +15,22 @@ internal static class Db
     public static decimal ParseMoney(string? value) =>
         decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var d) ? d : 0m;
 
-    public static string Stamp(DateTime value) => value.ToString("O", CultureInfo.InvariantCulture);
+    /// <summary>
+    /// A date as the database stores it: the shop's local time, always in the same shape and
+    /// never with a time-zone suffix.
+    ///
+    /// Dates are compared as text in SQL, so the shape is the whole of correctness. "O" wrote
+    /// "…T00:00:00.0000000+01:00" for a DateTime.Today but "…T00:00:00.0000000" for a date
+    /// picked from a calendar, and the shorter string sorts first — an expense dated today
+    /// fell before the start of "Today" and was saved but never listed. Morocco also moves its
+    /// offset for Ramadan, which broke comparisons across that change the same way.
+    ///
+    /// Rows written by older builds still compare correctly against this: the digits come
+    /// first, and a suffix only ever makes an otherwise equal stamp sort after its twin.
+    /// </summary>
+    public static string Stamp(DateTime value) =>
+        (value.Kind == DateTimeKind.Utc ? value.ToLocalTime() : value)
+            .ToString("yyyy-MM-dd'T'HH:mm:ss.fffffff", CultureInfo.InvariantCulture);
 
     public static DateTime ParseStamp(string? value) =>
         DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var d)

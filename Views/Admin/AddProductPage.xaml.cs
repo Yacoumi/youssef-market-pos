@@ -586,7 +586,7 @@ public partial class AddProductPage : AdminPageBase
                 // to photograph it.
                 if (_pickedPicture is not null) ProductImageWriter.Save(known.Barcode, _pickedPicture);
 
-                Done($"{quantity:0.###} × {known.Name} added to stock");
+                Done(Loc.T("{0} × {1} added to stock", Loc.Ltr($"{quantity:0.###}"), known.Name));
                 return;
             }
 
@@ -624,7 +624,7 @@ public partial class AddProductPage : AdminPageBase
             // an in-store code minted a line above this.
             if (_pickedPicture is not null) ProductImageWriter.Save(barcode, _pickedPicture);
 
-            Done($"{name} saved · {quantity:0.###} in stock");
+            Done(Loc.T("{0} saved · {1} in stock", name, Loc.Ltr($"{quantity:0.###}")));
         }
         catch (Exception error)
         {

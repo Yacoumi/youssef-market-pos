@@ -2110,6 +2110,114 @@ public static class Translations
             ["items sold"] =
                 ("articles vendus",
                  "منتجات مباعة"),
+            ["ADD QUANTITY"] =
+                ("QUANTITÉ À AJOUTER",
+                 "الكمية المضافة"),
+            ["ADD WEIGHT (KG)"] =
+                ("POIDS À AJOUTER (KG)",
+                 "الوزن المضاف (كغ)"),
+            ["Change the details, or enter how many arrived to add them to stock."] =
+                ("Modifiez les détails, ou indiquez combien sont arrivés pour les ajouter au stock.",
+                 "عدّل التفاصيل، أو أدخل الكمية التي وصلت لإضافتها إلى المخزون."),
+            ["Choose a photo of the receipt"] =
+                ("Choisir une photo du reçu",
+                 "اختر صورة الإيصال"),
+            ["For goods with nothing printed on them"] =
+                ("Pour les articles sans code-barres imprimé",
+                 "للسلع التي لا تحمل باركود مطبوعاً"),
+            ["In stock now: {0}. The quantity above is added to it."] =
+                ("En stock : {0}. La quantité ci-dessus y est ajoutée.",
+                 "المتوفر الآن: {0}. تُضاف الكمية أعلاه إليه."),
+            ["No barcode. The cashier presses its picture at the till."] =
+                ("Sans code-barres. Le caissier appuie sur sa photo à la caisse.",
+                 "بدون باركود. يضغط الكاشير على صورته في الصندوق."),
+            ["Save changes"] =
+                ("Enregistrer",
+                 "حفظ التغييرات"),
+            ["That is more than the {0} outstanding."] =
+                ("C'est plus que les {0} restants.",
+                 "هذا أكثر من المبلغ المتبقي {0}."),
+            ["{0} product in this category."] =
+                ("{0} produit dans cette catégorie.",
+                 "{0} منتج في هذه الفئة."),
+            ["{0} products in this category."] =
+                ("{0} produits dans cette catégorie.",
+                 "{0} منتجات في هذه الفئة."),
+            ["{0} — this month"] =
+                ("{0} — ce mois-ci",
+                 "{0} — هذا الشهر"),
+            ["{0} types this to sign in at the till, so their sales and shifts are recorded against them."] =
+                ("{0} le saisit pour se connecter à la caisse, afin que ses ventes et ses services lui soient attribués.",
+                 "يُدخل {0} هذا الرمز لتسجيل الدخول في الصندوق، لتُسجَّل مبيعاته ونوباته باسمه."),
+            ["The old PIN stops working straight away."] =
+                ("L'ancien code cesse de fonctionner immédiatement.",
+                 "يتوقف الرمز القديم عن العمل فوراً."),
+            ["You cannot pay more than the {0} invoice."] =
+                ("Vous ne pouvez pas payer plus que la facture de {0}.",
+                 "لا يمكنك دفع أكثر من قيمة الفاتورة {0}."),
+            ["{0} still owed"] =
+                ("{0} encore dû",
+                 "{0} ما زال مستحقاً"),
+            ["Nothing outstanding"] =
+                ("Rien à payer",
+                 "لا شيء مستحق"),
+            ["{0} purchased, {1} paid."] =
+                ("{0} acheté, {1} payé.",
+                 "مشتريات {0}، مدفوع {1}."),
+            ["You cannot pay more than the {0} delivery."] =
+                ("Vous ne pouvez pas payer plus que la livraison de {0}.",
+                 "لا يمكنك دفع أكثر من قيمة التوريد {0}."),
+            ["till"] =
+                ("caisse",
+                 "الصندوق"),
+            ["Refunded"] =
+                ("Remboursée",
+                 "مستردة"),
+            ["Partly refunded"] =
+                ("Partiellement remboursée",
+                 "مستردة جزئياً"),
+            ["Cancelled"] =
+                ("Annulée",
+                 "ملغاة"),
+            ["Completed"] =
+                ("Terminée",
+                 "مكتملة"),
+            ["{0} in stock"] =
+                ("{0} en stock",
+                 "{0} في المخزون"),
+            ["Adjust {0}"] =
+                ("Ajuster {0}",
+                 "تعديل {0}"),
+            ["No change — {0} stays at {1}."] =
+                ("Aucun changement — {0} reste à {1}.",
+                 "لا تغيير — يبقى {0} عند {1}."),
+            ["Value removed: {0} at cost."] =
+                ("Valeur retirée : {0} au coût.",
+                 "القيمة المخصومة: {0} بسعر التكلفة."),
+            ["Value added: {0} at cost."] =
+                ("Valeur ajoutée : {0} au coût.",
+                 "القيمة المضافة: {0} بسعر التكلفة."),
+            ["That would take {0} below zero. There are only {1} in stock."] =
+                ("Cela ferait passer {0} sous zéro. Il n'y en a que {1} en stock.",
+                 "سيجعل هذا {0} أقل من صفر. المتوفر فقط {1} في المخزون."),
+            ["{0} has no back-office access. The owner sets this under Workers."] =
+                ("{0} n'a pas accès à la gestion. Le propriétaire le règle dans Employés.",
+                 "لا يملك {0} صلاحية الإدارة. يحدد المالك ذلك من صفحة العمال."),
+            ["No receipt #{0}. Receipt numbers are printed on completed sales — they are not the same as a held ticket."] =
+                ("Aucun reçu n°{0}. Les numéros de reçu figurent sur les ventes terminées — ce ne sont pas ceux des tickets en attente.",
+                 "لا يوجد إيصال رقم {0}. أرقام الإيصالات تُطبع على المبيعات المكتملة — وهي ليست أرقام التذاكر المعلقة."),
+            ["{0} × {1} added to stock"] =
+                ("{0} × {1} ajouté au stock",
+                 "أُضيف {0} × {1} إلى المخزون"),
+            ["{0} saved · {1} in stock"] =
+                ("{0} enregistré · {1} en stock",
+                 "حُفظ {0} · {1} في المخزون"),
+            ["{0} signed out"] =
+                ("{0} s'est déconnecté",
+                 "سجّل {0} الخروج"),
+            ["Quantity: {0}"] =
+                ("Quantité : {0}",
+                 "الكمية: {0}"),
             ["last {0}"] =
                 ("dernier {0}",
                  "آخر مرة {0}"),
