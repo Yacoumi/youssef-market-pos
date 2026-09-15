@@ -27,7 +27,7 @@
                     <TextBlock x:Name="AmountLabel" Text="AMOUNT" Style="{StaticResource Text.FieldLabel}"/>
                     <TextBox x:Name="AmountBox" Style="{StaticResource TextBox.Field}"/>
                 </StackPanel>
-                <StackPanel Grid.Column="2">
+                <StackPanel x:Name="DateSection" Grid.Column="2">
                     <TextBlock Text="DATE" Style="{StaticResource Text.FieldLabel}"/>
                     <DatePicker x:Name="DateBox" Style="{StaticResource DatePicker.Field}"/>
                 </StackPanel>
@@ -38,8 +38,10 @@
                 <ComboBox x:Name="MethodBox" Style="{StaticResource ComboBox.Form}"/>
             </StackPanel>
 
-            <TextBlock Text="NOTE (OPTIONAL)" Style="{StaticResource Text.FieldLabel}" Margin="2,16,0,6"/>
-            <TextBox x:Name="NoteBox" Style="{StaticResource TextBox.Field}"/>
+            <StackPanel x:Name="NoteSection">
+                <TextBlock Text="NOTE (OPTIONAL)" Style="{StaticResource Text.FieldLabel}" Margin="2,16,0,6"/>
+                <TextBox x:Name="NoteBox" Style="{StaticResource TextBox.Field}"/>
+            </StackPanel>
 
             <TextBlock x:Name="ErrorText" Style="{StaticResource Text.Body}" FontSize="12.5"
                        Foreground="{StaticResource Brush.Danger}" Margin="2,14,2,0" TextWrapping="Wrap"

@@ -195,11 +195,21 @@ public sealed class SaleViewModel : ViewModelBase
     public event EventHandler<string>? ScannedSomethingUnknown;
 
     /// <summary>
+    /// A product the shop does sell was asked for, but the shelf has none left to cover it.
+    /// Carries the product, so the till can offer to put the delivery in the cashier's hand
+    /// into stock there and then, instead of only refusing.
+    /// </summary>
+    public event EventHandler<Product>? RanOutOf;
+
+    /// <summary>
     /// A typed quantity was brought down to what the shelf holds. Said out loud, because
     /// silently changing a number somebody just typed is how a cashier stops trusting the till.
     /// </summary>
     /// <summary>A plain confirmation in the till's status banner, from outside the view model.</summary>
     public void Announce(string message) => SetStatus(message, isError: false);
+
+    /// <summary>A problem in the till's status banner, from outside the view model.</summary>
+    public void AnnounceProblem(string message) => SetStatus(message, isError: true);
 
     private void SetStatus(string message, bool isError)
     {
@@ -717,6 +727,7 @@ public sealed class SaleViewModel : ViewModelBase
             if (scanned.IsOutOfStock && !AlreadyInTheBasket(scanned))
             {
                 Refuse(Loc.T("Error: {0} is out of stock.", scanned.Name));
+                RanOutOf?.Invoke(this, scanned);
                 return;
             }
 
@@ -810,6 +821,17 @@ public sealed class SaleViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Puts a product back on the sale once its shelf has been topped up. Looked up again by id,
+    /// because the product that was refused carries the count from before the delivery.
+    /// </summary>
+    public void AddAfterRestock(int productId)
+    {
+        var restocked = Catalog.Products.FirstOrDefault(p => p.Id == productId);
+        if (restocked is not null) AddProduct(restocked);
+        else FocusBarcode();
+    }
+
+    /// <summary>
     /// How many more of this the basket may take.
     ///
     /// The shelf, less whatever is already in this basket. Counting the basket is the part
@@ -819,12 +841,12 @@ public sealed class SaleViewModel : ViewModelBase
     /// </summary>
     /// <summary>Whether this product is already on the sale in front of the cashier.</summary>
     private bool AlreadyInTheBasket(Product product) =>
-        Cart.Any(l => l.Product.Barcode == product.Barcode);
+        Cart.Any(l => l.Product.Id == product.Id);
 
     private decimal RoomFor(Product product)
     {
         var alreadyInBasket = Cart
-            .Where(l => l.Product.Barcode == product.Barcode)
+            .Where(l => l.Product.Id == product.Id)
             .Sum(l => l.Quantity);
 
         return product.Stock - alreadyInBasket;
@@ -833,7 +855,7 @@ public sealed class SaleViewModel : ViewModelBase
     private void AddProduct(Product product)
     {
         CartLine touched;
-        var existing = Cart.FirstOrDefault(l => l.Product.Barcode == product.Barcode);
+        var existing = Cart.FirstOrDefault(l => l.Product.Id == product.Id);
         var wanted = existing?.Step ?? (product.Unit == Unit.Kg ? 1.0m : 1m);
 
         // The shelf has the last word, on the first one and on every one after it.
@@ -848,6 +870,7 @@ public sealed class SaleViewModel : ViewModelBase
         if (RoomFor(product) < wanted)
         {
             Refuse(Loc.T("Error: {0} is out of stock.", product.Name));
+            RanOutOf?.Invoke(this, product);
             return;
         }
 

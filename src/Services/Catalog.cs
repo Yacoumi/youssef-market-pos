@@ -101,5 +101,9 @@ public static class Catalog
         _categories ?? throw new InvalidOperationException("Catalog.Load() must run at startup.");
 
     public static Product? FindByBarcode(string barcode) =>
-        Products.FirstOrDefault(p => p.Barcode == barcode.Trim());
+        barcode.Trim() is { Length: > 0 } code
+            ? Products.FirstOrDefault(p => p.Barcode == code)
+            // Every product with nothing printed on it has an empty barcode. An empty code
+            // is not a scan of any one of them.
+            : null;
 }

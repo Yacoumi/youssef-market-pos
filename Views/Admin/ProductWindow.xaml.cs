@@ -81,6 +81,10 @@ public partial class ProductWindow : Window
     {
         var form = new ProductWindow(null).By(owner);
         form.BarcodeBox.Text = barcode;
+
+        // The cashier is holding at least one, and it goes straight onto the sale after saving.
+        // Starting at 0 made that sale refuse the product the moment it was created.
+        form.StockBox.Text = "1";
         form.Loaded += (_, _) => { form.NameBox.Focus(); form.NameBox.SelectAll(); };
 
         return form.ShowDialog() == true;

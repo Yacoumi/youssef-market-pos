@@ -74,6 +74,7 @@ public partial class MainWindow : Window
         Vm.PaymentRequested += Vm_PaymentRequested;
         Vm.CartLineTouched += Vm_CartLineTouched;
         Vm.ScannedSomethingUnknown += Vm_ScannedSomethingUnknown;
+        Vm.RanOutOf += Vm_RanOutOf;
 
         StartTalkingToTheBackOffice();
     }
@@ -357,6 +358,52 @@ public partial class MainWindow : Window
         }
 
         FocusBarcode();
+    }
+
+    /// <summary>
+    /// Something the shop sells was scanned with nothing left on the shelf. Offers to put what
+    /// the cashier is holding into stock, then puts it on the sale it interrupted.
+    ///
+    /// Usually the delivery has just arrived and nobody has counted it in yet — refusing the
+    /// sale over that leaves a customer waiting for a number that is simply behind.
+    /// </summary>
+    private async void Vm_RanOutOf(object? sender, Product product)
+    {
+        if (!Owned.CanOwn(this)) return;
+
+        var answer = Views.Admin.AmountWindow.Ask(this, new Views.Admin.AmountRequest
+        {
+            Heading = Loc.T("{0} is not in stock", product.Name),
+            Blurb = Loc.T("Add how many you have, and it goes straight onto the sale."),
+            AmountLabel = Loc.T("QUANTITY TO ADD"),
+            ConfirmText = Loc.T("Add to stock"),
+            Suggested = 1m,
+            AskMethod = false,
+            AskDateAndNote = false,
+        });
+
+        if (answer is null || answer.Amount <= 0m)
+        {
+            FocusBarcode();
+            return;
+        }
+
+        try
+        {
+            Link.Shop.Stock.ReceiveAtTill(product.Id, answer.Amount, cost: null, price: null, expiresOn: null);
+
+            // A till holds the server's catalogue in memory; it has to be asked again before the
+            // new count is on this screen.
+            if (Catalog.BelongsToAServer) await ShopLink.PullCatalogue();
+
+            Vm.ReloadCatalogue();
+            Vm.AddAfterRestock(product.Id);
+        }
+        catch (Exception error)
+        {
+            Vm.AnnounceProblem(error.Message);
+            FocusBarcode();
+        }
     }
 
     private void Vm_CartLineTouched(object? sender, CartLine line)

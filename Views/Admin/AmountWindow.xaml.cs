@@ -24,6 +24,9 @@ public sealed class AmountRequest
     /// <summary>False for things that are not a payment, so no "paid by" is asked for.</summary>
     public bool AskMethod { get; init; } = true;
 
+    /// <summary>False for a plain "how many", where a date and a note would only be in the way.</summary>
+    public bool AskDateAndNote { get; init; } = true;
+
     /// <summary>Allows negatives — the cash drawer needs to take money out as well as put it in.</summary>
     public bool AllowNegative { get; init; }
 }
@@ -63,6 +66,8 @@ public partial class AmountWindow : Window
         };
         MethodBox.SelectedIndex = 0;
         MethodSection.Visibility = request.AskMethod ? Visibility.Visible : Visibility.Collapsed;
+        DateSection.Visibility = request.AskDateAndNote ? Visibility.Visible : Visibility.Collapsed;
+        NoteSection.Visibility = request.AskDateAndNote ? Visibility.Visible : Visibility.Collapsed;
 
         if (request.Suggested is { } suggested)
             AmountBox.Text = suggested.ToString("0.00", CultureInfo.InvariantCulture);

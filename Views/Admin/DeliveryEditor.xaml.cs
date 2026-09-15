@@ -116,7 +116,7 @@ public partial class DeliveryEditor : UserControl
         // By barcode first: a scan that reached this box as text is a code, not a name, and
         // matching it against names would make a new product out of it.
         var product = ProductBox.SelectedItem as StockItem
-            ?? Known.FirstOrDefault(p => p.Barcode == typed)
+            ?? (typed.Length > 0 ? Known.FirstOrDefault(p => p.Barcode == typed) : null)
             ?? Known.FirstOrDefault(p => string.Equals(p.Name, typed,
                                                        StringComparison.CurrentCultureIgnoreCase));
 

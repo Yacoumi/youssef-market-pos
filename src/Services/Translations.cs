@@ -97,6 +97,15 @@ public static class Translations
             ["Add to stock"] =
                 ("Ajouter au stock",
                  "أضف إلى المخزون"),
+            ["{0} is not in stock"] =
+                ("{0} n'est pas en stock",
+                 "{0} غير متوفر في المخزون"),
+            ["Add how many you have, and it goes straight onto the sale."] =
+                ("Indiquez combien vous en avez, et il est ajouté directement à la vente.",
+                 "أدخل الكمية المتوفرة لديك، وستُضاف مباشرة إلى عملية البيع."),
+            ["QUANTITY TO ADD"] =
+                ("QUANTITÉ À AJOUTER",
+                 "الكمية المراد إضافتها"),
             ["Add what arrived, or leave it empty."] =
                 ("Ajoutez ce qui est arrivé, ou laissez vide.",
                  "أضف ما وصل، أو اتركه فارغاً."),
