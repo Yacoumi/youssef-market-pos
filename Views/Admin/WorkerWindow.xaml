@@ -38,6 +38,25 @@
                 <TextBlock x:Name="RoleNoteText" Style="{StaticResource Text.CellMuted}" TextWrapping="Wrap"/>
             </Border>
 
+            <!-- The worker's account: they sign in to the back office with their name and this. -->
+            <Grid Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="PASSWORD" Style="{StaticResource Text.FieldLabel}"/>
+                    <PasswordBox x:Name="PasswordBox" Style="{StaticResource PasswordBox.Field}" MaxLength="32"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="CONFIRM PASSWORD" Style="{StaticResource Text.FieldLabel}"/>
+                    <PasswordBox x:Name="ConfirmPasswordBox" Style="{StaticResource PasswordBox.Field}" MaxLength="32"/>
+                </StackPanel>
+            </Grid>
+            <TextBlock x:Name="PasswordNote" Style="{StaticResource Text.Muted}" FontSize="12"
+                       Margin="2,6,2,0" TextWrapping="Wrap"/>
+
             <Grid Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

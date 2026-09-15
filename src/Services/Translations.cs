@@ -1843,6 +1843,27 @@ public static class Translations
             ["Use at least 4 characters, or leave both boxes empty to turn the password off."] =
                 ("Utilisez au moins 4 caractères, ou laissez les deux champs vides pour désactiver le mot de passe.",
                  "استخدم 4 محارف على الأقل، أو اترك الحقلين فارغين لتعطيل كلمة المرور."),
+            ["Uses the till. In the back office they see Add product, Categories and Inventory."] =
+                ("Utilise la caisse. Dans la gestion : Ajouter un produit, Catégories et Inventaire.",
+                 "يستخدم الصندوق. في الإدارة يرى: إضافة منتج، الفئات والمخزون."),
+            ["In the back office they see Add product, Categories and Inventory. No money screens."] =
+                ("Dans la gestion : Ajouter un produit, Catégories et Inventaire. Aucun écran d'argent.",
+                 "في الإدارة يرى: إضافة منتج، الفئات والمخزون. بدون شاشات المال."),
+            ["Give them a name and a password: they use them to sign in to the back office."] =
+                ("Donnez-lui un nom et un mot de passe : il s'en sert pour se connecter à la gestion.",
+                 "أعطه اسماً وكلمة مرور: يستعملهما لتسجيل الدخول إلى الإدارة."),
+            ["They sign in with their name and this password."] =
+                ("Il se connecte avec son nom et ce mot de passe.",
+                 "يسجّل الدخول باسمه وبكلمة المرور هذه."),
+            ["Leave empty to keep the current password."] =
+                ("Laissez vide pour garder le mot de passe actuel.",
+                 "اتركه فارغاً للإبقاء على كلمة المرور الحالية."),
+            ["Give the worker a password so they can sign in."] =
+                ("Donnez un mot de passe à l'employé pour qu'il puisse se connecter.",
+                 "أعطِ العامل كلمة مرور ليتمكن من تسجيل الدخول."),
+            ["Another worker already has this name. Give each worker their own."] =
+                ("Un autre employé porte déjà ce nom. Donnez à chacun le sien.",
+                 "يوجد عامل آخر بهذا الاسم. أعطِ كل عامل اسماً خاصاً به."),
             ["Use at least 4 characters."] =
                 ("Utilisez au moins 4 caractères.",
                  "استخدم 4 محارف على الأقل."),

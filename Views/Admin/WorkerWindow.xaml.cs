@@ -25,9 +25,9 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
     private static readonly (string Label, WorkerRole Role, string What)[] Roles =
     [
         ("Cashier", WorkerRole.Cashier,
-         "Uses the till and can see their own sales. Nothing else in the back office."),
+         "Uses the till. In the back office they see Add product, Categories and Inventory."),
         ("Stock worker", WorkerRole.StockWorker,
-         "Manages products and stock levels, and can see stock movements. No money screens."),
+         "In the back office they see Add product, Categories and Inventory. No money screens."),
         ("Manager", WorkerRole.Manager,
          "Runs the shop floor: products, stock, suppliers, purchases, staff and reports. "
          + "Cannot see profit, salaries, supplier debt or settings."),
@@ -53,7 +53,8 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
         if (existing is null)
         {
             HeadingText.Text = Loc.T("Add worker");
-            SubText.Text = Loc.T("Give them a role now; a till PIN can be set afterwards.");
+            SubText.Text = Loc.T("Give them a name and a password: they use them to sign in to the back office.");
+            PasswordNote.Text = Loc.T("They sign in with their name and this password.");
             RoleBox.SelectedIndex = 0;
             PeriodBox.SelectedIndex = 0;
             StartedBox.SelectedDate = DateTime.Today;
@@ -77,6 +78,10 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
                 SalaryPeriod.Daily => 2,
                 _ => 0,
             };
+
+            PasswordNote.Text = Loc.T(existing.HasPin
+                ? "Leave empty to keep the current password."
+                : "They sign in with their name and this password.");
 
             ActiveButton.Visibility = Visibility.Visible;
             ActiveButton.Content = Loc.T(existing.IsActive ? "Deactivate" : "Reactivate");
@@ -109,6 +114,50 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
         {
             ErrorText.Text = Loc.T("Give the worker a name.");
             NameBox.Focus();
+            return;
+        }
+
+        // The account. Required for a new worker, who could never sign in without one, and
+        // optional on an edit, where an empty box keeps the password they have.
+        var password = PasswordBox.Password;
+        var needsPassword = _existing is null || !_existing.HasPin;
+        if (password.Length > 0 || ConfirmPasswordBox.Password.Length > 0 || needsPassword)
+        {
+            if (password.Length == 0)
+            {
+                ErrorText.Text = Loc.T("Give the worker a password so they can sign in.");
+                PasswordBox.Focus();
+                return;
+            }
+            if (password.Length < 4)
+            {
+                ErrorText.Text = Loc.T("Use at least 4 characters.");
+                PasswordBox.Focus();
+                return;
+            }
+            if (password != ConfirmPasswordBox.Password)
+            {
+                ErrorText.Text = Loc.T("The two passwords do not match.");
+                ConfirmPasswordBox.Focus();
+                return;
+            }
+        }
+
+        // The sign-in picks a worker by name, so two workers may not share one.
+        try
+        {
+            if (Link.Shop.Workers.List(includeInactive: true).Any(w =>
+                    w.Id != (_existing?.Id ?? 0) &&
+                    string.Equals(w.Name.Trim(), name, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                ErrorText.Text = Loc.T("Another worker already has this name. Give each worker their own.");
+                NameBox.Focus();
+                return;
+            }
+        }
+        catch (Exception error)
+        {
+            ErrorText.Text = error.Message;
             return;
         }
 
@@ -147,8 +196,11 @@ public partial class WorkerWindow : MarketPos.Views.DialogWindow
 
         try
         {
-            if (_existing is null) Link.Shop.Workers.Create(worker);
+            var id = _existing?.Id ?? 0;
+            if (_existing is null) id = Link.Shop.Workers.Create(worker);
             else Link.Shop.Workers.Update(worker);
+
+            if (password.Length > 0 && id > 0) Link.Shop.Workers.SetPin(id, password);
 
             DialogResult = true;
             Close();

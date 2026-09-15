@@ -67,11 +67,14 @@ public static class Session
         // ManageSettings. A manager runs the shop floor; profit and payroll are the owner's.
 
         [WorkerRole.Cashier] =
-            Permission.UsePos | Permission.SeeOwnSales | Permission.AddProductAtTill,
+            // Back office: Add product, Categories and Inventory.
+            Permission.UsePos | Permission.SeeOwnSales | Permission.AddProductAtTill |
+            Permission.ManageProducts | Permission.ManageCategories | Permission.ManageInventory |
+            Permission.SeeStockMovements,
 
         [WorkerRole.StockWorker] =
             Permission.ManageInventory | Permission.SeeStockMovements | Permission.ManageProducts |
-            Permission.AddProductAtTill,
+            Permission.ManageCategories | Permission.AddProductAtTill,
     };
 
     /// <summary>

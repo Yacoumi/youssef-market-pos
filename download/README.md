@@ -5,7 +5,16 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 3.1
+## What's new in 3.2
+- **Worker accounts:**
+  - When you add a worker, you set their password right in the form.
+  - They sign in to the back office with their name and that password.
+- **What a worker sees in the back office:**
+  - They get **Add product**, **Categories** and **Inventory** only.
+  - Money, suppliers, workers, sales history and reports stay hidden and blocked.
+- To change a worker's password, edit the worker and type a new one. Leave the boxes empty to keep the current password.
+
+## From 3.1
 - **Update BOTH POS-Server.exe and POS-Till.exe on EVERY computer.**
   - An older till saved photos only on its own computer, so nobody else could see them.
   - A till older than the server is now told to update instead of losing photos.
