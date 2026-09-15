@@ -66,13 +66,15 @@ public static class ShopImages
     {
         if (!IsToken(token)) return null;
 
-        if (Kept.TryGetValue(token, out var already))
-            return already.Length == 0 ? null : already;
+        if (Kept.TryGetValue(token, out var already)) return already;
 
-        var got = Ask(token) ?? Array.Empty<byte>();
-        Kept[token] = got;
+        // Only a picture that arrived is remembered. "Nothing came back" was kept too, so a till
+        // that asked a moment before the photo reached the shop, or during a network hiccup,
+        // showed an empty tile until it was restarted.
+        var got = Ask(token);
+        if (got is { Length: > 0 }) Kept[token] = got;
 
-        return got.Length == 0 ? null : got;
+        return got is { Length: > 0 } ? got : null;
     }
 
     private static byte[]? Ask(string token)

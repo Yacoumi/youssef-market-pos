@@ -5,7 +5,14 @@
 
 Publisher: **Homayk Studio**
 
-## What's new in 3.0
+## What's new in 3.1
+- **Update BOTH POS-Server.exe and POS-Till.exe on EVERY computer.**
+  - An older till saved photos only on its own computer, so nobody else could see them.
+  - A till older than the server is now told to update instead of losing photos.
+- **Every photo sent to the server is logged in `server.log`** ("photo saved for product …").
+- **A till no longer stays stuck on an empty picture** after a network hiccup.
+
+## From 3.0
 - **Products without a barcode now behave like products with one when stock runs out.**
   - Pressing **+** in the basket past the stock left opens the pop-up asking how many to add to stock.
   - Typing a bigger quantity, or using a weight button, does the same.

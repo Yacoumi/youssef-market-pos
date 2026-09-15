@@ -238,7 +238,12 @@ app.MapPost("/products/{id:int}/deliveries", (HttpRequest r, int id, ReceiveStoc
     Authorised.Answering(r, () => ShopBusinessApi.ReceiveStock(id, asked), s => s.Ok));
 
 app.MapPost("/products/{id:int}/photo", (HttpRequest r, int id, PhotoUpload asked) =>
-    Authorised.Answering(r, () => ShopBusinessApi.SaveProductPhoto(id, asked), s => s.Ok));
+    Authorised.Answering(r, () =>
+    {
+        var saved = ShopBusinessApi.SaveProductPhoto(id, asked);
+        Note(saved.Ok ? $"photo saved for product {id}" : $"photo for product {id} refused: {saved.Problem}");
+        return saved;
+    }, s => s.Ok));
 
 // ---------------------------------------------------------------- the shelves
 app.MapGet("/inventory/movements", (HttpRequest r, DateTime? from, DateTime? to, int? productId) =>
@@ -442,7 +447,12 @@ app.MapDelete("/categories/{id:int}", (HttpRequest request, int id) =>
     Authorised.Answering(request, () => ShopCategoriesApi.Delete(id), s => s.Ok));
 
 app.MapPost("/categories/{id:int}/photo", (HttpRequest request, int id, CategoryPhotoUpload asked) =>
-    Authorised.Answering(request, () => ShopCategoriesApi.SavePhoto(id, asked), s => s.Ok, 400));
+    Authorised.Answering(request, () =>
+    {
+        var saved = ShopCategoriesApi.SavePhoto(id, asked);
+        Note(saved.Ok ? $"photo saved for category {id}" : $"photo for category {id} refused: {saved.Problem}");
+        return saved;
+    }, s => s.Ok, 400));
 
 // ---------------------------------------------------------------- who is allowed in
 

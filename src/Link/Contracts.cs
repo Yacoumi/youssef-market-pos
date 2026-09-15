@@ -17,7 +17,9 @@
 public static class Contracts
 {
     /// <summary>Bumped when a field changes meaning. A till refuses a server it does not know.</summary>
-    public const int Version = 1;
+    // 2: photos are sent to the shop and kept beside marketpos.db. An older till kept them on its
+    // own computer, where no other screen could see them — so it is told to update instead.
+    public const int Version = 2;
 }
 
 /// <summary>What the server is and whether it is willing to talk.</summary>
