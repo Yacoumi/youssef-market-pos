@@ -74,23 +74,28 @@ public partial class AdminWindow : Window
 
     // ---------- Drawn inside the till ----------
 
-    /// <summary>True when this back office is drawn inside the till's window, not a window of its own.</summary>
+    /// <summary>True when this back office is the screen of the till's window, not a window of its own.</summary>
     public bool IsInsideTheTill { get; private set; }
+
+    /// <summary>The window this back office is the screen of; itself when it has its own.</summary>
+    private Window Frame => _till ?? this;
+
+    private Window? _till;
 
     /// <summary>Raised when the back office is done — closed, signed out, or Back to the till.</summary>
     public event EventHandler? LeaveRequested;
 
     /// <summary>
-    /// Hands over this back office's content to be drawn inside the till, so the owner works in
-    /// the same main window as the cashier with the extra pages their permissions allow.
+    /// Hands over this back office as the whole screen of the till's window. The same window
+    /// switches from the cashier's screen to the admin's; closing switches it back.
     ///
-    /// The window itself is never shown. Its pages, sidebar and code stay exactly as they are;
-    /// dialogs they open go into the till's page, and closing it returns to the till.
+    /// The back-office window itself is never shown. Its pages, sidebar and code stay exactly
+    /// as they are; its window buttons act on the till's window, and dialogs open over it.
     /// </summary>
     public FrameworkElement ContentFor(Window till)
     {
         IsInsideTheTill = true;
-        WindowControls.Visibility = Visibility.Collapsed;
+        _till = till;
 
         var content = InPage.Detach(this);
         InPage.Embed(this, till);
@@ -110,6 +115,7 @@ public partial class AdminWindow : Window
             if (announced) return;
             announced = true;
             RaiseEvent(new RoutedEventArgs(LoadedEvent, this));
+            ShowWindowSize();
         };
 
         return content;
@@ -287,7 +293,7 @@ public partial class AdminWindow : Window
     /// <summary>The middle window control: fill the screen, or come back off it.</summary>
     private void Size_Click(object sender, RoutedEventArgs e)
     {
-        Chrome.Toggle(this);
+        Chrome.Toggle(Frame);
         ShowWindowSize();
     }
 
@@ -297,7 +303,7 @@ public partial class AdminWindow : Window
     /// </summary>
     private void ShowWindowSize()
     {
-        var filled = Chrome.FillsTheScreen(this);
+        var filled = Chrome.FillsTheScreen(Frame);
 
         SizeGlyph.Data = (System.Windows.Media.Geometry)FindResource(
             filled ? "Icon.Restore" : "Icon.Maximize");
@@ -341,7 +347,7 @@ public partial class AdminWindow : Window
         }
     }
 
-    private void Minimise_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    private void Minimise_Click(object sender, RoutedEventArgs e) => Frame.WindowState = WindowState.Minimized;
 
     private void Close_Click(object sender, RoutedEventArgs e) => Close();
 

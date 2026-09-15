@@ -3,12 +3,12 @@
 - **POS-Till.exe**: for each cashier PC.
 - **marketpos.db**: a clean, empty database for a new client (no products, sales, users or records).
 
-## What's new in 2.3
-- **One main page for everyone.**
-  - The back office opens inside the till window, next to the same rail, not as a separate window.
-  - The admin sees the extra pages and controls their permissions allow; a cashier doesn't.
-  - Press **Sale / Items / Tickets** on the rail, or **Back to the till**, to return.
-- **Fixed:** the "'Pulse' name cannot be found" error when opening the scan popup from **Add product**. The same fix covers every popup that uses animations or its own styles.
+## What's new in 2.4
+- **Admin and cashier share one window.**
+  - Pressing the back-office button switches the whole screen from the cashier view to the admin view. There's no second window and no page inside the cashier screen.
+  - The admin sees the pages and controls their permissions allow.
+  - **Back to the till** or the close button switches the screen back to the cashier.
+- **Fixed:** the "'Pulse' name cannot be found" error in the scan popup, and any popup that uses its own animations or styles.
 
 ## Also included (from 2.2)
 - **Single database file:** the database is only `marketpos.db`. Leftover `-wal` / `-shm` files are deleted at startup and never read.

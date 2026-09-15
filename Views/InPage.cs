@@ -28,7 +28,14 @@ public static class InPage
         public List<Layer> Open { get; } = new();
     }
 
-    private static readonly ConditionalWeakTable<Window, Host> Hosts = new();
+    /// <summary>
+    /// One overlay per screen, not per window: the till window shows either the till or the
+    /// back office, and a dialog must open over whichever of the two is on screen.
+    /// </summary>
+    private static readonly ConditionalWeakTable<UIElement, Host> Hosts = new();
+
+    /// <summary>Every overlay a window has had, so closing the window releases all of them.</summary>
+    private static readonly ConditionalWeakTable<Window, List<Host>> HostsOfWindow = new();
 
     /// <summary>
     /// Windows whose content is drawn inside another window — the back office inside the till.
@@ -67,7 +74,7 @@ public static class InPage
 
     /// <summary>True while any dialog is open inside this window.</summary>
     public static bool IsOpen(Window? window) =>
-        window is not null && Hosts.TryGetValue(window, out var host) && host.Open.Count > 0;
+        window?.Content is UIElement screen && Hosts.TryGetValue(screen, out var host) && host.Open.Count > 0;
 
     /// <summary>
     /// The window a dialog should open inside: the page its owner is on, or the page of the
@@ -93,7 +100,7 @@ public static class InPage
 
     private static Host HostOf(Window window)
     {
-        if (Hosts.TryGetValue(window, out var existing)) return existing;
+        if (window.Content is UIElement current && Hosts.TryGetValue(current, out var existing)) return existing;
 
         var overlay = new Grid { Visibility = Visibility.Collapsed };
 
@@ -118,14 +125,21 @@ public static class InPage
         }
 
         var host = new Host { Window = window, Overlay = overlay };
-        Hosts.Add(window, host);
+        Hosts.AddOrUpdate((UIElement)window.Content, host);
 
         // A window closed with a form still open must not leave the code that opened it
         // waiting for ever.
-        window.Closed += (_, _) =>
+        if (!HostsOfWindow.TryGetValue(window, out var all))
         {
-            foreach (var layer in host.Open.ToList()) layer.Close();
-        };
+            all = new List<Host>();
+            HostsOfWindow.Add(window, all);
+            window.Closed += (_, _) =>
+            {
+                foreach (var each in all)
+                    foreach (var layer in each.Open.ToList()) layer.Close();
+            };
+        }
+        all.Add(host);
 
         return host;
     }

@@ -261,8 +261,8 @@
                                 Click="Refresh_Click" Margin="0,0,6,0">
                             <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Refresh}"/>
                         </Button>
-                        <!-- Window controls, for the back office on a window of its own. Inside
-                             the till the till's own controls are the window's, and these go. -->
+                        <!-- Window controls. When the back office is the till window's screen they
+                             act on that window, and close returns to the cashier's screen. -->
                         <StackPanel x:Name="WindowControls" Orientation="Horizontal">
                             <Button Style="{StaticResource Button.WinControl}" ToolTip="Minimise" Click="Minimise_Click">
                                 <Path Style="{StaticResource Icon.Small}" Data="{StaticResource Icon.Minimize}"/>

@@ -624,23 +624,38 @@ public partial class MainWindow : Window
     /// <summary>The back office while it is on screen; null while the till is.</summary>
     private AdminWindow? _backOffice;
 
+    /// <summary>The cashier's screen, kept while the back office has the window.</summary>
+    private UIElement? _tillScreen;
+
     /// <summary>
-    /// Opens the back office inside this window, beside the same rail the cashier uses. There
-    /// is one main page for everybody: an admin simply has more on it, decided by the
-    /// permissions of whoever signed in.
+    /// Switches this same window from the cashier's screen to the back office. No second
+    /// window and nothing nested: the window shows one or the other, and what the back office
+    /// offers is decided by the permissions of whoever signed in.
     /// </summary>
     private void ShowBackOffice()
     {
         var office = new AdminWindow();
         office.LeaveRequested += (_, _) => LeaveBackOffice();
 
-        BackOfficeHost.Children.Clear();
-        BackOfficeHost.Children.Add(office.ContentFor(this));
-        BackOfficeHost.Visibility = Visibility.Visible;
-        TillSearchBar.Visibility = Visibility.Hidden;
+        var screen = office.ContentFor(this);
+        _tillScreen = (UIElement)Content;
         _backOffice = office;
+        Content = screen;
 
-        RailAdmin.IsChecked = true;
+        // The draggable strip along the top follows the back office's header, which is
+        // scaled on its own terms.
+        if (screen is MarketPos.Controls.ScaleHost scaled)
+        {
+            scaled.Rescaled += scale => { if (_backOffice == office) SetCaption(scale); };
+            screen.Loaded += (_, _) => { if (_backOffice == office) SetCaption(scaled.Scale); };
+        }
+    }
+
+    /// <summary>Height of the window's draggable top strip, at the scale of the screen showing.</summary>
+    private void SetCaption(double scale)
+    {
+        if (System.Windows.Shell.WindowChrome.GetWindowChrome(this) is { IsFrozen: false } chrome)
+            chrome.CaptionHeight = Math.Round(96 * scale);
     }
 
     /// <summary>Back to the till, with whatever the back office changed already on its screen.</summary>
@@ -651,9 +666,9 @@ public partial class MainWindow : Window
         var office = _backOffice;
         _backOffice = null;
 
-        BackOfficeHost.Children.Clear();
-        BackOfficeHost.Visibility = Visibility.Collapsed;
-        TillSearchBar.Visibility = Visibility.Visible;
+        if (_tillScreen is not null) Content = _tillScreen;
+        _tillScreen = null;
+        SetCaption(Services.Responsive.ScaleOf(this));
         InPage.Unembed(office);
 
         Catalog.Reload();
